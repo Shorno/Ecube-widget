@@ -15,6 +15,7 @@ export default async function getPlayerMapdata() {
     const players = Array.isArray(data)
       ? data
       : data?.playerInfoList || data?.TotalPlayerList;
+   
     return Array.isArray(players) ? players : [];
   } catch {
     return [];

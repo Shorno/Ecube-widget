@@ -6,38 +6,114 @@ import getGameGlobalInfo from "@/utils/getGameGlobalInfo";
 import getCircleInfo from "@/utils/getCircleInfo";
 import { MAPS, defaultGameInfo } from "./constants";
 import MapCanvas from "./MapCanvas";
-import ControlPanel from "./components/ControlPanel";
+import { MAP_CONTROL_STORAGE_KEY, readMapControlState } from "./controlStorage";
 
-// Top-level simulator page: owns simulator state, polls live player data,
-// and wires controls to the canvas via a shared render-state ref.
+// Top-level map page: polls live player/circle data and renders it on canvas.
 export default function PubgMapSimulator() {
-  const [simulatorState, setSimulatorState] = useState({
-    mapType: "Erangel",
+  const initialControl = readMapControlState();
+  const initialMapType = MAPS[initialControl.mapType]
+    ? initialControl.mapType
+    : "Erangel";
+  const [simulatorState, setSimulatorState] = useState(() => ({
+    mapType: initialMapType,
+    showGrid: Boolean(initialControl.showGrid),
+    teamLogoById:
+      initialControl.teamLogoById &&
+      typeof initialControl.teamLogoById === "object"
+        ? initialControl.teamLogoById
+        : {},
     TotalPlayerList: [],
-    gameGlobalInfo: defaultGameInfo(MAPS.Erangel.size),
-  });
-  const [showGrid, setShowGrid] = useState(false);
+    gameGlobalInfo: defaultGameInfo(
+      MAPS[initialMapType]?.size ?? MAPS.Erangel.size,
+    ),
+  }));
+  const activeMapTypeRef = useRef(initialMapType);
+
+  // Synthesizes an initial blue zone that starts from map edge.
+  const buildMapEdgeBlueZone = () => {
+    const mapSize = MAPS[activeMapTypeRef.current]?.size ?? MAPS.Erangel.size;
+    // Start from top-left corner and a large radius so it visibly shrinks
+    // toward the first announced safe zone.
+    return {
+      X: "0",
+      Y: "0",
+      Size: String(mapSize),
+    };
+  };
 
   // Mutable lerp / animation cache shared between MapCanvas and the
-  // shrink-trigger button below. Lives in the page so siblings can poke it.
+  // canvas. Lives in the page so it persists across re-renders.
   const renderStateRef = useRef({
     players: {},
     circles: [],
     blueZoneAnim: null,
+    activeShrinkKey: null,
+    frozenBlueZone: null,
     viewport: null,
-    // If a PCOB URL is configured we are in live mode. Block the MapCanvas
-    // first-frame plane fallback so the plane only appears once we have a
-    // real GameTime from the API. Without this, the plane flashes at position
-    // 0 for the 1-2s before the first fetch resolves.
-    planeInitialized: !!process.env.NEXT_PUBLIC_PCOB_URL,
+    // MapCanvas starts plane animation once this start time is known.
+    planeInitialized: false,
+    planeOffsetApplied: false,
   });
 
-  // Polls player data every ~1000ms, scheduling the next request after each
+  const resetRenderCaches = () => {
+    renderStateRef.current = {
+      players: {},
+      circles: [],
+      blueZoneAnim: null,
+      activeShrinkKey: null,
+      frozenBlueZone: null,
+      viewport: null,
+      planeStartTime: null,
+      planeInitialized: false,
+      planeOffsetApplied: false,
+    };
+  };
+
+  // Control settings live in LocalStorage via /map/control page.
+  useEffect(() => {
+    const applyStoredControlState = () => {
+      const stored = readMapControlState();
+      const nextMapType = MAPS[stored.mapType] ? stored.mapType : "Erangel";
+
+      setSimulatorState((prev) => {
+        const mapChanged = prev.mapType !== nextMapType;
+        if (mapChanged) {
+          activeMapTypeRef.current = nextMapType;
+          resetRenderCaches();
+        }
+
+        return {
+          ...prev,
+          mapType: nextMapType,
+          showGrid: Boolean(stored.showGrid),
+          teamLogoById:
+            stored.teamLogoById && typeof stored.teamLogoById === "object"
+              ? stored.teamLogoById
+              : {},
+        };
+      });
+    };
+
+    applyStoredControlState();
+
+    const onStorage = (event) => {
+      if (!event.key || event.key === MAP_CONTROL_STORAGE_KEY) {
+        applyStoredControlState();
+      }
+    };
+
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
+
+  // Polls player data every ~500ms, scheduling the next request after each
   // fetch resolves so slow responses don't pile up.
   useEffect(() => {
     let isMounted = true;
     let pollTimeout;
-    const POLL_INTERVAL_MS = 1000;
+    const POLL_INTERVAL_MS = 500;
 
     const scheduleNextPoll = (startedAt) => {
       const elapsedMs = Date.now() - startedAt;
@@ -77,19 +153,18 @@ export default function PubgMapSimulator() {
   }, []);
 
   // Polls getgameglobalinfo + getCircleInfo together every 1s.
-  // - getgameglobalinfo  → updates CircleArray and plane coordinates in state
-  // - getCircleInfo      → drives the blue-zone shrink animation via a local timer
-  //                        (we ignore Counter and trust MaxTime + local clock instead)
   useEffect(() => {
     let isMounted = true;
     let pollTimeout;
     const POLL_INTERVAL_MS = 1000;
-    const PLANE_DURATION_MS = 60000;
     const prevCircleStatus = { current: null };
 
     const scheduleNextPoll = (startedAt) => {
       const elapsed = Date.now() - startedAt;
-      pollTimeout = setTimeout(syncGameInfo, Math.max(0, POLL_INTERVAL_MS - elapsed));
+      pollTimeout = setTimeout(
+        syncGameInfo,
+        Math.max(0, POLL_INTERVAL_MS - elapsed),
+      );
     };
 
     const syncGameInfo = async () => {
@@ -103,53 +178,96 @@ export default function PubgMapSimulator() {
 
         const rp = renderStateRef.current;
 
-        // --- Plane: set correct start offset from GameTime on first valid
-        //     API response. We use a separate flag (planeOffsetApplied) so
-        //     this runs even if MapCanvas already set planeInitialized on its
-        //     first rAF frame (which happens ~16ms before the first fetch).
-        if (circleInfo && !rp.planeOffsetApplied) {
-          const gameTimeSec = parseInt(circleInfo.GameTime ?? 0);
-          // GameTime "0" means either PCOB is unreachable (emptyPayload) or
-          // the match literally just started. Skip for now — next poll (1s)
-          // will have a non-zero value when PCOB is actually running.
-          if (gameTimeSec === 0) return;
-          if (gameTimeSec < PLANE_DURATION_MS / 1000) {
-            rp.planeStartTime = performance.now() - gameTimeSec * 1000;
-          } else {
-            // Game is past the plane phase — mark as finished immediately
-            rp.planeStartTime = performance.now() - PLANE_DURATION_MS - 1;
-          }
-          rp.planeInitialized = true;
-          rp.planeOffsetApplied = true;
-        }
-
-        // --- CircleArray + plane coords → simulator state
+        // --- CircleArray + plane coords → live state
         // Only update plane coords if the API returned non-zero values.
         // Zero coords mean PCOB is unreachable (emptyPayload fallback) and
         // would collapse the flight path to a single invisible point.
         if (globalInfo) {
+          const incomingCircles = Array.isArray(globalInfo.CircleArray)
+            ? globalInfo.CircleArray
+            : [];
+          const status = circleInfo?.CircleStatus ?? "0";
+          // PCOB returns historical + active circles in one array.
+          // The active pair is always at the tail:
+          //   last     => safe zone
+          //   second last => blue zone
+          const safeIdx = Math.max(0, incomingCircles.length - 1);
+          const blueIdx = Math.max(0, safeIdx - 1);
+          const latestSafeZone = incomingCircles[safeIdx];
+          const latestBlueZone = incomingCircles[blueIdx] ?? latestSafeZone;
+
+          // At shrink start some feeds briefly return only one circle.
+          // In that window, blue zone should start from map edge.
+          const fallbackBlueZone =
+            status === "2" && incomingCircles.length === 1
+              ? buildMapEdgeBlueZone()
+              : null;
+
+          // For rendering we normalize API CircleArray into either:
+          // - [] during delay (status 1, circle not announced yet)
+          // - [blue, safe] during wait/shrink when available
+          // - [map-edge blue, safe] during first shrink tick when only one
+          //   element exists
+          let visibleCircles = [];
+          if (incomingCircles.length > 0) {
+            if (status === "2") {
+              if (blueIdx !== safeIdx) {
+                visibleCircles = [latestBlueZone, latestSafeZone];
+              } else if (fallbackBlueZone && latestSafeZone) {
+                visibleCircles = [fallbackBlueZone, latestSafeZone];
+              } else {
+                visibleCircles = latestSafeZone ? [latestSafeZone] : [];
+              }
+            } else if (status === "0") {
+              if (incomingCircles.length >= 2) {
+                visibleCircles = [latestBlueZone, latestSafeZone];
+              } else {
+                visibleCircles = latestSafeZone ? [latestSafeZone] : [];
+              }
+            }
+          }
+
+          const planeStartX = parseFloat(globalInfo.PlaneStartLocX);
+          const planeStartY = parseFloat(globalInfo.PlaneStartLocY);
+          const planeStopX = parseFloat(globalInfo.PlaneStopLocX);
+          const planeStopY = parseFloat(globalInfo.PlaneStopLocY);
           const hasPlaneData =
-            parseFloat(globalInfo.PlaneStopLocX) !== 0 ||
-            parseFloat(globalInfo.PlaneStopLocY) !== 0;
+            Number.isFinite(planeStartX) &&
+            Number.isFinite(planeStartY) &&
+            Number.isFinite(planeStopX) &&
+            Number.isFinite(planeStopY) &&
+            (Math.abs(planeStopX - planeStartX) > 1 ||
+              Math.abs(planeStopY - planeStartY) > 1);
+
+          // As soon as GameTime is available, treat match as started and
+          // track plane by local wall clock + GameTime offset for smoothness.
+          const rawGameTime = parseInt(circleInfo?.GameTime ?? "0", 10);
+          const gameTimeSec = Number.isFinite(rawGameTime)
+            ? Math.max(0, rawGameTime)
+            : 0;
+          if (hasPlaneData && Number.isFinite(rawGameTime)) {
+            const targetStartTime = performance.now() - gameTimeSec * 1000;
+            if (!Number.isFinite(rp.planeStartTime)) {
+              rp.planeStartTime = targetStartTime;
+              rp.planeInitialized = true;
+              rp.planeOffsetApplied = true;
+            } else {
+              // Slowly correct drift from polling jitter without visible jumps.
+              const driftMs = targetStartTime - rp.planeStartTime;
+              if (Math.abs(driftMs) > 2000) {
+                rp.planeStartTime += driftMs * 0.35;
+              }
+            }
+          }
 
           setSimulatorState((prev) => ({
             ...prev,
             gameGlobalInfo: {
-              CircleArray: Array.isArray(globalInfo.CircleArray)
-                ? globalInfo.CircleArray
-                : prev.gameGlobalInfo.CircleArray,
-              PlaneStartLocX: hasPlaneData
-                ? globalInfo.PlaneStartLocX
-                : prev.gameGlobalInfo.PlaneStartLocX,
-              PlaneStartLocY: hasPlaneData
-                ? globalInfo.PlaneStartLocY
-                : prev.gameGlobalInfo.PlaneStartLocY,
-              PlaneStopLocX: hasPlaneData
-                ? globalInfo.PlaneStopLocX
-                : prev.gameGlobalInfo.PlaneStopLocX,
-              PlaneStopLocY: hasPlaneData
-                ? globalInfo.PlaneStopLocY
-                : prev.gameGlobalInfo.PlaneStopLocY,
+              CircleArray: visibleCircles,
+              PlaneStartLocX: globalInfo.PlaneStartLocX,
+              PlaneStartLocY: globalInfo.PlaneStartLocY,
+              PlaneStopLocX: globalInfo.PlaneStopLocX,
+              PlaneStopLocY: globalInfo.PlaneStopLocY,
             },
           }));
         }
@@ -159,33 +277,85 @@ export default function PubgMapSimulator() {
         //     as the clock so HTTP latency has no effect on smoothness.
         if (circleInfo) {
           const status = circleInfo.CircleStatus;
-          const prev = prevCircleStatus.current;
 
-          if (status === "2" && prev !== "2") {
-            // Zone just started moving — fire local shrink animation
-            const duration = parseInt(circleInfo.MaxTime) * 1000;
-            const circles = rp.circles;
-            // circles[0] = current blue zone (visual pos), circles[1] = safe zone target
-            if (circles.length >= 2 && globalInfo?.CircleArray?.length >= 2) {
-              const safeZone = globalInfo.CircleArray[1];
+          if (status === "2") {
+            const allCircles = Array.isArray(globalInfo?.CircleArray)
+              ? globalInfo.CircleArray
+              : [];
+            const safeIdx = Math.max(0, allCircles.length - 1);
+            const blueIdx = Math.max(0, safeIdx - 1);
+            const safeZone = allCircles[safeIdx];
+            const fallbackBlueZone =
+              allCircles.length === 1 ? buildMapEdgeBlueZone() : null;
+            const blueZone =
+              allCircles[blueIdx] ?? fallbackBlueZone ?? safeZone;
+            const shrinkKey = safeZone
+              ? `${safeZone.X}|${safeZone.Y}|${safeZone.Size}`
+              : null;
+            const rawMaxTimeSec = parseInt(circleInfo.MaxTime ?? "0", 10);
+            const maxTimeSec =
+              Number.isFinite(rawMaxTimeSec) && rawMaxTimeSec > 0
+                ? rawMaxTimeSec
+                : null;
+            const maxTimeMs = maxTimeSec ? maxTimeSec * 1000 : null;
+            const rawCounterSec = parseInt(circleInfo.Counter ?? "0", 10);
+            const counterSec = Number.isFinite(rawCounterSec)
+              ? Math.max(0, rawCounterSec)
+              : 0;
+            const elapsedMsFromCounter = maxTimeSec
+              ? Math.min(counterSec, maxTimeSec) * 1000
+              : 0;
+
+            // Start a shrink once per target safe zone and only with valid
+            // MaxTime to avoid instant collapse to safe zone.
+            if (
+              safeZone &&
+              blueZone &&
+              shrinkKey &&
+              maxTimeMs &&
+              rp.activeShrinkKey !== shrinkKey
+            ) {
               rp.blueZoneAnim = {
-                startTime: performance.now(),
-                duration,
-                startX: circles[0].x,
-                startY: circles[0].y,
-                startRadius: circles[0].radius,
+                startTime: performance.now() - elapsedMsFromCounter,
+                duration: maxTimeMs,
+                startX: parseFloat(blueZone.X),
+                startY: parseFloat(blueZone.Y),
+                startRadius: parseFloat(blueZone.Size),
                 targetX: parseFloat(safeZone.X),
                 targetY: parseFloat(safeZone.Y),
-                targetRadius: parseFloat(safeZone.Size) / 2,
+                targetRadius: parseFloat(safeZone.Size),
               };
+              rp.activeShrinkKey = shrinkKey;
+              rp.frozenBlueZone = null;
+            } else if (
+              safeZone &&
+              blueZone &&
+              shrinkKey &&
+              maxTimeMs &&
+              rp.activeShrinkKey === shrinkKey &&
+              rp.blueZoneAnim
+            ) {
+              // Reload/poll failsafe: recover local timer from Counter/MaxTime
+              // and gently correct drift without visual jumps.
+              const expectedStartTime =
+                performance.now() - elapsedMsFromCounter;
+              const driftMs = expectedStartTime - rp.blueZoneAnim.startTime;
+              rp.blueZoneAnim.duration = maxTimeMs;
+              if (Math.abs(driftMs) > 1200) {
+                rp.blueZoneAnim.startTime += driftMs * 0.35;
+              }
             }
+          } else if (status !== "2") {
+            // In wait/announce phases, nothing should be moving.
+            rp.blueZoneAnim = null;
+            rp.activeShrinkKey = null;
+            rp.frozenBlueZone = null;
           }
 
-          // '2'→'0': zone finished on the server. We intentionally do NOT
-          // snap or clear blueZoneAnim here. MaxTime matches the shrink duration,
-          // so the animation will complete naturally within the same window.
-          // frozenBlueZone in MapCanvas prevents the lerp from snapping back
-          // to stale API coords once the animation finishes on its own.
+          // Status handling contract:
+          // - "0" -> wait (announced, not moving)
+          // - "1" -> delay (not announced yet, not moving)
+          // - "2"       -> shrinking
 
           prevCircleStatus.current = status;
         }
@@ -201,162 +371,11 @@ export default function PubgMapSimulator() {
       clearTimeout(pollTimeout);
     };
   }, []);
-
-  // ===========================================================================
-  // SIMULATOR CONTROLS
-  // ===========================================================================
-  const updateCircle = (index, prop, value) => {
-    renderStateRef.current.blueZoneAnim = null;
-    setSimulatorState((prev) => {
-      const newCircles = [...prev.gameGlobalInfo.CircleArray];
-      newCircles[index] = { ...newCircles[index], [prop]: String(value) };
-      return {
-        ...prev,
-        gameGlobalInfo: { ...prev.gameGlobalInfo, CircleArray: newCircles },
-      };
-    });
-  };
-
-  const addCircle = () => {
-    setSimulatorState((prev) => {
-      const mapSize = MAPS[prev.mapType].size;
-      const existing = prev.gameGlobalInfo.CircleArray;
-      if (existing.length >= 2) return prev;
-      const newCircle = {
-        X: String(Math.round(mapSize * 0.5)),
-        Y: String(Math.round(mapSize * 0.5)),
-        Size: String(
-          Math.round(existing.length === 0 ? mapSize * 0.6 : mapSize * 0.35),
-        ),
-      };
-      return {
-        ...prev,
-        gameGlobalInfo: {
-          ...prev.gameGlobalInfo,
-          CircleArray: [...existing, newCircle],
-        },
-      };
-    });
-  };
-
-  const removeLastCircle = () => {
-    renderStateRef.current.blueZoneAnim = null;
-    setSimulatorState((prev) => {
-      const newCircles = prev.gameGlobalInfo.CircleArray.slice(0, -1);
-      return {
-        ...prev,
-        gameGlobalInfo: { ...prev.gameGlobalInfo, CircleArray: newCircles },
-      };
-    });
-  };
-
-  // Triggers a timed blue-zone shrink animation toward the safe zone.
-  const triggerBlueZoneShrink = () => {
-    const rp = renderStateRef.current;
-    const circles = simulatorState?.gameGlobalInfo?.CircleArray ?? [];
-    if (circles.length < 2 || rp.circles.length < 1) return;
-
-    const target = circles[1];
-    rp.blueZoneAnim = {
-      startTime: performance.now(),
-      duration: 15000,
-      startX: rp.circles[0].x,
-      startY: rp.circles[0].y,
-      startRadius: rp.circles[0].radius,
-      targetX: parseFloat(target.X),
-      targetY: parseFloat(target.Y),
-      targetRadius: parseFloat(target.Size) / 2,
-    };
-
-    setSimulatorState((prev) => {
-      const newCircles = [...prev.gameGlobalInfo.CircleArray];
-      newCircles[0] = { ...newCircles[1] };
-      return {
-        ...prev,
-        gameGlobalInfo: { ...prev.gameGlobalInfo, CircleArray: newCircles },
-      };
-    });
-  };
-
-  const updatePlane = (prop, value) => {
-    setSimulatorState((prev) => ({
-      ...prev,
-      gameGlobalInfo: { ...prev.gameGlobalInfo, [prop]: String(value) },
-    }));
-  };
-
-  const updatePlayerPos = (index, axis, value) => {
-    setSimulatorState((prev) => {
-      const newPlayers = [...prev.TotalPlayerList];
-      newPlayers[index] = {
-        ...newPlayers[index],
-        location: { ...newPlayers[index].location, [axis]: parseInt(value) },
-      };
-      return { ...prev, TotalPlayerList: newPlayers };
-    });
-  };
-
-  // Rescales players/zones when switching maps and resets render caches.
-  const handleMapChange = (e) => {
-    const newMapType = e.target.value;
-    const oldMapSize = MAPS[simulatorState.mapType].size;
-    const newMapSize = MAPS[newMapType].size;
-    const ratio = newMapSize / oldMapSize;
-
-    setSimulatorState((prev) => ({
-      ...prev,
-      mapType: newMapType,
-      TotalPlayerList: prev.TotalPlayerList.map((p) => ({
-        ...p,
-        location: {
-          ...p.location,
-          x: Math.round(p.location.x * ratio),
-          y: Math.round(p.location.y * ratio),
-        },
-      })),
-      gameGlobalInfo: {
-        ...defaultGameInfo(newMapSize),
-        CircleArray: (prev.gameGlobalInfo?.CircleArray ?? []).map((c) => ({
-          X: String(Math.round(parseFloat(c.X) * ratio)),
-          Y: String(Math.round(parseFloat(c.Y) * ratio)),
-          Size: String(Math.round(parseFloat(c.Size) * ratio)),
-        })),
-      },
-    }));
-
-    renderStateRef.current = {
-      players: {},
-      circles: [],
-      blueZoneAnim: null,
-      viewport: null,
-      planeStartTime: null,
-    };
-  };
-
-  const currentMapUnits = MAPS[simulatorState?.mapType]?.size || 800000;
-  const circles = simulatorState?.gameGlobalInfo?.CircleArray ?? [];
-
   return (
-    <div className="flex h-screen overflow-hidden font-sans text-white">
-      <ControlPanel
-        simulatorState={simulatorState}
-        currentMapUnits={currentMapUnits}
-        circles={circles}
-        showGrid={showGrid}
-        onToggleGrid={() => setShowGrid((g) => !g)}
-        onMapChange={handleMapChange}
-        onAddCircle={addCircle}
-        onRemoveCircle={removeLastCircle}
-        onUpdateCircle={updateCircle}
-        onTriggerShrink={triggerBlueZoneShrink}
-        onUpdatePlane={updatePlane}
-        onUpdatePlayerPos={updatePlayerPos}
-      />
-
-      <div className="flex flex-1 items-start justify-end">
+    <div className="flex h-screen items-center justify-center overflow-hidden bg-neutral-900">
+      <div className="h-270 w-270 flex-none">
         <MapCanvas
           simulatorState={simulatorState}
-          showGrid={showGrid}
           renderStateRef={renderStateRef}
         />
       </div>

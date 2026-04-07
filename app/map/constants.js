@@ -1,6 +1,14 @@
 // Canvas is a fixed-size logical surface; CSS scales it to the viewport.
 export const CANVAS_SIZE = 1080;
 
+// Observer feeds commonly use ~125s for the plane phase.
+// Keep this configurable for tournaments that use different timings.
+const envPlaneDuration = Number(process.env.NEXT_PUBLIC_PCOB_PLANE_DURATION_MS);
+export const PLANE_DURATION_MS =
+  Number.isFinite(envPlaneDuration) && envPlaneDuration > 0
+    ? envPlaneDuration
+    : 125000;
+
 // Map sizes are in centimetres (Unreal Engine units).
 // 1 km = 100 000 cm. All values verified against PUBG official API telemetry docs.
 // Erangel/Miramar/Taego/Deston/Rondo: 8.16 km × 8.16 km = 816 000 cm
@@ -12,7 +20,7 @@ const BASE_URL =
 
 export const MAPS = {
   Erangel: {
-    src: `${BASE_URL}/Erangel_Main_Low_Res.png`,
+    src: `/Erangel_Main_High_Res.png`,
     name: "Erangel",
     size: 816000,
     label: "Erangel (8.16km)",
@@ -80,19 +88,18 @@ export const TEAM_COLOR_BY_ID = {
   20: "rgba(130, 0, 69, 1)",
   21: "rgba(13, 71, 161, 1)",
   22: "rgba(183, 6, 15, 1)",
-  // Continue palette cycling for lobbies with team IDs beyond 22.
-  23: "rgba(225, 98, 9, 1)",
-  24: "rgba(32, 150, 209, 1)",
-  25: "rgba(74, 20, 140, 1)",
+  23: "rgba(246, 121, 34, 1)",
+  24: "rgba(63, 171, 225, 1)",
+  25: "rgba(88, 24, 168, 1)",
 };
 
 // Builds default plane path and empty circle state for a selected map size.
-export const defaultGameInfo = (mapSize) => ({
+export const defaultGameInfo = (_mapSize) => ({
   CircleArray: [],
-  PlaneStartLocX: String(Math.round(mapSize * 0.2)),
-  PlaneStartLocY: String(Math.round(mapSize * 0.1)),
-  PlaneStopLocX: String(Math.round(mapSize * 0.8)),
-  PlaneStopLocY: String(Math.round(mapSize * 0.9)),
+  PlaneStartLocX: "0",
+  PlaneStartLocY: "0",
+  PlaneStopLocX: "0",
+  PlaneStopLocY: "0",
 });
 
 // liveState values that represent a player we want to render on the minimap.

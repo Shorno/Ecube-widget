@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
-import { readFileSync } from "fs";
-import { join } from "path";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 export const dynamic = "force-dynamic";
-
-const isDebug = process.env.DEBUG === "true";
 
 const backendBaseUrl =
   process.env.PCOB_URL?.replace(/\/$/, "") ||
@@ -12,21 +10,36 @@ const backendBaseUrl =
 
 const emptyPayload = { playerInfoList: [] };
 const REQUEST_TIMEOUT_MS = 2500;
+const DEBUG_ON = ["1", "true", "yes", "on"].includes(
+  String(
+    process.env.DEBUG ?? process.env.NEXT_PUBLIC_DEBUG ?? "",
+  ).toLowerCase(),
+);
+
+const normalizePlayers = (data) =>
+  Array.isArray(data)
+    ? data
+    : Array.isArray(data?.playerInfoList)
+      ? data.playerInfoList
+      : Array.isArray(data?.TotalPlayerList)
+        ? data.TotalPlayerList
+        : [];
 
 export async function GET() {
-  if (isDebug) {
-    const filePath = join(process.cwd(), "public", "playerData.json");
-    const raw = readFileSync(filePath, "utf-8");
-    const json = JSON.parse(raw);
-    const players = Array.isArray(json?.TotalPlayerList)
-      ? json.TotalPlayerList
-      : Array.isArray(json?.playerInfoList)
-        ? json.playerInfoList
-        : [];
-    return NextResponse.json(
-      { playerInfoList: players },
-      { headers: { "Cache-Control": "no-store" } },
-    );
+  if (DEBUG_ON) {
+    try {
+      const filePath = path.join(process.cwd(), "public", "playerData.json");
+      const raw = await readFile(filePath, "utf8");
+      const data = JSON.parse(raw);
+      return NextResponse.json(
+        { playerInfoList: normalizePlayers(data) },
+        { headers: { "Cache-Control": "no-store" } },
+      );
+    } catch {
+      return NextResponse.json(emptyPayload, {
+        headers: { "Cache-Control": "no-store" },
+      });
+    }
   }
 
   if (!backendBaseUrl) {
@@ -51,11 +64,7 @@ export async function GET() {
     }
 
     const data = await response.json();
-    const players = Array.isArray(data?.playerInfoList)
-      ? data.playerInfoList
-      : Array.isArray(data?.TotalPlayerList)
-        ? data.TotalPlayerList
-        : [];
+    const players = normalizePlayers(data);
 
     return NextResponse.json(
       { playerInfoList: players },
