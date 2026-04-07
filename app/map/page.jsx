@@ -89,13 +89,13 @@ export default function PubgMapSimulator() {
   const imagesRef = useRef({});
   const requestRef = useRef();
 
-  // Polls player data with a 100ms target, scheduling the next request after each fetch resolves.
+  // Polls player data with a 1000ms target, scheduling the next request after each fetch resolves.
   useEffect(() => {
     let isMounted = true;
     let pollTimeout;
-    const POLL_INTERVAL_MS = 100;
+    const POLL_INTERVAL_MS = 1000;
 
-    // Schedules the next fetch while preserving a minimum 100ms poll cycle.
+    // Schedules the next fetch while preserving a minimum 1000ms poll cycle.
     const scheduleNextPoll = (startedAt) => {
       const elapsedMs = Date.now() - startedAt;
       const delayMs = Math.max(0, POLL_INTERVAL_MS - elapsedMs);
