@@ -49,6 +49,186 @@ const formatTeamIdLabel = (teamId) => {
 const TALL_FONT_STACK =
   '"Bahnschrift Condensed", "Arial Narrow", "Roboto Condensed", sans-serif';
 
+const LIVE_STATE_ICON_SRC_BY_STATE = {
+  2: "/live-state-icons/parachute.svg",
+  3: "/live-state-icons/steering-wheel.svg",
+  4: "/live-state-icons/plus.svg",
+  6: "/live-state-icons/disconnected.svg",
+};
+
+const drawLiveStateBadge = (
+  ctx,
+  liveState,
+  markerX,
+  markerY,
+  markerRadius,
+  zoom,
+  iconImages,
+) => {
+  const stateValue = Number(liveState);
+  if (stateValue === 0) return;
+
+  const badgeRadius = Math.max(8 / zoom, markerRadius * 0.5);
+  const badgeX = markerX + markerRadius * 0.72;
+  const badgeY = markerY - markerRadius * 0.72;
+
+  ctx.save();
+
+  // Base badge container (mini black circle).
+  ctx.beginPath();
+  ctx.arc(badgeX, badgeY, badgeRadius, 0, 2 * Math.PI);
+  ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+  ctx.fill();
+
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 1.6 / zoom;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  // Prefer image icons when available.
+  const iconImage = iconImages?.[stateValue];
+  if (iconImage && iconImage.complete && iconImage.naturalWidth > 0) {
+    const iconSize = badgeRadius * 1.45;
+    ctx.drawImage(
+      iconImage,
+      badgeX - iconSize / 2,
+      badgeY - iconSize / 2,
+      iconSize,
+      iconSize,
+    );
+    ctx.restore();
+    return;
+  }
+
+  if (stateValue === 2) {
+    // Parachute icon with segmented canopy and suspension lines.
+    const canopyTopY = badgeY - badgeRadius * 0.64;
+    const canopyBaseY = badgeY - badgeRadius * 0.08;
+    const canopyHalfW = badgeRadius * 0.78;
+    const harnessY = badgeY + badgeRadius * 0.48;
+    const harnessHalfW = badgeRadius * 0.24;
+
+    // Outer canopy arch.
+    ctx.beginPath();
+    ctx.moveTo(badgeX - canopyHalfW, canopyBaseY);
+    ctx.quadraticCurveTo(badgeX, canopyTopY, badgeX + canopyHalfW, canopyBaseY);
+    ctx.stroke();
+
+    // Lower canopy seam for the panel look.
+    ctx.beginPath();
+    ctx.moveTo(badgeX - canopyHalfW * 0.94, canopyBaseY);
+    ctx.quadraticCurveTo(
+      badgeX,
+      canopyBaseY + badgeRadius * 0.16,
+      badgeX + canopyHalfW * 0.94,
+      canopyBaseY,
+    );
+    ctx.stroke();
+
+    // Canopy ribs.
+    const ribOffsets = [-0.66, -0.33, 0, 0.33, 0.66];
+    ctx.beginPath();
+    ribOffsets.forEach((ratio) => {
+      ctx.moveTo(badgeX, canopyTopY + badgeRadius * 0.06);
+      ctx.lineTo(badgeX + canopyHalfW * ratio, canopyBaseY);
+    });
+    ctx.stroke();
+
+    // Suspension lines from canopy to harness.
+    const lineOffsets = [-0.72, -0.42, 0, 0.42, 0.72];
+    ctx.beginPath();
+    lineOffsets.forEach((ratio) => {
+      const topX = badgeX + canopyHalfW * ratio;
+      const bottomX =
+        ratio < -0.2
+          ? badgeX - harnessHalfW
+          : ratio > 0.2
+            ? badgeX + harnessHalfW
+            : badgeX;
+      ctx.moveTo(topX, canopyBaseY + badgeRadius * 0.03);
+      ctx.lineTo(bottomX, harnessY);
+    });
+    ctx.stroke();
+
+    // Harness line.
+    ctx.beginPath();
+    ctx.moveTo(badgeX - harnessHalfW, harnessY);
+    ctx.lineTo(badgeX + harnessHalfW, harnessY);
+    ctx.stroke();
+  } else if (stateValue === 3) {
+    // Steering wheel icon.
+    const outerR = badgeRadius * 0.58;
+    const innerR = badgeRadius * 0.2;
+
+    ctx.beginPath();
+    ctx.arc(badgeX, badgeY, outerR, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(badgeX, badgeY, innerR, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    // Three spokes (top, bottom-left, bottom-right).
+    const spokeAngles = [-Math.PI / 2, (5 * Math.PI) / 6, Math.PI / 6];
+    ctx.beginPath();
+    spokeAngles.forEach((angle) => {
+      ctx.moveTo(
+        badgeX + Math.cos(angle) * innerR * 0.3,
+        badgeY + Math.sin(angle) * innerR * 0.3,
+      );
+      ctx.lineTo(
+        badgeX + Math.cos(angle) * outerR * 0.92,
+        badgeY + Math.sin(angle) * outerR * 0.92,
+      );
+    });
+    ctx.stroke();
+  } else if (stateValue === 4) {
+    // Plus (DBNO) icon.
+    const plusArm = badgeRadius * 0.45;
+
+    ctx.beginPath();
+    ctx.moveTo(badgeX - plusArm, badgeY);
+    ctx.lineTo(badgeX + plusArm, badgeY);
+    ctx.moveTo(badgeX, badgeY - plusArm);
+    ctx.lineTo(badgeX, badgeY + plusArm);
+    ctx.stroke();
+  } else if (stateValue === 6) {
+    // Disconnected icon: wifi arcs + slash.
+    const arcY = badgeY + badgeRadius * 0.16;
+
+    ctx.beginPath();
+    ctx.arc(badgeX, arcY, badgeRadius * 0.62, Math.PI * 1.15, Math.PI * 1.85);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(badgeX, arcY, badgeRadius * 0.43, Math.PI * 1.14, Math.PI * 1.86);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(badgeX, arcY, badgeRadius * 0.24, Math.PI * 1.12, Math.PI * 1.88);
+    ctx.stroke();
+
+    // Wifi center dot.
+    ctx.beginPath();
+    ctx.fillStyle = "#ffffff";
+    ctx.arc(
+      badgeX,
+      arcY + badgeRadius * 0.2,
+      badgeRadius * 0.07,
+      0,
+      2 * Math.PI,
+    );
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(badgeX - badgeRadius * 0.62, badgeY + badgeRadius * 0.62);
+    ctx.lineTo(badgeX + badgeRadius * 0.62, badgeY - badgeRadius * 0.62);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+};
+
 // Canvas rendering surface that owns the requestAnimationFrame loop and draws
 // map, zones, flight path, and players. All stateful map data is passed in
 // via props; a shared `renderStateRef`
@@ -59,6 +239,7 @@ export default function MapCanvas({ simulatorState, renderStateRef }) {
   const gameStateRef = useRef(simulatorState);
   const imagesRef = useRef({});
   const teamLogoImagesRef = useRef({});
+  const liveStateIconImagesRef = useRef({});
   const requestRef = useRef();
 
   // Keeps an always-fresh state snapshot for the animation loop.
@@ -73,6 +254,15 @@ export default function MapCanvas({ simulatorState, renderStateRef }) {
       img.crossOrigin = "Anonymous";
       img.src = MAPS[key].src;
       imagesRef.current[key] = img;
+    });
+  }, []);
+
+  // Preloads live-state badge icon assets from /public.
+  useEffect(() => {
+    Object.entries(LIVE_STATE_ICON_SRC_BY_STATE).forEach(([state, src]) => {
+      const icon = new Image();
+      icon.src = src;
+      liveStateIconImagesRef.current[Number(state)] = icon;
     });
   }, []);
 
@@ -586,7 +776,7 @@ export default function MapCanvas({ simulatorState, renderStateRef }) {
           ctx.fillStyle = teamColor50;
           ctx.fill();
           ctx.lineWidth = 2 / vp.zoom;
-          ctx.strokeStyle = "#000000";
+          ctx.strokeStyle = "rgba(255,255,255,0.95)";
           ctx.stroke();
 
           // Team id text size inside fallback circle.
@@ -597,6 +787,17 @@ export default function MapCanvas({ simulatorState, renderStateRef }) {
           ctx.fillStyle = "#ffffff";
           ctx.fillText(teamIdLabel, px, py);
         }
+
+        // Draw live-state badge at marker top-right for supported states.
+        drawLiveStateBadge(
+          ctx,
+          player.liveState,
+          px,
+          py,
+          markerRadius,
+          vp.zoom,
+          liveStateIconImagesRef.current,
+        );
 
         // Read and sanitize player name text.
         const labelText = String(player.playerName ?? "").trim();
