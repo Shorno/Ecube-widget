@@ -1,14 +1,33 @@
 import { NextResponse } from "next/server";
+import { readFileSync } from "fs";
+import { join } from "path";
 
 export const dynamic = "force-dynamic";
+
+const isDebug = process.env.DEBUG === "true";
 
 const backendBaseUrl =
   process.env.PCOB_URL?.replace(/\/$/, "") ||
   process.env.NEXT_PUBLIC_PCOB_URL?.replace(/\/$/, "");
 
+const emptyPayload = { playerInfoList: [] };
+const REQUEST_TIMEOUT_MS = 2500;
+
 export async function GET() {
-  const emptyPayload = { playerInfoList: [] };
-  const REQUEST_TIMEOUT_MS = 2500;
+  if (isDebug) {
+    const filePath = join(process.cwd(), "public", "playerData.json");
+    const raw = readFileSync(filePath, "utf-8");
+    const json = JSON.parse(raw);
+    const players = Array.isArray(json?.TotalPlayerList)
+      ? json.TotalPlayerList
+      : Array.isArray(json?.playerInfoList)
+        ? json.playerInfoList
+        : [];
+    return NextResponse.json(
+      { playerInfoList: players },
+      { headers: { "Cache-Control": "no-store" } },
+    );
+  }
 
   if (!backendBaseUrl) {
     return NextResponse.json(emptyPayload, {
@@ -40,9 +59,7 @@ export async function GET() {
 
     return NextResponse.json(
       { playerInfoList: players },
-      {
-        headers: { "Cache-Control": "no-store" },
-      },
+      { headers: { "Cache-Control": "no-store" } },
     );
   } catch {
     return NextResponse.json(emptyPayload, {
