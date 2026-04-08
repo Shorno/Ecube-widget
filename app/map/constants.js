@@ -9,6 +9,14 @@ export const PLANE_DURATION_MS =
     ? envPlaneDuration
     : 125000;
 
+// Plane path visualization tuning.
+// Hide first 2.5 lakh cm from the real start, then render next 6 lakh cm
+// (visible segment is 2.5 lakh -> 8.5 lakh from actual start).
+export const PLANE_START_OFFSET_CM = 250000;
+// Visible segment length.
+// 6 lakh cm = 600000 cm.
+export const PLANE_PATH_LENGTH_CM = 618000;
+
 // Map sizes are in centimetres (Unreal Engine units).
 // 1 km = 100 000 cm. All values verified against PUBG official API telemetry docs.
 // Erangel/Miramar/Taego/Deston/Rondo: 8.16 km × 8.16 km = 816 000 cm
@@ -103,4 +111,4 @@ export const defaultGameInfo = (_mapSize) => ({
 });
 
 // liveState values that represent a player we want to render on the minimap.
-export const VISIBLE_LIVE_STATES = [0, 2, 3, 4, 6];
+export const VISIBLE_LIVE_STATES = [0, 1, 2, 3, 4, 6];

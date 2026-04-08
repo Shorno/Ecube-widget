@@ -5,6 +5,8 @@ import {
   CANVAS_SIZE,
   MAPS,
   PLANE_DURATION_MS,
+  PLANE_PATH_LENGTH_CM,
+  PLANE_START_OFFSET_CM,
   TEAM_COLOR_BY_ID,
   VISIBLE_LIVE_STATES,
 } from "./constants";
@@ -66,7 +68,7 @@ const drawLiveStateBadge = (
   iconImages,
 ) => {
   const stateValue = Number(liveState);
-  if (stateValue === 0) return;
+  if (![2, 3, 4, 6].includes(stateValue)) return;
 
   const badgeRadius = Math.max(8 / zoom, markerRadius * 0.5);
   const badgeX = markerX + markerRadius * 0.72;
@@ -240,6 +242,7 @@ export default function MapCanvas({ simulatorState, renderStateRef }) {
   const imagesRef = useRef({});
   const teamLogoImagesRef = useRef({});
   const liveStateIconImagesRef = useRef({});
+  const planeIconImageRef = useRef(null);
   const requestRef = useRef();
 
   // Keeps an always-fresh state snapshot for the animation loop.
@@ -264,6 +267,12 @@ export default function MapCanvas({ simulatorState, renderStateRef }) {
       icon.src = src;
       liveStateIconImagesRef.current[Number(state)] = icon;
     });
+  }, []);
+
+  useEffect(() => {
+    const planeIcon = new Image();
+    planeIcon.src = "/plane.png";
+    planeIconImageRef.current = planeIcon;
   }, []);
 
   // Starts the requestAnimationFrame loop on mount and cancels it on unmount.
@@ -570,113 +579,239 @@ export default function MapCanvas({ simulatorState, renderStateRef }) {
       // =====================================================================
       // FLIGHT PATH + MOVING PLANE
       // =====================================================================
-      const planeStartX = parseFloat(gi?.PlaneStartLocX ?? 0) * scale;
-      const planeStartY = parseFloat(gi?.PlaneStartLocY ?? 0) * scale;
-      const planeStopX = parseFloat(gi?.PlaneStopLocX ?? 0) * scale;
-      const planeStopY = parseFloat(gi?.PlaneStopLocY ?? 0) * scale;
+      const rawPlaneStartX = parseFloat(gi?.PlaneStartLocX ?? 0);
+      const rawPlaneStartY = parseFloat(gi?.PlaneStartLocY ?? 0);
+      const rawPlaneStopX = parseFloat(gi?.PlaneStopLocX ?? 0);
+      const rawPlaneStopY = parseFloat(gi?.PlaneStopLocY ?? 0);
+
+      // Always keep direction from the ACTUAL start to ACTUAL end.
+      const planeDirXRaw = rawPlaneStopX - rawPlaneStartX;
+      const planeDirYRaw = rawPlaneStopY - rawPlaneStartY;
+      const planeDirLen = Math.hypot(planeDirXRaw, planeDirYRaw);
+      const hasPlaneDirection = Number.isFinite(planeDirLen) && planeDirLen > 1;
+      const planeDirX = hasPlaneDirection ? planeDirXRaw / planeDirLen : 1;
+      const planeDirY = hasPlaneDirection ? planeDirYRaw / planeDirLen : 0;
+
+      // Visible path is clipped to [2 lakh, 8 lakh] from actual start,
+      // i.e. total visible length remains 6 lakh.
+      const visiblePathStartDistCm = hasPlaneDirection
+        ? Math.min(PLANE_START_OFFSET_CM, planeDirLen)
+        : 0;
+      const visiblePathEndDistCm = hasPlaneDirection
+        ? Math.min(PLANE_START_OFFSET_CM + PLANE_PATH_LENGTH_CM, planeDirLen)
+        : 0;
+
+      const visiblePathStartWorldX =
+        rawPlaneStartX + planeDirX * visiblePathStartDistCm;
+      const visiblePathStartWorldY =
+        rawPlaneStartY + planeDirY * visiblePathStartDistCm;
+      const visiblePathEndWorldX =
+        rawPlaneStartX + planeDirX * visiblePathEndDistCm;
+      const visiblePathEndWorldY =
+        rawPlaneStartY + planeDirY * visiblePathEndDistCm;
+
+      // Plane icon moves on actual start -> actual end route.
+      const planeStartX = rawPlaneStartX * scale;
+      const planeStartY = rawPlaneStartY * scale;
+      const planeEndX = rawPlaneStopX * scale;
+      const planeEndY = rawPlaneStopY * scale;
+
+      const pathStartX = visiblePathStartWorldX * scale;
+      const pathStartY = visiblePathStartWorldY * scale;
+      const pathEndBaseX = visiblePathEndWorldX * scale;
+      const pathEndBaseY = visiblePathEndWorldY * scale;
       const planeAngle = Math.atan2(
-        planeStopY - planeStartY,
-        planeStopX - planeStartX,
+        planeEndY - planeStartY,
+        planeEndX - planeStartX,
       );
       const hasPlanePath =
-        Number.isFinite(planeStartX) &&
-        Number.isFinite(planeStartY) &&
-        Number.isFinite(planeStopX) &&
-        Number.isFinite(planeStopY) &&
-        (Math.abs(planeStopX - planeStartX) > 1 ||
-          Math.abs(planeStopY - planeStartY) > 1);
+        hasPlaneDirection &&
+        Number.isFinite(pathStartX) &&
+        Number.isFinite(pathStartY) &&
+        Number.isFinite(pathEndBaseX) &&
+        Number.isFinite(pathEndBaseY) &&
+        (Math.abs(pathEndBaseX - pathStartX) > 1 ||
+          Math.abs(pathEndBaseY - pathStartY) > 1);
 
       // Plane flies once. page.jsx seeds planeStartTime from live API when
       // possible. Use performance.now() (wall clock) instead of rAF timestamp
       // so movement remains smooth even when tabs are throttled.
-      const hasPlaneClock = Number.isFinite(rp.planeStartTime);
+      const hasPlaneClock =
+        rp.planeInitialized && Number.isFinite(rp.planeStartTime);
+      const planeElapsedMs = hasPlaneClock
+        ? Math.max(0, performance.now() - rp.planeStartTime)
+        : 0;
+      const stripeElapsedMs = performance.now();
+      // Plane flies once on the fixed path and then stops at the end point.
       const planeT = hasPlaneClock
-        ? Math.min(
-            Math.max(
-              (performance.now() - rp.planeStartTime) / PLANE_DURATION_MS,
-              0,
-            ),
-            1.0,
-          )
+        ? Math.min(planeElapsedMs / PLANE_DURATION_MS, 1.0)
         : 0;
       const planeActive = hasPlaneClock && planeT < 1.0;
+      const showPlanePath = hasPlanePath && (!hasPlaneClock || planeActive);
+      const planePx = planeStartX + (planeEndX - planeStartX) * planeT;
+      const planePy = planeStartY + (planeEndY - planeStartY) * planeT;
 
-      if (hasPlanePath) {
-        // Draw dashed flight path line from start to end.
+      // Convert plane progress to a distance on actual route and clamp into
+      // visible path range so red segment does not "move the whole path".
+      const traveledDistCm = planeDirLen * planeT;
+      const redStartDistCm = Math.max(
+        visiblePathStartDistCm,
+        Math.min(traveledDistCm, visiblePathEndDistCm),
+      );
+      const redStartWorldX = rawPlaneStartX + planeDirX * redStartDistCm;
+      const redStartWorldY = rawPlaneStartY + planeDirY * redStartDistCm;
+      const redStartX = redStartWorldX * scale;
+      const redStartY = redStartWorldY * scale;
+
+      if (showPlanePath) {
+        // Draw full PUBG-style path immediately (no gradual expansion).
+        const arrowForwardOffset = 8 / vp.zoom;
+        const pathEndX =
+          pathEndBaseX + Math.cos(planeAngle) * arrowForwardOffset;
+        const pathEndY =
+          pathEndBaseY + Math.sin(planeAngle) * arrowForwardOffset;
+
+        ctx.save();
+
+        // White base stroke. Keep width/caps equal to red stripe so there is
+        // no white border/padding around red segments.
         ctx.beginPath();
-        ctx.moveTo(planeStartX, planeStartY);
-        ctx.lineTo(planeStopX, planeStopY);
-        ctx.lineWidth = 1.5 / vp.zoom;
-        ctx.strokeStyle = "rgba(255,255,255,0.3)";
-        ctx.setLineDash([10 / vp.zoom, 7 / vp.zoom]);
+        ctx.moveTo(pathStartX, pathStartY);
+        ctx.lineTo(pathEndBaseX, pathEndBaseY);
+        ctx.lineCap = "butt";
+        ctx.lineJoin = "miter";
+        ctx.lineWidth = 6 / vp.zoom;
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.96)";
+        ctx.stroke();
+
+        // Red striped center stroke.
+        ctx.beginPath();
+        // The remaining (upcoming) path stays red; passed path remains white.
+        ctx.moveTo(redStartX, redStartY);
+        ctx.lineTo(pathEndBaseX, pathEndBaseY);
+        // Use square dash caps so stripes are not rounded and start exactly
+        // at the same point as the white line.
+        ctx.lineCap = "butt";
+        ctx.lineJoin = "miter";
+        ctx.lineWidth = 6 / vp.zoom;
+        ctx.strokeStyle = "rgba(215, 38, 38, 0.98)";
+        ctx.setLineDash([18 / vp.zoom, 12 / vp.zoom]);
+        // Conveyor motion runs continuously, even before plane starts.
+        ctx.lineDashOffset = -(stripeElapsedMs / 18);
         ctx.stroke();
         ctx.setLineDash([]);
+
+        // White start marker circle (PUBG-style origin dot).
+        ctx.beginPath();
+        ctx.arc(pathStartX, pathStartY, 10 / vp.zoom, 0, 2 * Math.PI);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
+        ctx.fill();
+
+        // White arrow at the exact end of the path.
+        const arrowLength = 26 / vp.zoom;
+        const arrowWidth = 18 / vp.zoom;
+        const backX = pathEndX - Math.cos(planeAngle) * arrowLength;
+        const backY = pathEndY - Math.sin(planeAngle) * arrowLength;
+        const perpX = -Math.sin(planeAngle);
+        const perpY = Math.cos(planeAngle);
+
+        ctx.beginPath();
+        ctx.moveTo(pathEndX, pathEndY);
+        ctx.lineTo(
+          backX + perpX * (arrowWidth / 2),
+          backY + perpY * (arrowWidth / 2),
+        );
+        ctx.lineTo(
+          backX - perpX * (arrowWidth / 2),
+          backY - perpY * (arrowWidth / 2),
+        );
+        ctx.closePath();
+        ctx.fillStyle = "rgba(255, 255, 255, 0.98)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.28)";
+        ctx.lineWidth = 1 / vp.zoom;
+        ctx.stroke();
+
+        ctx.restore();
       }
 
       if (hasPlanePath && planeActive) {
         // Interpolate plane position along the flight path.
-        const planePx = planeStartX + (planeStopX - planeStartX) * planeT;
-        const planePy = planeStartY + (planeStopY - planeStartY) * planeT;
 
         // Enter local transform space for drawing oriented plane shape.
         ctx.save();
         ctx.translate(planePx, planePy);
-        ctx.rotate(planeAngle);
-        ctx.shadowColor = "rgba(0,0,0,0.7)";
-        ctx.shadowBlur = 5 / vp.zoom;
-        ctx.fillStyle = "#ffffff";
-        ctx.strokeStyle = "rgba(0,0,0,0.4)";
-        ctx.lineWidth = 0.5 / vp.zoom;
-        const s = 14 / vp.zoom;
+        const planeIcon = planeIconImageRef.current;
+        const hasPlaneIcon =
+          planeIcon && planeIcon.complete && planeIcon.naturalWidth > 0;
 
-        // Fuselage: central body ellipse.
-        ctx.beginPath();
-        ctx.ellipse(0, 0, s * 1.5, s * 0.2, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        // plane.png points upward by default, so add +90deg to align with path.
+        ctx.rotate(hasPlaneIcon ? planeAngle + Math.PI / 2 : planeAngle);
 
-        // Left wing polygon.
-        ctx.beginPath();
-        ctx.moveTo(s * 0.15, 0);
-        ctx.lineTo(-s * 0.4, -s * 1.1);
-        ctx.lineTo(-s * 0.85, -s * 0.6);
-        ctx.lineTo(-s * 0.25, 0);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+        if (hasPlaneIcon) {
+          const iconSize = 100 / vp.zoom;
+          ctx.shadowColor = "rgba(0, 0, 0, 0.65)";
+          ctx.shadowBlur = 5 / vp.zoom;
+          ctx.drawImage(
+            planeIcon,
+            -iconSize / 2,
+            -iconSize / 2,
+            iconSize,
+            iconSize,
+          );
+          ctx.shadowBlur = 0;
+        } else {
+          ctx.shadowColor = "rgba(0,0,0,0.7)";
+          ctx.shadowBlur = 5 / vp.zoom;
+          ctx.fillStyle = "#ffffff";
+          ctx.strokeStyle = "rgba(0,0,0,0.4)";
+          ctx.lineWidth = 0.5 / vp.zoom;
+          const s = 14 / vp.zoom;
 
-        // Right wing polygon.
-        ctx.beginPath();
-        ctx.moveTo(s * 0.15, 0);
-        ctx.lineTo(-s * 0.4, s * 1.1);
-        ctx.lineTo(-s * 0.85, s * 0.6);
-        ctx.lineTo(-s * 0.25, 0);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+          ctx.beginPath();
+          ctx.ellipse(0, 0, s * 1.5, s * 0.2, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
 
-        // Left tail fin polygon.
-        ctx.beginPath();
-        ctx.moveTo(-s * 1.1, 0);
-        ctx.lineTo(-s * 1.35, -s * 0.45);
-        ctx.lineTo(-s * 1.5, -s * 0.15);
-        ctx.lineTo(-s * 1.2, 0);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(s * 0.15, 0);
+          ctx.lineTo(-s * 0.4, -s * 1.1);
+          ctx.lineTo(-s * 0.85, -s * 0.6);
+          ctx.lineTo(-s * 0.25, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
 
-        // Right tail fin polygon.
-        ctx.beginPath();
-        ctx.moveTo(-s * 1.1, 0);
-        ctx.lineTo(-s * 1.35, s * 0.45);
-        ctx.lineTo(-s * 1.5, s * 0.15);
-        ctx.lineTo(-s * 1.2, 0);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(s * 0.15, 0);
+          ctx.lineTo(-s * 0.4, s * 1.1);
+          ctx.lineTo(-s * 0.85, s * 0.6);
+          ctx.lineTo(-s * 0.25, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
 
-        // Reset temporary shadow and leave plane-local transform space.
-        ctx.shadowBlur = 0;
+          ctx.beginPath();
+          ctx.moveTo(-s * 1.1, 0);
+          ctx.lineTo(-s * 1.35, -s * 0.45);
+          ctx.lineTo(-s * 1.5, -s * 0.15);
+          ctx.lineTo(-s * 1.2, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(-s * 1.1, 0);
+          ctx.lineTo(-s * 1.35, s * 0.45);
+          ctx.lineTo(-s * 1.5, s * 0.15);
+          ctx.lineTo(-s * 1.2, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.shadowBlur = 0;
+        }
+
         ctx.restore();
       }
 

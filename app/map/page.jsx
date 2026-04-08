@@ -10,6 +10,9 @@ import { MAP_CONTROL_STORAGE_KEY, readMapControlState } from "./controlStorage";
 
 // Top-level map page: polls live player/circle data and renders it on canvas.
 export default function PubgMapSimulator() {
+  const debugSessionRef = useRef(
+    `map-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+  );
   const initialControl = readMapControlState();
   const initialMapType = MAPS[initialControl.mapType]
     ? initialControl.mapType
@@ -29,15 +32,18 @@ export default function PubgMapSimulator() {
   }));
   const activeMapTypeRef = useRef(initialMapType);
 
-  // Synthesizes an initial blue zone that starts from map edge.
-  const buildMapEdgeBlueZone = () => {
+  // Synthesizes an initial first-shrink blue zone from map center.
+  // Radius is always the center-to-corner distance (half map diagonal).
+  const buildFirstShrinkBlueZone = (safeZone) => {
+    void safeZone;
     const mapSize = MAPS[activeMapTypeRef.current]?.size ?? MAPS.Erangel.size;
-    // Start from top-left corner and a large radius so it visibly shrinks
-    // toward the first announced safe zone.
+    const center = mapSize / 2;
+    const startRadius = Math.hypot(center, center);
+
     return {
-      X: "0",
-      Y: "0",
-      Size: String(mapSize),
+      X: String(center),
+      Y: String(center),
+      Size: String(startRadius),
     };
   };
 
@@ -48,6 +54,7 @@ export default function PubgMapSimulator() {
     circles: [],
     blueZoneAnim: null,
     activeShrinkKey: null,
+    lastShrinkElapsedMs: null,
     frozenBlueZone: null,
     viewport: null,
     // MapCanvas starts plane animation once this start time is known.
@@ -61,6 +68,7 @@ export default function PubgMapSimulator() {
       circles: [],
       blueZoneAnim: null,
       activeShrinkKey: null,
+      lastShrinkElapsedMs: null,
       frozenBlueZone: null,
       viewport: null,
       planeStartTime: null,
@@ -170,9 +178,10 @@ export default function PubgMapSimulator() {
     const syncGameInfo = async () => {
       const startedAt = Date.now();
       try {
+        const debugSessionId = debugSessionRef.current;
         const [globalInfo, circleInfo] = await Promise.all([
-          getGameGlobalInfo(),
-          getCircleInfo(),
+          getGameGlobalInfo(debugSessionId),
+          getCircleInfo(debugSessionId),
         ]);
         if (!isMounted) return;
 
@@ -200,7 +209,7 @@ export default function PubgMapSimulator() {
           // In that window, blue zone should start from map edge.
           const fallbackBlueZone =
             status === "2" && incomingCircles.length === 1
-              ? buildMapEdgeBlueZone()
+              ? buildFirstShrinkBlueZone(latestSafeZone)
               : null;
 
           // For rendering we normalize API CircleArray into either:
@@ -239,25 +248,24 @@ export default function PubgMapSimulator() {
             (Math.abs(planeStopX - planeStartX) > 1 ||
               Math.abs(planeStopY - planeStartY) > 1);
 
-          // As soon as GameTime is available, treat match as started and
-          // track plane by local wall clock + GameTime offset for smoothness.
-          const rawGameTime = parseInt(circleInfo?.GameTime ?? "0", 10);
-          const gameTimeSec = Number.isFinite(rawGameTime)
-            ? Math.max(0, rawGameTime)
-            : 0;
-          if (hasPlaneData && Number.isFinite(rawGameTime)) {
-            const targetStartTime = performance.now() - gameTimeSec * 1000;
-            if (!Number.isFinite(rp.planeStartTime)) {
-              rp.planeStartTime = targetStartTime;
-              rp.planeInitialized = true;
-              rp.planeOffsetApplied = true;
-            } else {
-              // Slowly correct drift from polling jitter without visible jumps.
-              const driftMs = targetStartTime - rp.planeStartTime;
-              if (Math.abs(driftMs) > 2000) {
-                rp.planeStartTime += driftMs * 0.35;
-              }
-            }
+          // Start plane timing once on first detected GameTime key/value.
+          // After initialization, keep local animation clock stable to avoid
+          // flicker or jumps from polling jitter.
+          const gameTimeRawValue = circleInfo?.GameTime;
+          const hasGameTimeValue =
+            gameTimeRawValue !== undefined &&
+            gameTimeRawValue !== null &&
+            String(gameTimeRawValue).trim() !== "";
+          const parsedGameTime = hasGameTimeValue
+            ? parseInt(String(gameTimeRawValue), 10)
+            : NaN;
+          const canStartPlaneClock = Number.isFinite(parsedGameTime);
+
+          if (hasPlaneData && canStartPlaneClock && !rp.planeInitialized) {
+            // Start from the actual route start on first detection only.
+            rp.planeStartTime = performance.now();
+            rp.planeInitialized = true;
+            rp.planeOffsetApplied = true;
           }
 
           setSimulatorState((prev) => ({
@@ -285,10 +293,13 @@ export default function PubgMapSimulator() {
             const safeIdx = Math.max(0, allCircles.length - 1);
             const blueIdx = Math.max(0, safeIdx - 1);
             const safeZone = allCircles[safeIdx];
-            const fallbackBlueZone =
-              allCircles.length === 1 ? buildMapEdgeBlueZone() : null;
-            const blueZone =
-              allCircles[blueIdx] ?? fallbackBlueZone ?? safeZone;
+            const isFirstShrinkSingleCircle = allCircles.length === 1;
+            const fallbackBlueZone = isFirstShrinkSingleCircle
+              ? buildFirstShrinkBlueZone(safeZone)
+              : null;
+            const blueZone = isFirstShrinkSingleCircle
+              ? (fallbackBlueZone ?? safeZone)
+              : (allCircles[blueIdx] ?? safeZone);
             const shrinkKey = safeZone
               ? `${safeZone.X}|${safeZone.Y}|${safeZone.Size}`
               : null;
@@ -305,6 +316,7 @@ export default function PubgMapSimulator() {
             const elapsedMsFromCounter = maxTimeSec
               ? Math.min(counterSec, maxTimeSec) * 1000
               : 0;
+            const startElapsedMs = elapsedMsFromCounter;
 
             // Start a shrink once per target safe zone and only with valid
             // MaxTime to avoid instant collapse to safe zone.
@@ -316,7 +328,7 @@ export default function PubgMapSimulator() {
               rp.activeShrinkKey !== shrinkKey
             ) {
               rp.blueZoneAnim = {
-                startTime: performance.now() - elapsedMsFromCounter,
+                startTime: performance.now() - startElapsedMs,
                 duration: maxTimeMs,
                 startX: parseFloat(blueZone.X),
                 startY: parseFloat(blueZone.Y),
@@ -326,6 +338,7 @@ export default function PubgMapSimulator() {
                 targetRadius: parseFloat(safeZone.Size),
               };
               rp.activeShrinkKey = shrinkKey;
+              rp.lastShrinkElapsedMs = elapsedMsFromCounter;
               rp.frozenBlueZone = null;
             } else if (
               safeZone &&
@@ -337,18 +350,35 @@ export default function PubgMapSimulator() {
             ) {
               // Reload/poll failsafe: recover local timer from Counter/MaxTime
               // and gently correct drift without visual jumps.
-              const expectedStartTime =
-                performance.now() - elapsedMsFromCounter;
-              const driftMs = expectedStartTime - rp.blueZoneAnim.startTime;
+              // Counter can briefly repeat or regress on unstable feeds; keep
+              // elapsed time monotonic to avoid fallback/restart behavior.
               rp.blueZoneAnim.duration = maxTimeMs;
-              if (Math.abs(driftMs) > 1200) {
-                rp.blueZoneAnim.startTime += driftMs * 0.35;
+              const previousElapsedMs = Number.isFinite(rp.lastShrinkElapsedMs)
+                ? rp.lastShrinkElapsedMs
+                : null;
+              const stableElapsedMs =
+                previousElapsedMs === null
+                  ? elapsedMsFromCounter
+                  : Math.max(previousElapsedMs, elapsedMsFromCounter);
+              const counterAdvanced =
+                previousElapsedMs === null ||
+                stableElapsedMs > previousElapsedMs;
+
+              if (counterAdvanced) {
+                const expectedStartTime = performance.now() - stableElapsedMs;
+                const driftMs = expectedStartTime - rp.blueZoneAnim.startTime;
+                if (Math.abs(driftMs) > 1200) {
+                  rp.blueZoneAnim.startTime += driftMs * 0.35;
+                }
               }
+
+              rp.lastShrinkElapsedMs = stableElapsedMs;
             }
           } else if (status !== "2") {
             // In wait/announce phases, nothing should be moving.
             rp.blueZoneAnim = null;
             rp.activeShrinkKey = null;
+            rp.lastShrinkElapsedMs = null;
             rp.frozenBlueZone = null;
           }
 
