@@ -3,10 +3,8 @@
 import React, { useEffect, useRef } from "react";
 import {
   CANVAS_SIZE,
+  getPlaneTuningForMap,
   MAPS,
-  PLANE_DURATION_MS,
-  PLANE_PATH_LENGTH_CM,
-  PLANE_START_OFFSET_CM,
   TEAM_COLOR_BY_ID,
   VISIBLE_LIVE_STATES,
 } from "./constants";
@@ -301,6 +299,11 @@ export default function MapCanvas({ simulatorState, renderStateRef }) {
       const scale = CANVAS_SIZE / currentMapSize;
       // Alias global game info for shorter access.
       const gi = state.gameGlobalInfo;
+      // Plane animation/path settings are map dependent.
+      const planeTuning = getPlaneTuningForMap(state.mapType);
+      const planeDurationMs = planeTuning.durationMs;
+      const planeStartOffsetCm = planeTuning.startOffsetCm;
+      const planePathLengthCm = planeTuning.pathLengthCm;
       // Incoming circle targets from latest telemetry.
       const targetCircles = gi?.CircleArray ?? [];
 
@@ -592,13 +595,12 @@ export default function MapCanvas({ simulatorState, renderStateRef }) {
       const planeDirX = hasPlaneDirection ? planeDirXRaw / planeDirLen : 1;
       const planeDirY = hasPlaneDirection ? planeDirYRaw / planeDirLen : 0;
 
-      // Visible path is clipped to [2 lakh, 8 lakh] from actual start,
-      // i.e. total visible length remains 6 lakh.
+      // Visible path is clipped to [offset, offset + length] from actual start.
       const visiblePathStartDistCm = hasPlaneDirection
-        ? Math.min(PLANE_START_OFFSET_CM, planeDirLen)
+        ? Math.min(planeStartOffsetCm, planeDirLen)
         : 0;
       const visiblePathEndDistCm = hasPlaneDirection
-        ? Math.min(PLANE_START_OFFSET_CM + PLANE_PATH_LENGTH_CM, planeDirLen)
+        ? Math.min(planeStartOffsetCm + planePathLengthCm, planeDirLen)
         : 0;
 
       const visiblePathStartWorldX =
@@ -644,7 +646,7 @@ export default function MapCanvas({ simulatorState, renderStateRef }) {
       const stripeElapsedMs = performance.now();
       // Plane flies once on the fixed path and then stops at the end point.
       const planeT = hasPlaneClock
-        ? Math.min(planeElapsedMs / PLANE_DURATION_MS, 1.0)
+        ? Math.min(planeElapsedMs / planeDurationMs, 1.0)
         : 0;
       const planeActive = hasPlaneClock && planeT < 1.0;
       const showPlanePath = hasPlanePath && planeActive;

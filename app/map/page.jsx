@@ -261,8 +261,8 @@ export default function PubgMapSimulator() {
             }
           }
 
-          // Plane start is intentionally simple for live API flow:
-          // first detected numeric GameTime starts path + plane animation.
+          // Start plane only when GameTime is present and > 0.
+          // Seed start time from GameTime so reload lands at correct position.
           const hasGameTimeKey = Boolean(
             circleInfo &&
             Object.prototype.hasOwnProperty.call(circleInfo, "GameTime"),
@@ -280,16 +280,17 @@ export default function PubgMapSimulator() {
             normalizedGameTimeValue !== "" &&
             Number.isFinite(parsedGameTime) &&
             parsedGameTime > 0;
+          const gameTimeSec = hasDetectedGameTime ? parsedGameTime : 0;
 
           if (
             hasPlaneData &&
             hasDetectedGameTime &&
             (!rp.planeInitialized || !Number.isFinite(rp.planeStartTime))
           ) {
-            rp.planeStartTime = performance.now();
+            rp.planeStartTime = performance.now() - gameTimeSec * 1000;
             rp.planeInitialized = true;
             rp.planeOffsetApplied = true;
-            rp.planeLastGameTimeSec = Math.max(0, parsedGameTime);
+            rp.planeLastGameTimeSec = gameTimeSec;
           }
 
           setSimulatorState((prev) => ({

@@ -1,21 +1,17 @@
 // Canvas is a fixed-size logical surface; CSS scales it to the viewport.
 export const CANVAS_SIZE = 1080;
 
-// Observer feeds commonly use ~125s for the plane phase.
-// Keep this configurable for tournaments that use different timings.
-const envPlaneDuration = Number(process.env.NEXT_PUBLIC_PCOB_PLANE_DURATION_MS);
-export const PLANE_DURATION_MS =
-  Number.isFinite(envPlaneDuration) && envPlaneDuration > 0
-    ? envPlaneDuration
-    : 125000;
-
-// Plane path visualization tuning.
-// Hide first 2.5 lakh cm from the real start, then render next 6 lakh cm
-// (visible segment is 2.5 lakh -> 8.5 lakh from actual start).
-export const PLANE_START_OFFSET_CM = 250000;
-// Visible segment length.
-// 6 lakh cm = 600000 cm.
-export const PLANE_PATH_LENGTH_CM = 618000;
+// Erangel baseline values used as defaults and scale references for other maps.
+const ERANGEL_BASE_PLANE_TUNING = {
+  durationMs: 105000,
+  startOffsetCm: 250000,
+  pathLengthCm: 618000,
+};
+const Miramar_BASE_PLANE_TUNING = {
+  durationMs: 105000,
+  startOffsetCm: 250000,
+  pathLengthCm: 618000,
+};
 
 // Map sizes are in centimetres (Unreal Engine units).
 // 1 km = 100 000 cm. All values verified against PUBG official API telemetry docs.
@@ -69,6 +65,39 @@ export const MAPS = {
     size: 816000,
     label: "Rondo (8.16km)",
   },
+};
+
+// Per-map plane tuning. Any map not listed here uses size-scaled Erangel
+// defaults so tuning automatically adapts when map size differs.
+const MAP_PLANE_TUNING_OVERRIDES = {
+  Erangel: ERANGEL_BASE_PLANE_TUNING,
+  Miramar: Miramar_BASE_PLANE_TUNING,
+};
+
+const ERANGEL_SIZE_CM = MAPS.Erangel.size;
+
+export const getPlaneTuningForMap = (mapType) => {
+  const normalizedMapType = MAPS[mapType] ? mapType : "Erangel";
+  const mapSizeCm = MAPS[normalizedMapType].size;
+  const sizeScale = mapSizeCm / ERANGEL_SIZE_CM;
+
+  const scaledDefaults = {
+    durationMs: Math.max(
+      1,
+      Math.round(ERANGEL_BASE_PLANE_TUNING.durationMs * sizeScale),
+    ),
+    startOffsetCm: Math.max(
+      0,
+      Math.round(ERANGEL_BASE_PLANE_TUNING.startOffsetCm * sizeScale),
+    ),
+    pathLengthCm: Math.max(
+      0,
+      Math.round(ERANGEL_BASE_PLANE_TUNING.pathLengthCm * sizeScale),
+    ),
+  };
+
+  const mapOverride = MAP_PLANE_TUNING_OVERRIDES[normalizedMapType];
+  return mapOverride ? { ...scaledDefaults, ...mapOverride } : scaledDefaults;
 };
 
 // Team palette from match feed design spec.
