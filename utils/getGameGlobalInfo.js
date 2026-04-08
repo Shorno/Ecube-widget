@@ -1,9 +1,6 @@
-export default async function getGameGlobalInfo(sessionId) {
+export default async function getGameGlobalInfo() {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 2500);
-  const sessionQuery = sessionId
-    ? `?session=${encodeURIComponent(String(sessionId))}`
-    : "";
   const emptyPayload = {
     CircleArray: [],
     PlaneStartLocX: "0",
@@ -13,7 +10,7 @@ export default async function getGameGlobalInfo(sessionId) {
   };
 
   try {
-    const res = await fetch(`/api/getgameglobalinfo${sessionQuery}`, {
+    const res = await fetch("/api/getgameglobalinfo", {
       cache: "no-store",
       signal: controller.signal,
     });

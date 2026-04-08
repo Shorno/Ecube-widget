@@ -1,12 +1,9 @@
-export default async function getCircleInfo(sessionId) {
+export default async function getCircleInfo() {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 2500);
-  const sessionQuery = sessionId
-    ? `?session=${encodeURIComponent(String(sessionId))}`
-    : "";
   const emptyPayload = {
     GameStartTime: "",
-    GameTime: "0",
+    GameTime: "",
     CircleStatus: "0",
     CircleIndex: "0",
     Counter: "0",
@@ -14,7 +11,7 @@ export default async function getCircleInfo(sessionId) {
   };
 
   try {
-    const res = await fetch(`/api/getcircleinfo${sessionQuery}`, {
+    const res = await fetch("/api/getcircleinfo", {
       cache: "no-store",
       signal: controller.signal,
     });
@@ -28,7 +25,10 @@ export default async function getCircleInfo(sessionId) {
         payload?.GameStartTime === undefined || payload?.GameStartTime === null
           ? ""
           : String(payload.GameStartTime),
-      GameTime: String(payload?.GameTime ?? "0"),
+      GameTime:
+        payload?.GameTime === undefined || payload?.GameTime === null
+          ? ""
+          : String(payload.GameTime),
       CircleStatus: String(payload?.CircleStatus ?? "0"),
       CircleIndex: String(payload?.CircleIndex ?? "0"),
       Counter: String(payload?.Counter ?? "0"),

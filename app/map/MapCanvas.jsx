@@ -647,7 +647,7 @@ export default function MapCanvas({ simulatorState, renderStateRef }) {
         ? Math.min(planeElapsedMs / PLANE_DURATION_MS, 1.0)
         : 0;
       const planeActive = hasPlaneClock && planeT < 1.0;
-      const showPlanePath = hasPlanePath && (!hasPlaneClock || planeActive);
+      const showPlanePath = hasPlanePath && planeActive;
       const planePx = planeStartX + (planeEndX - planeStartX) * planeT;
       const planePy = planeStartY + (planeEndY - planeStartY) * planeT;
 

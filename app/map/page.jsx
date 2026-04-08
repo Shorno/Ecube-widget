@@ -10,9 +10,6 @@ import { MAP_CONTROL_STORAGE_KEY, readMapControlState } from "./controlStorage";
 
 // Top-level map page: polls live player/circle data and renders it on canvas.
 export default function PubgMapSimulator() {
-  const debugSessionRef = useRef(
-    `map-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
-  );
   const initialControl = readMapControlState();
   const initialMapType = MAPS[initialControl.mapType]
     ? initialControl.mapType
@@ -57,6 +54,9 @@ export default function PubgMapSimulator() {
     lastShrinkElapsedMs: null,
     frozenBlueZone: null,
     viewport: null,
+    planeStartTime: null,
+    planeLastGameTimeSec: null,
+    planeRouteKey: null,
     // MapCanvas starts plane animation once this start time is known.
     planeInitialized: false,
     planeOffsetApplied: false,
@@ -72,6 +72,8 @@ export default function PubgMapSimulator() {
       frozenBlueZone: null,
       viewport: null,
       planeStartTime: null,
+      planeLastGameTimeSec: null,
+      planeRouteKey: null,
       planeInitialized: false,
       planeOffsetApplied: false,
     };
@@ -178,10 +180,9 @@ export default function PubgMapSimulator() {
     const syncGameInfo = async () => {
       const startedAt = Date.now();
       try {
-        const debugSessionId = debugSessionRef.current;
         const [globalInfo, circleInfo] = await Promise.all([
-          getGameGlobalInfo(debugSessionId),
-          getCircleInfo(debugSessionId),
+          getGameGlobalInfo(),
+          getCircleInfo(),
         ]);
         if (!isMounted) return;
 
@@ -248,34 +249,65 @@ export default function PubgMapSimulator() {
             (Math.abs(planeStopX - planeStartX) > 1 ||
               Math.abs(planeStopY - planeStartY) > 1);
 
-          // Start plane timing once on first detected GameTime key/value.
-          // After initialization, keep local animation clock stable to avoid
-          // flicker or jumps from polling jitter.
-          const gameTimeRawValue = circleInfo?.GameTime;
-          const hasGameTimeValue =
-            gameTimeRawValue !== undefined &&
-            gameTimeRawValue !== null &&
-            String(gameTimeRawValue).trim() !== "";
-          const parsedGameTime = hasGameTimeValue
-            ? parseInt(String(gameTimeRawValue), 10)
-            : NaN;
-          const canStartPlaneClock = Number.isFinite(parsedGameTime);
+          // Route-level failsafe: when flight path changes, reset plane clock.
+          if (hasPlaneData) {
+            const planeRouteKey = `${globalInfo.PlaneStartLocX}|${globalInfo.PlaneStartLocY}|${globalInfo.PlaneStopLocX}|${globalInfo.PlaneStopLocY}`;
+            if (rp.planeRouteKey !== planeRouteKey) {
+              rp.planeRouteKey = planeRouteKey;
+              rp.planeStartTime = null;
+              rp.planeInitialized = false;
+              rp.planeOffsetApplied = false;
+              rp.planeLastGameTimeSec = null;
+            }
+          }
 
-          if (hasPlaneData && canStartPlaneClock && !rp.planeInitialized) {
-            // Start from the actual route start on first detection only.
+          // Plane start is intentionally simple for live API flow:
+          // first detected numeric GameTime starts path + plane animation.
+          const hasGameTimeKey = Boolean(
+            circleInfo &&
+            Object.prototype.hasOwnProperty.call(circleInfo, "GameTime"),
+          );
+          const gameTimeRawValue = hasGameTimeKey ? circleInfo?.GameTime : null;
+          const normalizedGameTimeValue =
+            gameTimeRawValue === null || gameTimeRawValue === undefined
+              ? ""
+              : String(gameTimeRawValue).trim();
+          const parsedGameTime =
+            normalizedGameTimeValue === ""
+              ? NaN
+              : Number(normalizedGameTimeValue);
+          const hasDetectedGameTime =
+            normalizedGameTimeValue !== "" &&
+            Number.isFinite(parsedGameTime) &&
+            parsedGameTime > 0;
+
+          if (
+            hasPlaneData &&
+            hasDetectedGameTime &&
+            (!rp.planeInitialized || !Number.isFinite(rp.planeStartTime))
+          ) {
             rp.planeStartTime = performance.now();
             rp.planeInitialized = true;
             rp.planeOffsetApplied = true;
+            rp.planeLastGameTimeSec = Math.max(0, parsedGameTime);
           }
 
           setSimulatorState((prev) => ({
             ...prev,
             gameGlobalInfo: {
               CircleArray: visibleCircles,
-              PlaneStartLocX: globalInfo.PlaneStartLocX,
-              PlaneStartLocY: globalInfo.PlaneStartLocY,
-              PlaneStopLocX: globalInfo.PlaneStopLocX,
-              PlaneStopLocY: globalInfo.PlaneStopLocY,
+              PlaneStartLocX: hasPlaneData
+                ? globalInfo.PlaneStartLocX
+                : prev.gameGlobalInfo.PlaneStartLocX,
+              PlaneStartLocY: hasPlaneData
+                ? globalInfo.PlaneStartLocY
+                : prev.gameGlobalInfo.PlaneStartLocY,
+              PlaneStopLocX: hasPlaneData
+                ? globalInfo.PlaneStopLocX
+                : prev.gameGlobalInfo.PlaneStopLocX,
+              PlaneStopLocY: hasPlaneData
+                ? globalInfo.PlaneStopLocY
+                : prev.gameGlobalInfo.PlaneStopLocY,
             },
           }));
         }
