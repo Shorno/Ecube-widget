@@ -3,14 +3,27 @@ export const CANVAS_SIZE = 1080;
 
 // Erangel baseline values used as defaults and scale references for other maps.
 const ERANGEL_BASE_PLANE_TUNING = {
-  durationMs: 105000,
+  durationMs: 103000,
   startOffsetCm: 250000,
   pathLengthCm: 618000,
 };
+
 const Miramar_BASE_PLANE_TUNING = {
   durationMs: 105000,
   startOffsetCm: 250000,
-  pathLengthCm: 618000,
+  pathLengthCm: 625000,
+};
+
+const Rondo_BASE_PLANE_TUNING = {
+  durationMs: 105000,
+  startOffsetCm: 250000,
+  pathLengthCm: 625000,
+};
+
+const Sanhok_BASE_PLANE_TUNING = {
+  durationMs: 53000,
+  startOffsetCm: 160000,
+  pathLengthCm: 300000,
 };
 
 // Map sizes are in centimetres (Unreal Engine units).
@@ -72,6 +85,8 @@ export const MAPS = {
 const MAP_PLANE_TUNING_OVERRIDES = {
   Erangel: ERANGEL_BASE_PLANE_TUNING,
   Miramar: Miramar_BASE_PLANE_TUNING,
+  Rondo: Rondo_BASE_PLANE_TUNING,
+  Sanhok: Sanhok_BASE_PLANE_TUNING,
 };
 
 const ERANGEL_SIZE_CM = MAPS.Erangel.size;
