@@ -435,7 +435,7 @@ export default function PubgMapSimulator() {
     };
   }, []);
   return (
-    <div className="flex h-screen items-center justify-center overflow-hidden bg-neutral-900">
+    <div className="flex h-screen items-center justify-center overflow-hidden bg-transparent">
       <div className="h-270 w-270 flex-none">
         <MapCanvas
           simulatorState={simulatorState}
