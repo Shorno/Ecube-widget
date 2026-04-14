@@ -16,6 +16,7 @@ const nextConfig = {
     ],
   },
   async redirects() {
+    if (!process.env.REDIRECT_TO_RENDER) return [];
     return [
       {
         source: "/:path*",
