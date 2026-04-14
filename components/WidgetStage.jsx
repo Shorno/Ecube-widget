@@ -19,7 +19,8 @@ export default function WidgetStage({ dataReady, children }) {
   return (
     <div
       ref={ref}
-      className={`transition-opacity duration-500 ${ready ? "opacity-100" : "opacity-0"}`}
+      // transition-opacity duration-500
+      className={`${ready ? "opacity-100" : "opacity-0"}`}
     >
       {children}
     </div>

@@ -35,10 +35,13 @@ body {
 }
 
 .stroked-text {
-  -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: #888;
-  color: white; /* Sets the fill color of the text */
+  color: white;
+  text-shadow:
+    -1px -1px 0 #888,
+    1px -1px 0 #888,
+    -1px 1px 0 #888,
+    1px 1px 0 #888;
 }
 .wrapper {
-  @apply mx-auto mt-16 flex h-[508px] w-max gap-6 px-16;
+  @apply mx-auto mt-16 flex h-127 w-max gap-6 px-16;
 }

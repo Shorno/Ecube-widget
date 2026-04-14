@@ -1,8 +1,8 @@
 import Image from "next/image";
 
-const TableRow = ({ team, overall = false }) => {
+const TableRow = ({ team, overall = false, className = "" }) => {
   return (
-    <div className="bg-primary flex">
+    <div className={`bg-primary flex ${className}`}>
       <div className="bg-primary-shade-two grid min-w-15! place-items-center p-3 text-2xl font-bold text-white">
         #{team?.position}
       </div>

@@ -1,10 +1,12 @@
 "use client";
 import Layout from "@/components/layout";
 import Title from "@/components/Title";
-import { use } from "react";
+import { use, useRef } from "react";
 import { useGetHeadToHeadQuery } from "@/lib/services/widget-api";
 import Image from "next/image";
 import WidgetStage from "@/components/WidgetStage";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 const statsConfig = [
   { label: "Damages", key: "total_damages" },
@@ -17,6 +19,7 @@ const statsConfig = [
 function HeadToHead({ params }) {
   const { tournamentID } = use(params);
   const { data } = useGetHeadToHeadQuery({ tournamentID });
+  const containerRef = useRef(null);
   const getMaxSurvivalTime = (team) => {
     const players = team?.players ?? [];
     if (!players.length) return null;
@@ -43,15 +46,51 @@ function HeadToHead({ params }) {
       }
     : null;
 
+  useGSAP(
+    () => {
+      if (!data || !containerRef.current) return;
+
+      gsap.set(".anim-title", { opacity: 0, y: -30 });
+      gsap.set(".anim-team-left", { opacity: 0, x: -60 });
+      gsap.set(".anim-team-right", { opacity: 0, x: 60 });
+      gsap.set(".anim-row", { opacity: 0, y: 30 });
+
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+      // 1. Title drops in from top
+      tl.to(".anim-title", { opacity: 1, y: 0, duration: 0.8 })
+
+        // 2. Both team banners slide in from their sides simultaneously
+        .to(".anim-team-left", { opacity: 1, x: 0, duration: 0.9 }, "<0.1")
+        .to(".anim-team-right", { opacity: 1, x: 0, duration: 0.9 }, "<")
+
+        // 3. Compare rows stagger up
+        .to(
+          ".anim-row",
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: { each: 0.08, from: "start" },
+          },
+          "<0.2",
+        );
+    },
+    { scope: containerRef, dependencies: [data] },
+  );
+
   if (!data || !data.data) return null;
 
   return (
     <WidgetStage dataReady={!!data}>
+    <div ref={containerRef}>
     <Layout top>
-      <Title title="Team Head-to-Head" data={data?.info} />
+      <div className="anim-title opacity-0">
+        <Title title="Team Head-to-Head" data={data?.info} />
+      </div>
       <div className="wrapper">
         <div className="grid grid-cols-4 gap-4">
-          <Teambanner team={teamA} />
+          <Teambanner team={teamA} className="anim-team-left opacity-0" />
           <div className="col-span-2 flex h-100 flex-col gap-5.5">
             {statsConfig.map((stat, idx) => (
               <CompareRow
@@ -63,19 +102,20 @@ function HeadToHead({ params }) {
               />
             ))}
           </div>
-          <Teambanner team={teamB} />
+          <Teambanner team={teamB} className="anim-team-right opacity-0" />
         </div>
       </div>
     </Layout>
+    </div>
     </WidgetStage>
   );
 }
 
 export default HeadToHead;
 
-const Teambanner = ({ team }) => {
+const Teambanner = ({ team, className = "" }) => {
   return (
-    <div className="">
+    <div className={className}>
       <p className="bg-primary p-2 text-center text-3xl font-bold text-white">
         {team?.team_name || ""}
       </p>
@@ -98,7 +138,7 @@ const Teambanner = ({ team }) => {
 
 const CompareRow = ({ teamA, label, teamB, statKey }) => {
   return (
-    <div className="bg-primary grid grid-cols-4 gap-4 p-3">
+    <div className="anim-row opacity-0 bg-primary grid grid-cols-4 gap-4 p-3">
       <div className="bg-primary-shade-two col-span-1 p-2 text-center text-3xl font-bold text-white">
         {teamA?.[statKey] ?? 0}
       </div>

@@ -1,6 +1,8 @@
-const MVPStats = ({ icon, label, value }) => {
+import { cn } from "@/lib/utils";
+
+const MVPStats = ({ icon, label, value, className="anim-MVPStats" }) => {
   return (
-    <div className="bg-primary flex w-[460px]">
+    <div className={cn("bg-primary flex w-115", className)}>
       <div className="grid w-[40%] place-content-center text-7xl text-white">
         {icon}
       </div>

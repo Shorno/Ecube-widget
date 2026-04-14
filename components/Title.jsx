@@ -12,20 +12,20 @@ const Title = ({ title, subtitle, data, stageOnly }) => {
 
   return (
     <div className="mx-auto w-max text-center text-white uppercase">
-      <h1 className="mb-2 text-7xl font-extrabold">
+      <h1 className="mb-2 text-7xl font-extrabold title-main">
         {titleMain}{" "}
         <span className="text-primary-shade-one">{titlehightlight}</span>
       </h1>
 
       {data && (
-        <p className="bg-primary-shade-one mx-auto w-max p-1 px-2 text-3xl">
+        <p className="bg-primary-shade-one mx-auto w-max p-1 px-2 text-3xl title-sub">
           {stageOnly
             ? `${game_stage}`
             : `${game_stage} - ${game_day} - ${game_name}`}
         </p>
       )}
       {subtitle && (
-        <p className="bg-primary-shade-one mx-auto w-max p-1 text-3xl">
+        <p className="bg-primary-shade-one mx-auto w-max p-1 text-3xl title-sub">
           {subtitle}
         </p>
       )}
