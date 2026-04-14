@@ -1,0 +1,210 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+
+const IN_GAME_WIDGETS = [
+  { href: "/rampdom",    label: "RampDom"    },
+  { href: "/elmis",      label: "Elmis"      },
+  { href: "/topfour",    label: "Top Four"   },
+  { href: "/firstblood", label: "First Blood"},
+  { href: "/map",        label: "Map"        },
+];
+
+const AFTER_MATCH_WIDGETS = [
+  { slug: "matchsummary",            label: "Match Summary"         },
+  { slug: "mvp-match",               label: "MVP Match"             },
+  { slug: "mvp-group",               label: "MVP Group"             },
+  { slug: "head-to-head",            label: "Head to Head"          },
+  { slug: "after-match-score",       label: "After Match Score"     },
+  { slug: "after-match-score-group", label: "Score Group"           },
+  { slug: "top-player-match",        label: "Top Player Match"      },
+  { slug: "top-players-group",       label: "Top Players Group"     },
+  { slug: "wwc",                     label: "WWC"                   },
+  { slug: "wwctwo",                  label: "WWC Two"               },
+  { slug: "wwcstats",                label: "WWC Stats"             },
+];
+
+export default function WidgetsPage() {
+  const [origin, setOrigin]           = useState("");
+  const [tournamentId, setTournamentId] = useState("");
+  const [isSaved, setIsSaved]         = useState(false);
+  const [copiedUrl, setCopiedUrl]     = useState(null);
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+    const saved = localStorage.getItem("tournamentId") ?? "";
+    setTournamentId(saved);
+    setIsSaved(!!saved);
+  }, []);
+
+  function copy(url) {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedUrl(url);
+      setTimeout(() => setCopiedUrl(null), 2000);
+    });
+  }
+
+  const tid = isSaved ? tournamentId.trim() : "";
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+
+      {/* Header */}
+      <header className="bg-gray-800 border-b border-gray-700 px-5 py-3 flex items-center gap-4">
+        <Link
+          href="/controller"
+          className="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors"
+        >
+          ← Controller
+        </Link>
+        <span className="h-3 w-px bg-gray-600" />
+        <span className="text-xs font-bold uppercase tracking-widest text-white">Individual Widget Links</span>
+      </header>
+
+      <main className="p-5 space-y-8 max-w-4xl">
+
+        {/* Display URL */}
+        <section>
+          <SectionLabel color="blue" title="Multi-Widget Display (OBS Browser Source)" />
+          <div className="mt-3">
+            <UrlRow
+              label="Display"
+              url={`${origin}/display`}
+              copiedUrl={copiedUrl}
+              onCopy={copy}
+              origin={origin}
+            />
+          </div>
+        </section>
+
+        {/* In-game */}
+        <section>
+          <SectionLabel color="green" title="In-Game Widgets" />
+          <div className="mt-3 space-y-2">
+            {IN_GAME_WIDGETS.map((w) => (
+              <UrlRow
+                key={w.href}
+                label={w.label}
+                url={`${origin}${w.href}`}
+                copiedUrl={copiedUrl}
+                onCopy={copy}
+                origin={origin}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* After-match */}
+        <section>
+          <div className="flex items-center gap-3 mb-3">
+            <span className="block w-1 h-4 bg-orange-500 rounded-sm shrink-0" />
+            <span className="text-xs font-bold uppercase tracking-widest text-orange-400">After-Match Widgets</span>
+            <span className="flex-1 h-px bg-gray-700" />
+          </div>
+
+          {/* Tournament ID input */}
+          <div className="mb-4 flex items-center gap-2">
+            <input
+              type="text"
+              placeholder="Tournament ID"
+              value={tournamentId}
+              onChange={(e) => { setTournamentId(e.target.value); setIsSaved(false); }}
+              onKeyDown={(e) => { if (e.key === "Enter" && tournamentId.trim()) { localStorage.setItem("tournamentId", tournamentId.trim()); setIsSaved(true); } }}
+              className="w-44 bg-gray-950 border border-gray-600 text-white text-xs px-2 py-1.5 outline-none focus:border-orange-500 placeholder:text-gray-600"
+            />
+            {!isSaved && tournamentId.trim() && (
+              <button
+                onClick={() => { localStorage.setItem("tournamentId", tournamentId.trim()); setIsSaved(true); }}
+                className="bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 transition-colors"
+              >
+                Save
+              </button>
+            )}
+            {isSaved && <span className="text-xs font-bold text-orange-400">ID: {tid}</span>}
+          </div>
+
+          <div className="space-y-2">
+            {AFTER_MATCH_WIDGETS.map((w) => {
+              const path = tid ? `/after-match/${tid}/${w.slug}` : null;
+              return (
+                <UrlRow
+                  key={w.slug}
+                  label={w.label}
+                  url={path ? `${origin}${path}` : null}
+                  placeholder={`${origin}/after-match/{id}/${w.slug}`}
+                  copiedUrl={copiedUrl}
+                  onCopy={copy}
+                  origin={origin}
+                  disabled={!path}
+                />
+              );
+            })}
+          </div>
+        </section>
+
+      </main>
+    </div>
+  );
+}
+
+function SectionLabel({ color, title }) {
+  const accent = { green: "bg-green-500 text-green-400", blue: "bg-blue-500 text-blue-400" };
+  const [bg, text] = accent[color].split(" ");
+  return (
+    <div className="flex items-center gap-3">
+      <span className={`block w-1 h-4 ${bg} rounded-sm shrink-0`} />
+      <span className={`text-xs font-bold uppercase tracking-widest ${text}`}>{title}</span>
+      <span className="flex-1 h-px bg-gray-700" />
+    </div>
+  );
+}
+
+function UrlRow({ label, url, placeholder, copiedUrl, onCopy, origin, disabled }) {
+  const isCopied = copiedUrl === url;
+  const display  = url ?? placeholder;
+
+  return (
+    <div className="flex items-center gap-2 bg-gray-800 border border-gray-700 px-3 py-2">
+      {/* Label */}
+      <span className="w-44 shrink-0 text-xs font-bold uppercase tracking-wide text-gray-300 truncate">
+        {label}
+      </span>
+
+      {/* URL */}
+      <span className={[
+        "flex-1 font-mono text-xs truncate",
+        disabled ? "text-gray-600" : "text-blue-300",
+      ].join(" ")}>
+        {display}
+      </span>
+
+      {/* Actions */}
+      <div className="flex items-center gap-1 shrink-0">
+        {!disabled && url && (
+          <Link
+            href={url.replace(origin, "")}
+            target="_blank"
+            className="text-xs font-bold px-2 py-1 border border-gray-600 text-gray-400 hover:border-gray-400 hover:text-white transition-colors"
+          >
+            Open ↗
+          </Link>
+        )}
+        <button
+          onClick={() => !disabled && url && onCopy(url)}
+          disabled={disabled}
+          className={[
+            "text-xs font-bold px-2 py-1 border transition-colors",
+            isCopied
+              ? "border-green-500 text-green-400 bg-green-950"
+              : disabled
+              ? "border-gray-700 text-gray-700 cursor-not-allowed"
+              : "border-gray-600 text-gray-400 hover:border-blue-500 hover:text-blue-400 cursor-pointer",
+          ].join(" ")}
+        >
+          {isCopied ? "Copied ✓" : "Copy"}
+        </button>
+      </div>
+    </div>
+  );
+}
