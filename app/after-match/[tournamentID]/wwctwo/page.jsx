@@ -5,6 +5,7 @@ import { useGetWwcdTeamStatsQuery } from "@/lib/services/widget-api";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import Layout from "@/components/layout";
+import WidgetStage from "@/components/WidgetStage";
 
 function WwcTwo({ params }) {
   const { tournamentID } = use(params);
@@ -14,6 +15,7 @@ function WwcTwo({ params }) {
   if (!data || !data.data) return null;
 
   return (
+    <WidgetStage dataReady={!!data}>
     <Layout>
       <div className="absolute bottom-16 z-10 h-auto w-full px-16">
         <div className="relative z-10 mx-auto mb-8 flex max-h-45 w-max">
@@ -69,6 +71,7 @@ function WwcTwo({ params }) {
         </div>
       </div>
     </Layout>
+    </WidgetStage>
   );
 }
 

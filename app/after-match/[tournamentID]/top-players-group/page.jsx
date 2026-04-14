@@ -5,6 +5,7 @@ import PlayerCard from "@/components/PlayerCard";
 import Title from "@/components/Title";
 import { use } from "react";
 import { useGetTopPlayersGroupQuery } from "@/lib/services/widget-api";
+import WidgetStage from "@/components/WidgetStage";
 
 function TopPlayersGroup({ params }) {
   const { tournamentID } = use(params);
@@ -14,6 +15,7 @@ function TopPlayersGroup({ params }) {
   if (!data || !data.data) return null;
 
   return (
+    <WidgetStage dataReady={!!data}>
     <Layout top>
       <Title title="Overall Top Players" stageOnly data={data?.game[0]} />
       <div className="mx-auto mt-16 flex h-127 w-max gap-6 px-16">
@@ -30,6 +32,7 @@ function TopPlayersGroup({ params }) {
         </div>
       </div>
     </Layout>
+    </WidgetStage>
   );
 }
 

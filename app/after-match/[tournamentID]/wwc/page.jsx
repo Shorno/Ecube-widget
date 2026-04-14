@@ -4,6 +4,7 @@ import Image from "next/image";
 import { use } from "react";
 import { useGetWwcdTeamStatsQuery } from "@/lib/services/widget-api";
 import { cn } from "@/lib/utils";
+import WidgetStage from "@/components/WidgetStage";
 
 function WWC({ params }) {
   const { tournamentID } = use(params);
@@ -15,6 +16,7 @@ function WWC({ params }) {
   if (!data || !data.data) return null;
 
   return (
+    <WidgetStage dataReady={!!data}>
     <div className="flex h-screen w-full items-center justify-center overflow-hidden p-2">
       <div className="w-490 space-y-4 overflow-hidden">
         <h1 className="text-primary text-5xl font-bold uppercase">
@@ -51,6 +53,7 @@ function WWC({ params }) {
         </div>
       </div>
     </div>
+    </WidgetStage>
   );
 }
 

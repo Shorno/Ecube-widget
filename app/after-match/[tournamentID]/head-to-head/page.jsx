@@ -4,6 +4,7 @@ import Title from "@/components/Title";
 import { use } from "react";
 import { useGetHeadToHeadQuery } from "@/lib/services/widget-api";
 import Image from "next/image";
+import WidgetStage from "@/components/WidgetStage";
 
 const statsConfig = [
   { label: "Damages", key: "total_damages" },
@@ -45,6 +46,7 @@ function HeadToHead({ params }) {
   if (!data || !data.data) return null;
 
   return (
+    <WidgetStage dataReady={!!data}>
     <Layout top>
       <Title title="Team Head-to-Head" data={data?.info} />
       <div className="wrapper">
@@ -65,6 +67,7 @@ function HeadToHead({ params }) {
         </div>
       </div>
     </Layout>
+    </WidgetStage>
   );
 }
 

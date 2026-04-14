@@ -33,6 +33,7 @@ export default function ControllerPage() {
   const [sendStatus, setSendStatus]     = useState("idle");
   const [origin, setOrigin]             = useState("");
   const [copied, setCopied]             = useState(false);
+  const [loadError, setLoadError]       = useState(null); // { widgetUrl, failedImages }
 
   useEffect(() => {
     const saved = localStorage.getItem("tournamentId") ?? "";
@@ -45,6 +46,22 @@ export default function ControllerPage() {
       .then((r) => r.json())
       .then(({ url, label }) => { setActiveUrl(url ?? null); setActiveLabel(label ?? null); })
       .catch(() => setActiveUrl(null));
+
+    // Listen for real-time events from the server
+    const es = new EventSource("/api/sse");
+
+    // A widget reported that one or more images failed to load
+    es.addEventListener("widget-status", (e) => {
+      const { widgetUrl, failedImages } = JSON.parse(e.data);
+      setLoadError({ widgetUrl, failedImages });
+    });
+
+    // A new widget was activated — clear any previous load error
+    es.addEventListener("widget-change", () => {
+      setLoadError(null);
+    });
+
+    return () => es.close();
   }, []);
 
   async function sendCommand(url, label) {
@@ -141,6 +158,35 @@ export default function ControllerPage() {
           </div>
         </div>
       </header>
+
+      {/* ── Widget load error banner ── */}
+      {loadError && (
+        <div className="bg-red-950 border-b border-red-700 px-5 py-2">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-xs font-bold uppercase tracking-widest text-red-400 mb-1">
+                ⚠ Widget hidden — image failed to load
+              </p>
+              <p className="text-xs text-red-500 mb-1">
+                Widget: <span className="font-mono text-red-300">{loadError.widgetUrl}</span>
+              </p>
+              <div className="space-y-0.5">
+                {loadError.failedImages.map((url, i) => (
+                  <p key={i} className="font-mono text-xs text-red-400 truncate">
+                    ✗ {url}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <button
+              onClick={() => setLoadError(null)}
+              className="shrink-0 text-xs text-red-600 hover:text-red-400 transition-colors font-bold"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Display URL bar ── */}
       <div className="bg-gray-950 border-b border-gray-800 px-5 py-2 flex items-center justify-between gap-4">

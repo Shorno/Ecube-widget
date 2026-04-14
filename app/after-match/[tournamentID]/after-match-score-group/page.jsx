@@ -6,6 +6,7 @@ import TableRow from "@/components/TableRow";
 import Title from "@/components/Title";
 import { useGetAfterMatchScoreGroupQuery } from "@/lib/services/widget-api";
 import { use } from "react";
+import WidgetStage from "@/components/WidgetStage";
 
 function AfterMatchScoreGroup({ params }) {
   const { tournamentID } = use(params);
@@ -17,6 +18,7 @@ function AfterMatchScoreGroup({ params }) {
   if (!data || !data.data) return null;
 
   return (
+    <WidgetStage dataReady={!!data}>
     <Layout top>
       <Title title="Overall Standing" stageOnly data={data?.info} />
       <div className="wrapper mx-auto grid h-auto! w-full! grid-cols-2 gap-4">
@@ -38,6 +40,7 @@ function AfterMatchScoreGroup({ params }) {
         </div>
       </div>
     </Layout>
+    </WidgetStage>
   );
 }
 

@@ -2,6 +2,7 @@
 import { use } from "react";
 import { useGetMvpMatchQuery } from "@/lib/services/widget-api";
 import MVPPage from "@/components/MVPPage";
+import WidgetStage from "@/components/WidgetStage";
 
 function MvpMatch({ params }) {
   const { tournamentID } = use(params);
@@ -10,7 +11,11 @@ function MvpMatch({ params }) {
 
   if (!data || !data.data) return null;
 
-  return <MVPPage mvp={mvp} />;
+  return (
+    <WidgetStage dataReady={!!data}>
+      <MVPPage mvp={mvp} />
+    </WidgetStage>
+  );
 }
 
 export default MvpMatch;

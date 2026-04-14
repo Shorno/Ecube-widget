@@ -5,6 +5,7 @@ import Title from "@/components/Title";
 import { use } from "react";
 import { useGetWwcdTeamStatsQuery } from "@/lib/services/widget-api";
 import Image from "next/image";
+import WidgetStage from "@/components/WidgetStage";
 
 function WWCStats({ params }) {
   const { tournamentID } = use(params);
@@ -14,6 +15,7 @@ function WWCStats({ params }) {
   if (!data || !data.data) return null;
 
   return (
+    <WidgetStage dataReady={!!data}>
     <Layout top className={""}>
       <Title title={"WWCD Stats"} data={data?.game[0]} />
       <div className="mx-auto mt-16 flex h-127 w-max gap-6 px-16">
@@ -45,6 +47,7 @@ function WWCStats({ params }) {
         </div>
       </div>
     </Layout>
+    </WidgetStage>
   );
 }
 

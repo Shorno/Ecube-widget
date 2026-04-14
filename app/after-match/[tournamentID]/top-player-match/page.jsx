@@ -5,6 +5,7 @@ import PlayerCard from "@/components/PlayerCard";
 import Title from "@/components/Title";
 import { use } from "react";
 import { useGetTopPlayersQuery } from "@/lib/services/widget-api";
+import WidgetStage from "@/components/WidgetStage";
 
 function TopPlayerMatch({ params }) {
   const { tournamentID } = use(params);
@@ -14,6 +15,7 @@ function TopPlayerMatch({ params }) {
   if (!data || !data.data) return null;
 
   return (
+    <WidgetStage dataReady={!!data}>
     <Layout top>
       <Title title={"Top Players"} data={data?.game[0]} />
 
@@ -31,6 +33,7 @@ function TopPlayerMatch({ params }) {
         </div>
       </div>
     </Layout>
+    </WidgetStage>
   );
 }
 

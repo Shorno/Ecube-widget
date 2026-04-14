@@ -7,6 +7,7 @@ import Tableheader from "@/components/Tableheader";
 import TableRow from "@/components/TableRow";
 import Title from "@/components/Title";
 import { useGetAfterMatchScoreQuery } from "@/lib/services/widget-api";
+import WidgetStage from "@/components/WidgetStage";
 
 function AfterMatchScore({ params }) {
   const { tournamentID } = use(params);
@@ -18,6 +19,7 @@ function AfterMatchScore({ params }) {
   if (!data || !data.data) return null;
 
   return (
+    <WidgetStage dataReady={!!data}>
     <Layout top>
       <Title title="Match Standing" stageOnly data={data?.info} />
       <div className="wrapper mx-auto grid h-auto! w-full! grid-cols-2 gap-4">
@@ -41,6 +43,7 @@ function AfterMatchScore({ params }) {
         </div>
       </div>
     </Layout>
+    </WidgetStage>
   );
 }
 
