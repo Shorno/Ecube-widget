@@ -9,6 +9,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "tournalink.com",
       },
+      {
+        protocol: "https",
+        hostname: "api.esportsawardsbd.com",
+      },
     ],
   },
   async rewrites() {

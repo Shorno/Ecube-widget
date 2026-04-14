@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useGetWwcdTeamStatsQuery } from "../../lib/services/api";
-import { cn } from "../../lib/utils";
+import { useGetWwcdTeamStatsQuery } from "@/lib/services/api";
+import { cn } from "@/lib/utils";
 
 function WWC() {
   const { data } = useGetWwcdTeamStatsQuery();
