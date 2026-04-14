@@ -15,6 +15,15 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        destination: "https://pubg-wdiget-test.onrender.com/:path*",
+        permanent: false,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {
