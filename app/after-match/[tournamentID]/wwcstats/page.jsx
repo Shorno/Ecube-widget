@@ -2,12 +2,16 @@
 import Layout from "@/components/layout";
 import PlayerCard from "@/components/PlayerCard";
 import Title from "@/components/Title";
-import { useGetWwcdTeamStatsQuery } from "@/lib/services/api";
+import { use } from "react";
+import { useGetWwcdTeamStatsQuery } from "@/lib/services/widget-api";
 import Image from "next/image";
 
-function WWCStats() {
-  const { data } = useGetWwcdTeamStatsQuery();
+function WWCStats({ params }) {
+  const { tournamentID } = use(params);
+  const { data } = useGetWwcdTeamStatsQuery({ tournamentID });
   const team = data?.data?.[0]?.players || [];
+
+  if (!data || !data.data) return null;
 
   return (
     <Layout top className={""}>

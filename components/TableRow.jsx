@@ -21,11 +21,11 @@ const TableRow = ({ team, overall = false }) => {
         {overall && (
           <>
             <div className="w-[80.67px]">{team?.match_played}</div>
-            <div className="w-[80.67px]">{team?.placement}</div>
+            <div className="w-[80.67px]">{team?.wwcd}</div>
           </>
         )}
         <div className="w-[80.67px]">{team?.positionPoints}</div>
-        <div className="w-[80.67px]">{team?.kills}</div>
+        <div className="w-[80.67px]">{team?.killPoints}</div>
         {!overall && <div className="w-[80.67px]">{team?.totalPoints}</div>}
       </div>
       {overall && (

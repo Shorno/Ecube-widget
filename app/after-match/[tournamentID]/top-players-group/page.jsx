@@ -3,11 +3,16 @@
 import Layout from "@/components/layout";
 import PlayerCard from "@/components/PlayerCard";
 import Title from "@/components/Title";
-import { useGetTopPlayersGroupQuery } from "@/lib/services/api";
+import { use } from "react";
+import { useGetTopPlayersGroupQuery } from "@/lib/services/widget-api";
 
-function TopPlayersGroup() {
-  const { data } = useGetTopPlayersGroupQuery();
+function TopPlayersGroup({ params }) {
+  const { tournamentID } = use(params);
+  const { data } = useGetTopPlayersGroupQuery({ tournamentID });
   const team = data?.data || [];
+
+  if (!data || !data.data) return null;
+
   return (
     <Layout top>
       <Title title="Overall Top Players" stageOnly data={data?.game[0]} />

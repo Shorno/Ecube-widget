@@ -4,17 +4,21 @@ import Layout from "@/components/layout";
 import Tableheader from "@/components/Tableheader";
 import TableRow from "@/components/TableRow";
 import Title from "@/components/Title";
-import { useGetAfterMatchScoreGroupQuery } from "@/lib/services/api";
+import { useGetAfterMatchScoreGroupQuery } from "@/lib/services/widget-api";
+import { use } from "react";
 
-function AfterMatchScoreGroup() {
-  const { data } = useGetAfterMatchScoreGroupQuery();
+function AfterMatchScoreGroup({ params }) {
+  const { tournamentID } = use(params);
+  const { data } = useGetAfterMatchScoreGroupQuery({ tournamentID });
   const teams = data?.data || [];
   const colOne = teams.slice(0, 8);
   const colTwo = teams.slice(8, 16);
 
+  if (!data || !data.data) return null;
+
   return (
     <Layout top>
-      <Title title="Overall Standing" stageOnly data={data?.game[0]} />
+      <Title title="Overall Standing" stageOnly data={data?.info} />
       <div className="wrapper mx-auto grid h-auto! w-full! grid-cols-2 gap-4">
         <div className="mx-auto w-215 space-y-2">
           <Tableheader overall />

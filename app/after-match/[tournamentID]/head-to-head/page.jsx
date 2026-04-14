@@ -1,24 +1,52 @@
 "use client";
 import Layout from "@/components/layout";
 import Title from "@/components/Title";
-import { useGetHeadToHeadQuery } from "@/lib/services/api";
+import { use } from "react";
+import { useGetHeadToHeadQuery } from "@/lib/services/widget-api";
 import Image from "next/image";
 
 const statsConfig = [
-  { label: "Damages", key: "total_damage" },
-  { label: "Knocks", key: "total_knockouts" },
-  { label: "Eliminations", key: "kills" },
-  { label: "Surv.Time", key: "time" },
-  { label: "Total Points", key: "points" },
+  { label: "Damages", key: "total_damages" },
+  { label: "Knocks", key: "total_knocks" },
+  { label: "Eliminations", key: "total_kills" },
+  { label: "Surv.Time", key: "total_survival_time" },
+  { label: "Total Points", key: "totalPoints" },
 ];
 
-function HeadToHead() {
-  const { data } = useGetHeadToHeadQuery();
-  const teamA = data?.data?.[0] || null;
-  const teamB = data?.data?.[1] || null;
+function HeadToHead({ params }) {
+  const { tournamentID } = use(params);
+  const { data } = useGetHeadToHeadQuery({ tournamentID });
+  const getMaxSurvivalTime = (team) => {
+    const players = team?.players ?? [];
+    if (!players.length) return null;
+    return (
+      players.reduce((best, p) =>
+        (p?.survival_time_display?.minute ?? 0) >
+        (best?.survival_time_display?.minute ?? 0)
+          ? p
+          : best,
+      ).survival_time_display?.text ?? null
+    );
+  };
+
+  const teamA = data?.data?.[0]
+    ? {
+        ...data.data[0],
+        total_survival_time: getMaxSurvivalTime(data.data[0]),
+      }
+    : null;
+  const teamB = data?.data?.[1]
+    ? {
+        ...data.data[1],
+        total_survival_time: getMaxSurvivalTime(data.data[1]),
+      }
+    : null;
+
+  if (!data || !data.data) return null;
+
   return (
     <Layout top>
-      <Title title="Team Head-to-Head" data={data?.game[0]} />
+      <Title title="Team Head-to-Head" data={data?.info} />
       <div className="wrapper">
         <div className="grid grid-cols-4 gap-4">
           <Teambanner team={teamA} />
@@ -49,11 +77,11 @@ const Teambanner = ({ team }) => {
         {team?.team_name || ""}
       </p>
       <div className="bg-primary-shade-two grid place-content-center p-2">
-        {team?.team_logo ? (
+        {team?.team_logoUrl ? (
           <Image
             width={400}
             height={400}
-            src={team?.team_logo}
+            src={team?.team_logoUrl}
             alt="Team Logo"
             priority
           />

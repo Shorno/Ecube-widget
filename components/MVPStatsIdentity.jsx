@@ -11,12 +11,12 @@ const MVPStatsIdentity = ({ mvp, isGroup = false }) => {
           MVP
         </p>
       </div>
-      <div className="bg-primary flex w-[400px]">
+      <div className="bg-primary flex w-100">
         <div className="grid place-content-center py-2">
           <div className="bg-primary-shade-two">
             <Image
               priority
-              src={mvp?.team_logo}
+              src={mvp?.team_logoUrl}
               alt=""
               width={120}
               height={120}

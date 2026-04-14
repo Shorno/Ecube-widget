@@ -1,14 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useGetWwcdTeamStatsQuery } from "@/lib/services/api";
+import { use } from "react";
+import { useGetWwcdTeamStatsQuery } from "@/lib/services/widget-api";
 import { cn } from "@/lib/utils";
 
-function WWC() {
-  const { data } = useGetWwcdTeamStatsQuery();
+function WWC({ params }) {
+  const { tournamentID } = use(params);
+  const { data } = useGetWwcdTeamStatsQuery({ tournamentID });
   const team = data?.data?.[0]?.players || [];
 
   // const teams = data?.data[0]?.players;
+
+  if (!data || !data.data) return null;
 
   return (
     <div className="flex h-screen w-full items-center justify-center overflow-hidden p-2">

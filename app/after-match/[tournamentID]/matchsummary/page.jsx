@@ -2,7 +2,8 @@
 
 import Layout from "@/components/layout";
 import Title from "@/components/Title";
-import { useGetMatchSummaryQuery } from "@/lib/services/api";
+import { use } from "react";
+import { useGetMatchSummaryQuery } from "@/lib/services/widget-api";
 import { BiTargetLock } from "react-icons/bi";
 import { FaHeartPulse } from "react-icons/fa6";
 import { FaPersonFalling } from "react-icons/fa6";
@@ -10,42 +11,45 @@ import { GiGrenade } from "react-icons/gi";
 import { FaHandshakeSimple } from "react-icons/fa6";
 import { FaCarCrash } from "react-icons/fa";
 
-function MatchSummary() {
-  const { data } = useGetMatchSummaryQuery();
+function MatchSummary({ params }) {
+  const { tournamentID } = use(params);
+  const { data } = useGetMatchSummaryQuery({ tournamentID });
+
+  if (!data || !data.data) return null;
 
   return (
     <Layout top>
-      <Title title={"Match Sumary"} data={data?.game[0]} />
+      <Title title={"Match Sumary"} data={data?.info} />
 
       <div className="mx-auto mt-16 grid w-max grid-cols-3 gap-x-8 gap-y-16">
         <Databox
           title="Total Elims"
-          value={data?.data[0]?.eliminations}
+          value={data?.data?.total_kills}
           icon={<BiTargetLock />}
         />
         <Databox
           title="Total Heals"
-          value={data?.data[0]?.total_healings}
+          value={data?.data?.total_heals}
           icon={<FaHeartPulse />}
         />
         <Databox
           title="Total Knocks"
-          value={data?.data[0]?.knockouts}
+          value={data?.data?.total_knocks}
           icon={<FaPersonFalling />}
         />
         <Databox
           title="Grenade Elims"
-          value={data?.data[0]?.grenade_elims}
+          value={data?.data?.total_grenade_kills}
           icon={<GiGrenade />}
         />
         <Databox
           title="Total Assits"
-          value={data?.data[0]?.assists}
+          value={data?.data?.total_assists}
           icon={<FaHandshakeSimple />}
         />
         <Databox
           title="Vehical Elims"
-          value={data?.data[0]?.vehicle_elims}
+          value={data?.data?.total_vehicle_kills}
           icon={<FaCarCrash />}
         />
       </div>

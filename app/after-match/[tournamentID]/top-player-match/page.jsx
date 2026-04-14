@@ -3,11 +3,15 @@
 import Layout from "@/components/layout";
 import PlayerCard from "@/components/PlayerCard";
 import Title from "@/components/Title";
-import { useGetTopPlayersQuery } from "@/lib/services/api";
+import { use } from "react";
+import { useGetTopPlayersQuery } from "@/lib/services/widget-api";
 
-function TopPlayerMatch() {
-  const { data } = useGetTopPlayersQuery();
+function TopPlayerMatch({ params }) {
+  const { tournamentID } = use(params);
+  const { data } = useGetTopPlayersQuery({ tournamentID });
   const team = data?.data || [];
+
+  if (!data || !data.data) return null;
 
   return (
     <Layout top>

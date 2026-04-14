@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect } from "react";
+import { use } from "react";
 import HighLightTeam from "@/components/HighLightTeam";
 import Layout from "@/components/layout";
 import Tableheader from "@/components/Tableheader";
@@ -14,10 +14,6 @@ function AfterMatchScore({ params }) {
   const teamOne = data?.data?.[0] || {};
   const colOne = data?.data?.slice(1, 7) || [];
   const colTwo = data?.data?.slice(7, 16) || [];
-
-  useEffect(() => {
-    console.log("tournamentID:", tournamentID);
-  }, [tournamentID]);
 
   if (!data || !data.data) return null;
 

@@ -1,13 +1,17 @@
 "use client";
 
-import { useGetWwcdTeamStatsQuery } from "@/lib/services/api";
+import { use } from "react";
+import { useGetWwcdTeamStatsQuery } from "@/lib/services/widget-api";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import Layout from "@/components/layout";
 
-function WwcTwo() {
-  const { data } = useGetWwcdTeamStatsQuery();
+function WwcTwo({ params }) {
+  const { tournamentID } = use(params);
+  const { data } = useGetWwcdTeamStatsQuery({ tournamentID });
   const team = data?.data?.[0]?.players || [];
+
+  if (!data || !data.data) return null;
 
   return (
     <Layout>

@@ -14,7 +14,7 @@ const MVPPage = ({ mvp, isGroup = false }) => {
       <Image
         priority
         className="absolute bottom-0 left-1/2 z-20 -translate-x-1/2"
-        src={mvp?.player_image}
+        src={mvp?.player_imageUrl}
         alt=""
         width={600}
         height={600}
@@ -23,22 +23,22 @@ const MVPPage = ({ mvp, isGroup = false }) => {
       <div className="absolute right-6 bottom-16 flex flex-col gap-2">
         <MVPStats
           label={isGroup ? "Total Eliminations" : "Eliminations"}
-          value={mvp?.eliminations}
+          value={mvp?.kills}
           icon={<BiTargetLock />}
         />
         <MVPStats
           label={isGroup ? "Total Damage" : "Damage"}
-          value={mvp?.damage}
+          value={mvp?.damages}
           icon={<GiSilverBullet />}
         />
         <MVPStats
           label={isGroup ? "Total Knocks" : "Knocks"}
-          value={mvp?.knockouts}
+          value={mvp?.knocks}
           icon={<FaPersonFalling />}
         />
         <MVPStats
           label={isGroup ? "Matches Played" : "Survival Time"}
-          value={isGroup ? mvp?.matches : mvp?.survival_time?.text}
+          value={isGroup ? mvp?.match_played : mvp?.survival_time_display?.text}
           icon={isGroup ? <GiCrossedPistols /> : <GiSandsOfTime />}
         />
       </div>
