@@ -2,28 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-
-const IN_GAME_WIDGETS = [
-  { href: "/rampdom", label: "RampDom" },
-  { href: "/elmis", label: "Elmis" },
-  { href: "/topfour", label: "Top Four" },
-  { href: "/firstblood", label: "First Blood" },
-  { href: "/map", label: "Map" },
-];
-
-const AFTER_MATCH_WIDGETS = [
-  { slug: "matchsummary", label: "Match Summary" },
-  { slug: "mvp-match", label: "MVP Match" },
-  { slug: "mvp-group", label: "MVP Group" },
-  { slug: "head-to-head", label: "Head to Head" },
-  { slug: "after-match-score", label: "After Match Score" },
-  { slug: "after-match-score-group", label: "Score Group" },
-  { slug: "top-player-match", label: "Top Player Match" },
-  { slug: "top-players-group", label: "Top Players Group" },
-  { slug: "wwc", label: "WWC" },
-  { slug: "wwctwo", label: "WWC Two" },
-  { slug: "wwcstats", label: "WWC Stats" },
-];
+import {
+  AFTER_MATCH_WIDGETS,
+  IN_GAME_WIDGETS,
+  getWidgetPath,
+  getWidgetPlaceholder,
+} from "@/lib/widget-catalog";
 
 export default function WidgetsPage() {
   const [origin, setOrigin] = useState("");
@@ -68,7 +52,7 @@ export default function WidgetsPage() {
         <section>
           <SectionLabel
             color="blue"
-            title="Multi-Widget Display (OBS Browser Source)"
+            title="Multi-Widget Display (BROADCASTER Browser Source)"
           />
           <div className="mt-3">
             <UrlRow
@@ -81,35 +65,13 @@ export default function WidgetsPage() {
           </div>
         </section>
 
-        {/* In-game */}
+        {/* Tournament ID shared for all route-based widgets */}
         <section>
-          <SectionLabel color="green" title="In-Game Widgets" />
-          <div className="mt-3 space-y-2">
-            {IN_GAME_WIDGETS.map((w) => (
-              <UrlRow
-                key={w.href}
-                label={w.label}
-                url={`${origin}${w.href}`}
-                copiedUrl={copiedUrl}
-                onCopy={copy}
-                origin={origin}
-              />
-            ))}
-          </div>
-        </section>
-
-        {/* After-match */}
-        <section>
-          <div className="mb-3 flex items-center gap-3">
-            <span className="block h-4 w-1 shrink-0 rounded-sm bg-orange-500" />
-            <span className="text-xs font-bold tracking-widest text-orange-400 uppercase">
-              After-Match Widgets
-            </span>
-            <span className="h-px flex-1 bg-gray-700" />
-          </div>
-
-          {/* Tournament ID input */}
-          <div className="mb-4 flex items-center gap-2">
+          <SectionLabel
+            color="blue"
+            title="Tournament ID (Used Across Widgets)"
+          />
+          <div className="mt-3 flex items-center gap-2">
             <input
               type="text"
               placeholder="Tournament ID"
@@ -124,7 +86,7 @@ export default function WidgetsPage() {
                   setIsSaved(true);
                 }
               }}
-              className="w-44 border border-gray-600 bg-gray-950 px-2 py-1.5 text-xs text-white outline-none placeholder:text-gray-600 focus:border-orange-500"
+              className="w-44 border border-gray-600 bg-gray-950 px-2 py-1.5 text-xs text-white outline-none placeholder:text-gray-600 focus:border-blue-500"
             />
             {!isSaved && tournamentId.trim() && (
               <button
@@ -132,27 +94,80 @@ export default function WidgetsPage() {
                   localStorage.setItem("tournamentId", tournamentId.trim());
                   setIsSaved(true);
                 }}
-                className="bg-orange-600 px-3 py-1.5 text-xs font-bold tracking-wider text-white uppercase transition-colors hover:bg-orange-500"
+                className="bg-blue-600 px-3 py-1.5 text-xs font-bold tracking-wider text-white uppercase transition-colors hover:bg-blue-500"
               >
                 Save
               </button>
             )}
             {isSaved && (
-              <span className="text-xs font-bold text-orange-400">
-                ID: {tid}
+              <span className="text-xs font-bold text-blue-400">ID: {tid}</span>
+            )}
+          </div>
+        </section>
+
+        {/* In-game */}
+        <section>
+          <div className="mb-3 flex items-center gap-3">
+            <span className="block h-4 w-1 shrink-0 rounded-sm bg-green-500" />
+            <span className="text-xs font-bold tracking-widest text-green-400 uppercase">
+              In-Game Widgets
+            </span>
+            {tid ? (
+              <span className="text-xs text-gray-500">— Tournament: {tid}</span>
+            ) : (
+              <span className="text-xs text-gray-600">
+                — Save a Tournament ID to enable
               </span>
             )}
+            <span className="h-px flex-1 bg-gray-700" />
+          </div>
+          <div className="mt-3 space-y-2">
+            {IN_GAME_WIDGETS.map((w) => {
+              const path = getWidgetPath(w, tid);
+              const url = toDisplayUrl(path, origin);
+              return (
+                <UrlRow
+                  key={w.id}
+                  label={w.label}
+                  url={url}
+                  placeholder={toDisplayUrl(getWidgetPlaceholder(w), origin)}
+                  copiedUrl={copiedUrl}
+                  onCopy={copy}
+                  origin={origin}
+                  disabled={!path}
+                />
+              );
+            })}
+          </div>
+        </section>
+
+        {/* After-match */}
+        <section>
+          <div className="mb-3 flex items-center gap-3">
+            <span className="block h-4 w-1 shrink-0 rounded-sm bg-orange-500" />
+            <span className="text-xs font-bold tracking-widest text-orange-400 uppercase">
+              After-Match Widgets
+            </span>
+            {tid ? (
+              <span className="text-xs text-gray-500">— Tournament: {tid}</span>
+            ) : (
+              <span className="text-xs text-gray-600">
+                — Save a Tournament ID to enable
+              </span>
+            )}
+            <span className="h-px flex-1 bg-gray-700" />
           </div>
 
           <div className="space-y-2">
             {AFTER_MATCH_WIDGETS.map((w) => {
-              const path = tid ? `/after-match/${tid}/${w.slug}` : null;
+              const path = getWidgetPath(w, tid);
+              const url = toDisplayUrl(path, origin);
               return (
                 <UrlRow
-                  key={w.slug}
+                  key={w.id}
                   label={w.label}
-                  url={path ? `${origin}${path}` : null}
-                  placeholder={`${origin}/after-match/{id}/${w.slug}`}
+                  url={url}
+                  placeholder={toDisplayUrl(getWidgetPlaceholder(w), origin)}
                   copiedUrl={copiedUrl}
                   onCopy={copy}
                   origin={origin}
@@ -193,7 +208,9 @@ function UrlRow({
   origin,
   disabled,
 }) {
-  const isCopied = copiedUrl === url;
+  const isCopied = Boolean(url) && copiedUrl === url;
+  const isExternalUrl = typeof url === "string" && /^https?:\/\//i.test(url);
+  const openHref = !url ? null : isExternalUrl ? url : url.replace(origin, "");
   const display = url ?? placeholder;
 
   return (
@@ -215,9 +232,19 @@ function UrlRow({
 
       {/* Actions */}
       <div className="flex shrink-0 items-center gap-1">
-        {!disabled && url && (
+        {!disabled && url && isExternalUrl && (
+          <a
+            href={openHref}
+            target="_blank"
+            rel="noreferrer"
+            className="border border-gray-600 px-2 py-1 text-xs font-bold text-gray-400 transition-colors hover:border-gray-400 hover:text-white"
+          >
+            Open ↗
+          </a>
+        )}
+        {!disabled && url && !isExternalUrl && (
           <Link
-            href={url.replace(origin, "")}
+            href={openHref}
             target="_blank"
             className="border border-gray-600 px-2 py-1 text-xs font-bold text-gray-400 transition-colors hover:border-gray-400 hover:text-white"
           >
@@ -241,4 +268,10 @@ function UrlRow({
       </div>
     </div>
   );
+}
+
+function toDisplayUrl(path, origin) {
+  if (!path) return null;
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${origin}${path}`;
 }

@@ -2,28 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-
-const IN_GAME_WIDGETS = [
-  { href: "/rampdom", label: "RampDom" },
-  { href: "/elmis", label: "Elmis" },
-  { href: "/topfour", label: "Top Four" },
-  { href: "/firstblood", label: "First Blood" },
-  { href: "/map", label: "Map" },
-];
-
-const AFTER_MATCH_WIDGETS = [
-  { slug: "matchsummary", label: "Match Summary" },
-  { slug: "mvp-match", label: "MVP Match" },
-  { slug: "mvp-group", label: "MVP Group" },
-  { slug: "head-to-head", label: "Head to Head" },
-  { slug: "after-match-score", label: "After Match Score" },
-  { slug: "after-match-score-group", label: "Score Group" },
-  { slug: "top-player-match", label: "Top Player Match" },
-  { slug: "top-players-group", label: "Top Players Group" },
-  { slug: "wwc", label: "WWC" },
-  { slug: "wwctwo", label: "WWC Two" },
-  { slug: "wwcstats", label: "WWC Stats" },
-];
+import {
+  AFTER_MATCH_WIDGETS,
+  IN_GAME_WIDGETS,
+  getWidgetPath,
+} from "@/lib/widget-catalog";
 
 export default function ControllerPage() {
   const [tournamentId, setTournamentId] = useState("");
@@ -225,7 +208,7 @@ export default function ControllerPage() {
           <button
             onClick={copyDisplayUrl}
             className={[
-              "border px-3 py-1 text-xs font-bold tracking-wider uppercase transition-colors",
+              "cursor-pointer border px-3 py-1 text-xs font-bold tracking-wider uppercase transition-colors",
               copied
                 ? "border-green-500 bg-green-950 text-green-400"
                 : "border-gray-600 text-gray-400 hover:border-blue-500 hover:text-blue-400",
@@ -273,18 +256,28 @@ export default function ControllerPage() {
             <span className="text-xs font-bold tracking-widest text-green-400 uppercase">
               In-Game Widgets
             </span>
+            {!tid && (
+              <span className="text-xs text-gray-600">
+                — Save a Tournament ID to enable route-based widgets
+              </span>
+            )}
             <span className="h-px flex-1 bg-gray-700" />
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-            {IN_GAME_WIDGETS.map((w) => (
-              <WidgetBtn
-                key={w.href}
-                label={w.label}
-                color="green"
-                isActive={activeUrl === w.href}
-                onClick={() => sendCommand(w.href, w.label)}
-              />
-            ))}
+            {IN_GAME_WIDGETS.map((w) => {
+              const url = getWidgetPath(w, tid);
+
+              return (
+                <WidgetBtn
+                  key={w.id}
+                  label={w.label}
+                  color="green"
+                  isActive={activeUrl === url}
+                  disabled={!url}
+                  onClick={url ? () => sendCommand(url, w.label) : undefined}
+                />
+              );
+            })}
           </div>
         </section>
 
@@ -306,10 +299,10 @@ export default function ControllerPage() {
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {AFTER_MATCH_WIDGETS.map((w) => {
-              const url = tid ? `/after-match/${tid}/${w.slug}` : null;
+              const url = getWidgetPath(w, tid);
               return (
                 <WidgetBtn
-                  key={w.slug}
+                  key={w.id}
                   label={w.label}
                   color="orange"
                   isActive={activeUrl === url}

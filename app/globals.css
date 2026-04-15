@@ -45,3 +45,7 @@ body {
 .wrapper {
   @apply mx-auto mt-16 flex h-127 w-max gap-6 px-16;
 }
+
+button {
+  @apply cursor-pointer;
+}
