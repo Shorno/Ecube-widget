@@ -4,7 +4,7 @@ import gsap from "gsap";
 import Image from "next/image";
 
 function getPlayerBarColor(liveState) {
-  if (liveState === 0 || liveState === 2 || liveState === 3) return "bg-green-500";
+  if ([0, 1, 2, 3, 6].includes(liveState)) return "bg-green-500";
   if (liveState === 4) return "bg-red-500";
   return "bg-gray-500";
 }
