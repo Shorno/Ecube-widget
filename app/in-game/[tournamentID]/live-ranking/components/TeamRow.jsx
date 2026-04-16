@@ -93,13 +93,13 @@ export function TeamRow({ entry, isObserved = false }) {
 
       {/* Observer highlight — yellow ring when this team is being spectated */}
       {isObserved && (
-        <div className="pointer-events-none absolute inset-0 ring-2 ring-yellow-400/80 ring-inset" />
+        <div className="pointer-events-none absolute inset-0 z-40 ring-2 ring-yellow-400/80 ring-inset" />
       )}
 
       {/* Blue zone — rendered last so it sits above everything including observer ring */}
       {hasBlueZone && (
         <div
-          class="pointer-events-none absolute inset-0 animate-pulse"
+          class="pointer-events-none absolute inset-0 z-50 animate-pulse"
           style="background: radial-gradient(rgba(147, 197, 253, 0.4) 100%, rgba(59, 130, 246, 0.5) 100%, transparent 100%);"
         ></div>
       )}
