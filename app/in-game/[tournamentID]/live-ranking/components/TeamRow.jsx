@@ -99,12 +99,9 @@ export function TeamRow({ entry, isObserved = false }) {
       {/* Blue zone — rendered last so it sits above everything including observer ring */}
       {hasBlueZone && (
         <div
-          className="pointer-events-none absolute inset-0 animate-pulse"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(147,197,253,0.25) 0%, rgba(59,130,246,0.15) 50%, transparent 100%)",
-          }}
-        />
+          class="pointer-events-none absolute inset-0 animate-pulse"
+          style="background: radial-gradient(rgba(147, 197, 253, 0.4) 100%, rgba(59, 130, 246, 0.5) 100%, transparent 100%);"
+        ></div>
       )}
     </div>
   );
