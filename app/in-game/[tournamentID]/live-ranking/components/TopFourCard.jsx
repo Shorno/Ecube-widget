@@ -87,7 +87,7 @@ export const TopFourCard = forwardRef(function TopFourCard(
             WWCD
           </div>
           <div className="flex flex-1 items-center justify-center bg-[#3C41B4] text-xs font-bold text-white">
-            {entry.winProbability}%
+            {Math.round(entry.winProbability)}%
           </div>
         </div>
       )}
