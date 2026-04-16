@@ -102,7 +102,7 @@ export function TeamRow({ entry, isObserved = false }) {
           className="pointer-events-none absolute inset-0 z-50 animate-pulse"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(147,197,253,0.25) 0%, rgba(59,130,246,0.15) 50%, transparent 100%)",
+              "radial-gradient(ellipse at center, rgba(147,197,253,0.5) 100%, rgba(59,130,246,0.5) 100%, transparent 100%)",
           }}
         />
       )}
