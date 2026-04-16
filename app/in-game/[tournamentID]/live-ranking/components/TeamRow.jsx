@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 function getPlayerBarColor(liveState) {
-  if (liveState === 0 || liveState === 3) return "bg-green-500";
+  if (liveState === 0 || liveState === 2 || liveState === 3) return "bg-green-500";
   if (liveState === 4) return "bg-red-500";
   return "bg-gray-500";
 }
@@ -100,7 +100,7 @@ export function TeamRow({ entry, isObserved = false }) {
 
       {/* Observer highlight — yellow ring when this team is being spectated */}
       {isObserved && (
-        <div className="pointer-events-none absolute inset-0 ring-2 ring-inset ring-yellow-400/80" />
+        <div className="pointer-events-none absolute inset-0 ring-2 ring-yellow-400/80 ring-inset" />
       )}
     </div>
   );

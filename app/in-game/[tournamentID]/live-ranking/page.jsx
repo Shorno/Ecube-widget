@@ -24,14 +24,6 @@ const stateList = [
 
 gsap.registerPlugin(Flip);
 
-// Distributes 100% win probability across teams randomly (used when backend sends all-null).
-function assignWinProbabilities(teams) {
-  const weights = teams.map(() => Math.random());
-  const total   = weights.reduce((a, b) => a + b, 0);
-  const probs   = weights.map((w) => Math.round((w / total) * 100));
-  probs[0] += 100 - probs.reduce((a, b) => a + b, 0);
-  return teams.map((t, i) => ({ ...t, winProbability: probs[i] }));
-}
 
 export default function App() {
   // const [teams, setTeams] = useState(() =>
@@ -191,9 +183,7 @@ export default function App() {
     if (isTopFour && !wasTopFourRef.current) {
       wasTopFourRef.current = true;
 
-      const allNull  = aliveTeams.every((t) => t.winProbability === null);
-      const snapshot = allNull ? assignWinProbabilities(aliveTeams) : aliveTeams;
-      setTopFourTeams(snapshot);
+      setTopFourTeams(aliveTeams);
 
       if (listPanelRef.current) {
         gsap.to(listPanelRef.current, {
