@@ -17,6 +17,9 @@ function isEliminated(players) {
 
 export function TeamRow({ entry, isObserved = false }) {
   const eliminated = isEliminated(entry.players);
+  const hasBlueZone = entry.players.some(
+    (p) => p.isOutsideZone && p.liveState !== 5,
+  );
 
   return (
     <div
@@ -65,16 +68,6 @@ export function TeamRow({ entry, isObserved = false }) {
                     style={{ height: `${player.healths}%` }}
                   />
                 </div>
-                {/* Blue zone glow — shown when player is outside safe zone and still alive */}
-                {player.isOutsideZone && player.liveState !== 5 && (
-                  <div
-                    className="pointer-events-none absolute -inset-0.5 animate-pulse rounded-sm"
-                    style={{
-                      background:
-                        "radial-gradient(ellipse at center, rgba(147,197,253,0.95) 0%, rgba(59,130,246,0.55) 45%, transparent 100%)",
-                    }}
-                  />
-                )}
               </div>
             ))}
           </div>
@@ -101,6 +94,17 @@ export function TeamRow({ entry, isObserved = false }) {
       {/* Observer highlight — yellow ring when this team is being spectated */}
       {isObserved && (
         <div className="pointer-events-none absolute inset-0 ring-2 ring-yellow-400/80 ring-inset" />
+      )}
+
+      {/* Blue zone — rendered last so it sits above everything including observer ring */}
+      {hasBlueZone && (
+        <div
+          className="pointer-events-none absolute inset-0 animate-pulse"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(147,197,253,0.25) 0%, rgba(59,130,246,0.15) 50%, transparent 100%)",
+          }}
+        />
       )}
     </div>
   );
