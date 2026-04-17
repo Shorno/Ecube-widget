@@ -26,6 +26,7 @@ export function TeamRow({ entry, isObserved = false }) {
       className={cn(
         "team-row relative grid grid-cols-7 items-center border-b border-blue-900/30 bg-blue-100 text-sm text-white",
         eliminated && "opacity-90",
+        isObserved && "bg-yellow-300 text-black",
       )}
       data-flip-id={entry.team._id}
     >
@@ -34,11 +35,11 @@ export function TeamRow({ entry, isObserved = false }) {
         className={cn(
           "flex items-center justify-center bg-blue-700 p-2 font-bold",
           getRankColor(),
+          isObserved && "bg-yellow-500 text-black",
         )}
       >
         {entry.rank}
       </div>
-
       {/* Team — 3 cols */}
       <div className="col-span-3 flex items-center gap-2 bg-blue-900 p-2">
         <img
@@ -52,7 +53,6 @@ export function TeamRow({ entry, isObserved = false }) {
           {entry.team.name}
         </span>
       </div>
-
       {entry?.players?.length > 0 ? (
         <>
           {/* Player health bars with blue-zone indicator */}
@@ -85,17 +85,14 @@ export function TeamRow({ entry, isObserved = false }) {
       ) : (
         <div className="col-span-3 text-center text-red-500">MISSING</div>
       )}
-
       {/* Elimination overlay */}
       {eliminated && (
         <div className="pointer-events-none absolute inset-0 bg-black/60" />
       )}
-
-      {/* Observer highlight — yellow ring when this team is being spectated */}
+      Observer highlight — yellow ring when this team is being spectated
       {isObserved && (
         <div className="pointer-events-none absolute inset-0 z-40 ring-2 ring-yellow-400/80 ring-inset" />
       )}
-
       {/* Blue zone — rendered last so it sits above everything including observer ring */}
       {hasBlueZone && (
         <div
