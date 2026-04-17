@@ -6,16 +6,12 @@ function getPlayerBarColor(liveState) {
   return "bg-gray-500";
 }
 
-function getRankColor() {
-  return "text-white";
-}
-
 function isEliminated(players) {
   // Empty array → team is MISSING, not eliminated — no overlay
   return players.length > 0 && players.every((p) => p.liveState === 5);
 }
 
-export function TeamRow({ entry, isObserved = false }) {
+export function TeamRow({ entry, isObserved = false, isOverall = false ,rank}) {
   const eliminated = isEliminated(entry.players);
   const hasBlueZone = entry.players.some(
     (p) => p.isOutsideZone && p.liveState !== 5,
@@ -26,27 +22,16 @@ export function TeamRow({ entry, isObserved = false }) {
       className={cn(
         "team-row relative grid grid-cols-7 items-center border-b border-blue-900/30 bg-blue-100 text-sm text-white",
         eliminated && "opacity-90",
-        // isObserved && "bg-yellow-300 text-black",
       )}
       data-flip-id={entry.team._id}
     >
       {/* Rank */}
-      <div
-        className={cn(
-          "flex items-center justify-center bg-blue-700 p-2 font-bold",
-          getRankColor(),
-          isObserved && "bg-yellow-300 text-black",
-        )}
-      >
-        {entry.rank}
+      <div className="flex items-center justify-center bg-blue-700 p-2 font-bold text-white">
+        {rank}
       </div>
+
       {/* Team — 3 cols */}
-      <div
-        className={cn(
-          "col-span-3 flex items-center gap-2 bg-blue-900 p-2",
-          isObserved && "bg-yellow-600 text-black",
-        )}
-      >
+      <div className="col-span-3 flex items-center gap-2 bg-blue-900 p-2">
         <img
           src={entry.team.logoImageUrl}
           alt={entry.team.name}
@@ -58,9 +43,10 @@ export function TeamRow({ entry, isObserved = false }) {
           {entry.team.name}
         </span>
       </div>
+
       {entry?.players?.length > 0 ? (
         <>
-          {/* Player health bars with blue-zone indicator */}
+          {/* Player health bars */}
           <div className="flex items-center justify-center gap-0.75 bg-blue-100">
             {entry.players.map((player, idx) => (
               <div key={idx} className="relative">
@@ -77,9 +63,9 @@ export function TeamRow({ entry, isObserved = false }) {
             ))}
           </div>
 
-          {/* PTS */}
+          {/* PTS — points for live match, overAllPoints for overall */}
           <div className="flex items-center justify-center bg-blue-100 p-2 font-bold text-black/70">
-            {entry?.overAllPoints}
+            {isOverall ? entry?.overAllPoints : entry?.points}
           </div>
 
           {/* ELMIS */}
@@ -90,21 +76,24 @@ export function TeamRow({ entry, isObserved = false }) {
       ) : (
         <div className="col-span-3 text-center text-red-500">MISSING</div>
       )}
+
       {/* Elimination overlay */}
       {eliminated && (
         <div className="pointer-events-none absolute inset-0 bg-black/60" />
       )}
-      {/* Observer highlight — yellow ring when this team is being spectated */}
-      {/* {isObserved && (
-        <div className="pointer-events-none absolute inset-0 z-40 ring-2 ring-yellow-400/80 ring-inset" />
-      )} */}
-      {/* Blue zone — rendered last so it sits above everything including observer ring */}
+
+      {/* Observer highlight */}
+      {isObserved && (
+        <div className="pointer-events-none absolute inset-0 z-40 ring-2 ring-inset ring-yellow-400/80" />
+      )}
+
+      {/* Blue zone — above observer ring */}
       {hasBlueZone && (
         <div
           className="pointer-events-none absolute inset-0 z-50 animate-pulse"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(147,197,253,0.5) 100%, rgba(59,130,246,0.5) 100%, transparent 100%)",
+              "radial-gradient(ellipse at center, rgba(147,197,253,0.25) 0%, rgba(59,130,246,0.15) 50%, transparent 100%)",
           }}
         />
       )}

@@ -1,6 +1,7 @@
 "use client";
-import { useRef, useEffect, useCallback, createRef, useState } from "react";
+import { useRef, useEffect, useLayoutEffect, useCallback, createRef, useState } from "react";
 import gsap from "gsap";
+import { Flip } from "gsap/Flip";
 import { TopFourCard } from "./TopFourCard";
 
 function isTeamEliminated(players) {
@@ -8,8 +9,6 @@ function isTeamEliminated(players) {
 }
 
 export function TopFourView({ teams, observingTeamId = null }) {
-  // Tracks which team IDs are still visible in the DOM.
-  // When a card's exit animation finishes, its ID is removed → flex re-centers.
   const [visibleIds, setVisibleIds] = useState(
     () => new Set(teams.map((t) => t.team._id)),
   );
@@ -22,12 +21,14 @@ export function TopFourView({ teams, observingTeamId = null }) {
     }
   });
 
-  const exitedIds = useRef(new Set());
+  const exitedIds   = useRef(new Set());
+  const flipStateRef = useRef(null);
 
   const runExitAnimation = useCallback((el, teamId) => {
     const tl = gsap.timeline({
       onComplete: () => {
-        // Remove from visibleIds → card unmounts → flex container re-centers
+        // Capture positions of remaining cards before DOM changes
+        flipStateRef.current = Flip.getState(".top-four-card");
         setVisibleIds((prev) => {
           const next = new Set(prev);
           next.delete(teamId);
@@ -48,6 +49,17 @@ export function TopFourView({ teams, observingTeamId = null }) {
       // Phase 3: fall out downward
       .to(el, { y: 70, opacity: 0, scale: 0.88, duration: 0.45, ease: "power2.in" });
   }, []);
+
+  // Animate remaining cards to their new centered positions after a card is removed
+  useLayoutEffect(() => {
+    if (flipStateRef.current) {
+      Flip.from(flipStateRef.current, {
+        duration: 0.5,
+        ease: "power2.inOut",
+      });
+      flipStateRef.current = null;
+    }
+  }, [visibleIds]);
 
   useEffect(() => {
     teams.forEach((entry) => {

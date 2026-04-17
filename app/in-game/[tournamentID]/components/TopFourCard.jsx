@@ -32,7 +32,7 @@ export const TopFourCard = forwardRef(function TopFourCard(
     <div
       ref={ref}
       className={cn(
-        "relative flex w-64 shrink-0 flex-col border-b-2 border-l-4 bg-blue-900",
+        "top-four-card relative flex w-64 shrink-0 flex-col border-b-2 border-l-4 bg-blue-900",
         isObserved ? "border-blue-400 border-l-yellow-400" : "border-blue-400",
       )}
     >
