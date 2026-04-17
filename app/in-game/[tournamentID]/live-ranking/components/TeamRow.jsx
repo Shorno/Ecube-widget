@@ -26,7 +26,7 @@ export function TeamRow({ entry, isObserved = false }) {
       className={cn(
         "team-row relative grid grid-cols-7 items-center border-b border-blue-900/30 bg-blue-100 text-sm text-white",
         eliminated && "opacity-90",
-        isObserved && "bg-yellow-300 text-black",
+        // isObserved && "bg-yellow-300 text-black",
       )}
       data-flip-id={entry.team._id}
     >
@@ -41,7 +41,12 @@ export function TeamRow({ entry, isObserved = false }) {
         {entry.rank}
       </div>
       {/* Team — 3 cols */}
-      <div className="col-span-3 flex items-center gap-2 bg-blue-900 p-2">
+      <div
+        className={cn(
+          "col-span-3 flex items-center gap-2 bg-blue-900 p-2",
+          isObserved && "bg-yellow-500 text-black",
+        )}
+      >
         <img
           src={entry.team.logoImageUrl}
           alt={entry.team.name}
@@ -89,7 +94,7 @@ export function TeamRow({ entry, isObserved = false }) {
       {eliminated && (
         <div className="pointer-events-none absolute inset-0 bg-black/60" />
       )}
-      Observer highlight — yellow ring when this team is being spectated
+      {/* Observer highlight — yellow ring when this team is being spectated */}
       {isObserved && (
         <div className="pointer-events-none absolute inset-0 z-40 ring-2 ring-yellow-400/80 ring-inset" />
       )}
