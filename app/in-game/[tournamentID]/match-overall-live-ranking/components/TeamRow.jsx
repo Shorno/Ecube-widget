@@ -79,7 +79,7 @@ export function TeamRow({ entry, isObserved = false }) {
 
           {/* PTS */}
           <div className="flex items-center justify-center bg-blue-100 p-2 font-bold text-black/70">
-            {entry?.points}
+            {entry?.overAllPoints}
           </div>
 
           {/* ELMIS */}
