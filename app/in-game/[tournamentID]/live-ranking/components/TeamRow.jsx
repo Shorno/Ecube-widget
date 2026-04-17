@@ -35,7 +35,7 @@ export function TeamRow({ entry, isObserved = false }) {
         className={cn(
           "flex items-center justify-center bg-blue-700 p-2 font-bold",
           getRankColor(),
-          isObserved && "bg-yellow-500 text-black",
+          isObserved && "bg-yellow-300 text-black",
         )}
       >
         {entry.rank}
@@ -44,7 +44,7 @@ export function TeamRow({ entry, isObserved = false }) {
       <div
         className={cn(
           "col-span-3 flex items-center gap-2 bg-blue-900 p-2",
-          isObserved && "bg-yellow-500 text-black",
+          isObserved && "bg-yellow-600 text-black",
         )}
       >
         <img
