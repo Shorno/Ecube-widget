@@ -95,9 +95,9 @@ export function TeamRow({ entry, isObserved = false }) {
         <div className="pointer-events-none absolute inset-0 bg-black/60" />
       )}
       {/* Observer highlight — yellow ring when this team is being spectated */}
-      {isObserved && (
+      {/* {isObserved && (
         <div className="pointer-events-none absolute inset-0 z-40 ring-2 ring-yellow-400/80 ring-inset" />
-      )}
+      )} */}
       {/* Blue zone — rendered last so it sits above everything including observer ring */}
       {hasBlueZone && (
         <div
