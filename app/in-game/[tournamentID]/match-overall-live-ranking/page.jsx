@@ -194,12 +194,13 @@ export default function App() {
           </div>
 
           <div ref={containerRef} className="relative flex flex-col bg-slate-900">
-            {teams.map((entry) => (
+            {teams.map((entry,index) => (
               <TeamRow
                 key={entry.team._id}
                 entry={entry}
                 isObserved={observingTeamId === entry.team._id}
                 isOverall
+                rank={index + 1}
               />
             ))}
           </div>
