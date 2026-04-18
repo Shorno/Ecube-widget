@@ -93,9 +93,9 @@ export function TeamRow({
       )}
 
       {/* Observer highlight */}
-      {isObserved && (
+      {/* {isObserved && (
         <div className="pointer-events-none absolute inset-0 z-40 ring-2 ring-yellow-400/80 ring-inset" />
-      )}
+      )} */}
 
       {/* Blue zone — above observer ring */}
 
