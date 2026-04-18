@@ -11,7 +11,12 @@ function isEliminated(players) {
   return players.length > 0 && players.every((p) => p.liveState === 5);
 }
 
-export function TeamRow({ entry, isObserved = false, isOverall = false ,rank}) {
+export function TeamRow({
+  entry,
+  isObserved = false,
+  isOverall = false,
+  rank,
+}) {
   const eliminated = isEliminated(entry.players);
   const hasBlueZone = entry.players.some(
     (p) => p.isOutsideZone && p.liveState !== 5,
@@ -26,12 +31,17 @@ export function TeamRow({ entry, isObserved = false, isOverall = false ,rank}) {
       data-flip-id={entry.team._id}
     >
       {/* Rank */}
-      <div className="flex items-center justify-center bg-blue-700 p-2 font-bold text-white">
+      <div
+        className={cn(
+          "flex items-center justify-center bg-blue-700 p-2 font-bold text-white",
+          isObserved && "bg-yellow-500 text-black",
+        )}
+      >
         {rank}
       </div>
 
       {/* Team — 3 cols */}
-      <div className="col-span-3 flex items-center gap-2 bg-blue-900 p-2">
+      <div className={cn("col-span-3 flex items-center gap-2 bg-blue-900 p-2", isObserved && "bg-yellow-700 text-black")}>
         <img
           src={entry.team.logoImageUrl}
           alt={entry.team.name}
@@ -84,16 +94,17 @@ export function TeamRow({ entry, isObserved = false, isOverall = false ,rank}) {
 
       {/* Observer highlight */}
       {isObserved && (
-        <div className="pointer-events-none absolute inset-0 z-40 ring-2 ring-inset ring-yellow-400/80" />
+        <div className="pointer-events-none absolute inset-0 z-40 ring-2 ring-yellow-400/80 ring-inset" />
       )}
 
       {/* Blue zone — above observer ring */}
+
       {hasBlueZone && (
         <div
           className="pointer-events-none absolute inset-0 z-50 animate-pulse"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(147,197,253,0.25) 0%, rgba(59,130,246,0.15) 50%, transparent 100%)",
+              "radial-gradient(ellipse at center, rgba(147,197,253,0.5) 100%, rgba(59,130,246,0.5) 100%, transparent 100%)",
           }}
         />
       )}
