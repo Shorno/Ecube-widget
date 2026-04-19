@@ -17,7 +17,7 @@ function TopPlayersGroup({ params }) {
   return (
     <WidgetStage dataReady={!!data}>
     <Layout top>
-      <Title title="Overall Top Players" stageOnly data={data?.game[0]} />
+      <Title title="Overall Top Players" stageOnly data={data?.info} />
       <div className="mx-auto mt-16 flex h-127 w-max gap-6 px-16">
         <div className="grid grid-cols-5 gap-4">
           {team?.map((player, idx) => (
