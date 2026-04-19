@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 function getPlayerBarColor(liveState) {
@@ -28,7 +29,7 @@ export function TeamRow({
         "team-row relative grid grid-cols-7 items-center border-b border-blue-900/30 bg-blue-100 text-sm text-white",
         eliminated && "opacity-90",
       )}
-      data-flip-id={entry.team._id}
+      data-flip-id={entry.team.id}
     >
       {/* Rank */}
       <div
@@ -42,19 +43,20 @@ export function TeamRow({
 
       {/* Team — 3 cols */}
       <div className={cn("col-span-3 flex items-center gap-2 bg-blue-900 p-2", isObserved && "bg-yellow-700 text-black")}>
-        <img
+        <Image
           src={entry.team.logo}
           alt={entry.team.name}
           width={20}
           height={20}
           className="rounded"
+          unoptimized
         />
         <span className="truncate font-semibold uppercase">
           {entry.team.name}
         </span>
       </div>
 
-      {entry?.players?.length > 0 ? (
+      {!entry.isMissing || entry.players?.length > 0 ? (
         <>
           {/* Player health bars */}
           <div className="flex items-center justify-center gap-0.75 bg-blue-100">
