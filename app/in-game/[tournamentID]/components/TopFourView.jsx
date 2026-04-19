@@ -37,9 +37,10 @@ export function TopFourView({ teams, observingTeamId = null }) {
       },
     });
 
-    // Phase 1: red flash
+    // Phase 1: red flash — clear inline backgroundColor after so bg-blue-900 class shows through
     tl.to(el, { backgroundColor: "rgba(239,68,68,0.4)", duration: 0.15, ease: "power1.in" })
       .to(el, { backgroundColor: "rgba(239,68,68,0)",   duration: 0.15, ease: "power1.out" })
+      .call(() => gsap.set(el, { clearProps: "backgroundColor" }))
       // Phase 2: death rattle
       .to(el, {
         keyframes: { x: [0, -7, 7, -5, 5, -3, 3, 0], easeEach: "none" },

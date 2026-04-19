@@ -43,7 +43,7 @@ export function TeamRow({
       {/* Team — 3 cols */}
       <div className={cn("col-span-3 flex items-center gap-2 bg-blue-900 p-2", isObserved && "bg-yellow-700 text-black")}>
         <img
-          src={entry.team.logoImageUrl}
+          src={entry.team.logo}
           alt={entry.team.name}
           width={20}
           height={20}

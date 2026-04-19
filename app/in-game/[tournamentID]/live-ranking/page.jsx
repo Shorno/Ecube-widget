@@ -68,6 +68,7 @@ export default function App() {
 
       if (eventName === "MATCH_LIVE_RANK_DATA" && Array.isArray(data)) {
         if (!wasTopFourRef.current && containerRef.current) {
+          gsap.killTweensOf(".team-row");
           flipStateRef.current = Flip.getState(".team-row");
         }
         setTeams([...data]);
@@ -99,6 +100,7 @@ export default function App() {
         if (!Array.isArray(data)) return;
 
         if (!wasTopFourRef.current && containerRef.current) {
+          gsap.killTweensOf(".team-row");
           flipStateRef.current = Flip.getState(".team-row");
         }
         setTeams([...data]);
