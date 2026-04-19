@@ -63,7 +63,7 @@ export function TeamRow({
                 <div className="flex h-7 w-1.25 flex-col justify-end overflow-hidden rounded-[1px] bg-gray-800/15">
                   <div
                     className={cn(
-                      "w-full transition-all duration-500 ease-out",
+                      "w-full",
                       getPlayerBarColor(player.liveState),
                     )}
                     style={{ height: `${player.healths}%` }}
@@ -101,7 +101,7 @@ export function TeamRow({
 
       {hasBlueZone && (
         <div
-          className="pointer-events-none absolute inset-0 z-50 animate-pulse"
+          className="pointer-events-none absolute inset-0 z-50"
           style={{
             background:
               "radial-gradient(ellipse at center, rgba(147,197,253,0.5) 100%, rgba(59,130,246,0.5) 100%, transparent 100%)",

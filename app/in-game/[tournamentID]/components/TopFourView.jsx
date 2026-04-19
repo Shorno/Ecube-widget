@@ -1,91 +1,84 @@
 "use client";
-import { useRef, useEffect, useLayoutEffect, useCallback, createRef, useState } from "react";
-import gsap from "gsap";
-import { Flip } from "gsap/Flip";
-import { TopFourCard } from "./TopFourCard";
+import Image from "next/image";
+
+function getPlayerBarColor(liveState) {
+  if ([0, 1, 2, 3, 6].includes(liveState)) return "bg-green-500";
+  if (liveState === 4) return "bg-red-500";
+  return "bg-gray-500";
+}
 
 function isTeamEliminated(players) {
-  return players.length > 0 && players.every((p) => p.liveState === 5);
+  if (!players || players.length === 0) return false;
+  return players.every((p) => p.liveState === 5);
 }
 
 export function TopFourView({ teams, observingTeamId = null }) {
-  const [visibleIds, setVisibleIds] = useState(
-    () => new Set(teams.map((t) => t.team._id)),
-  );
-
-  // Stable ref map: { [teamId]: React.RefObject<HTMLDivElement> }
-  const cardRefs = useRef({});
-  teams.forEach((entry) => {
-    if (!cardRefs.current[entry.team._id]) {
-      cardRefs.current[entry.team._id] = createRef();
-    }
-  });
-
-  const exitedIds   = useRef(new Set());
-  const flipStateRef = useRef(null);
-
-  const runExitAnimation = useCallback((el, teamId) => {
-    const tl = gsap.timeline({
-      onComplete: () => {
-        // Capture positions of remaining cards before DOM changes
-        flipStateRef.current = Flip.getState(".top-four-card");
-        setVisibleIds((prev) => {
-          const next = new Set(prev);
-          next.delete(teamId);
-          return next;
-        });
-      },
-    });
-
-    // Phase 1: red flash — clear inline backgroundColor after so bg-blue-900 class shows through
-    tl.to(el, { backgroundColor: "rgba(239,68,68,0.4)", duration: 0.15, ease: "power1.in" })
-      .to(el, { backgroundColor: "rgba(239,68,68,0)",   duration: 0.15, ease: "power1.out" })
-      .call(() => gsap.set(el, { clearProps: "backgroundColor" }))
-      // Phase 2: death rattle
-      .to(el, {
-        keyframes: { x: [0, -7, 7, -5, 5, -3, 3, 0], easeEach: "none" },
-        duration: 0.32,
-        ease: "none",
-      })
-      // Phase 3: fall out downward
-      .to(el, { y: 70, opacity: 0, scale: 0.88, duration: 0.45, ease: "power2.in" });
-  }, []);
-
-  // Animate remaining cards to their new centered positions after a card is removed
-  useLayoutEffect(() => {
-    if (flipStateRef.current) {
-      Flip.from(flipStateRef.current, {
-        duration: 0.5,
-        ease: "power2.inOut",
-      });
-      flipStateRef.current = null;
-    }
-  }, [visibleIds]);
-
-  useEffect(() => {
-    teams.forEach((entry) => {
-      const id = entry.team._id;
-      if (isTeamEliminated(entry.players) && !exitedIds.current.has(id)) {
-        exitedIds.current.add(id);
-        const el = cardRefs.current[id]?.current;
-        if (el) runExitAnimation(el, id);
-      }
-    });
-  }, [teams, runExitAnimation]);
-
-  const visibleTeams = teams.filter((t) => visibleIds.has(t.team._id));
-
   return (
     <div className="flex items-start justify-center gap-4">
-      {visibleTeams.map((entry, i) => (
-        <TopFourCard
-          key={entry.team._id}
-          ref={cardRefs.current[entry.team._id]}
-          entry={entry}
-          entranceDelay={i * 0.1}
-          isObserved={observingTeamId === entry.team._id}
-        />
-      ))}
+      {teams.map((entry) => {
+        const eliminated = isTeamEliminated(entry.players);
+        const hasWinProb = entry.winProbability != null;
+
+        return (
+          <div
+            key={entry.team._id}
+            className={`top-four-card relative flex w-64 shrink-0 flex-col border-b-2 border-l-4 bg-blue-900 ${
+              observingTeamId === entry.team._id
+                ? "border-blue-400 border-l-yellow-400"
+                : "border-blue-400"
+            }`}
+          >
+            <div className="flex h-14 items-center">
+              <div className="flex flex-1 items-center gap-2 overflow-hidden px-2">
+                <Image
+                  src={entry.team.logo}
+                  alt={entry.team.name}
+                  width={28}
+                  height={28}
+                  className="shrink-0 rounded object-contain"
+                  unoptimized
+                />
+                <span className="truncate text-sm font-bold uppercase text-white">
+                  {entry.team.name}
+                </span>
+              </div>
+
+              <div className="flex h-full items-center gap-0.75 bg-blue-700 px-2">
+                {entry.players.map((player, idx) => (
+                  <div
+                    key={idx}
+                    className="flex h-8 w-1.25 flex-col justify-end overflow-hidden rounded-[1px] bg-gray-800/40"
+                  >
+                    <div
+                      className={`w-full ${getPlayerBarColor(player.liveState)}`}
+                      style={{ height: `${player.healths}%` }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {hasWinProb && (
+              <div className="flex h-7 w-full">
+                <div className="flex flex-1 items-center justify-center bg-[#4F63CE] text-xs font-bold text-white">
+                  WWCD
+                </div>
+                <div className="flex flex-1 items-center justify-center bg-[#3C41B4] text-xs font-bold text-white">
+                  {Math.round(entry.winProbability)}%
+                </div>
+              </div>
+            )}
+
+            {eliminated && (
+              <div className="pointer-events-none absolute inset-0 bg-black/60" />
+            )}
+
+            {observingTeamId === entry.team._id && (
+              <div className="pointer-events-none absolute inset-0 ring-2 ring-inset ring-yellow-400/80" />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

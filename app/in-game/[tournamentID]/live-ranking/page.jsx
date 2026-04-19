@@ -1,8 +1,6 @@
 "use client";
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import gsap from "gsap";
-import { Flip } from "gsap/Flip";
 import { useParams } from "next/navigation";
 import { TeamRow } from "../components/TeamRow";
 import { TopFourView } from "../components/TopFourView";
@@ -21,29 +19,24 @@ const stateList = [
   { label: "ELIMINATED", color: "bg-gray-500"  },
 ];
 
-gsap.registerPlugin(Flip);
+function sortByPoints(data) {
+  return [...data].sort((a, b) => (b.points ?? 0) - (a.points ?? 0));
+}
 
 export default function App() {
-  const [teams, setTeams] = useState([]);
-
-  const containerRef  = useRef(null);
-  const listPanelRef  = useRef(null);
-  const flipStateRef  = useRef(null);
-  const isFirstRender = useRef(true);
-
-  const [showTopFour,  setShowTopFour]  = useState(false);
-  const [topFourTeams, setTopFourTeams] = useState([]);
+  const [teams,           setTeams]           = useState([]);
+  const [showTopFour,     setShowTopFour]      = useState(false);
+  const [topFourTeams,    setTopFourTeams]     = useState([]);
   const wasTopFourRef = useRef(false);
-
-  const [observingTeamId,  setObservingTeamId]  = useState(null);
-  const [isMatchConnected, setIsMatchConnected] = useState(false);
+  const [observingTeamId, setObservingTeamId]  = useState(null);
+  const [isMatchConnected,setIsMatchConnected] = useState(false);
 
   const { tournamentID: rawTournamentID } = useParams();
   const tournamentID = Array.isArray(rawTournamentID)
     ? rawTournamentID[0]
     : rawTournamentID;
 
-  // --- 🔌 WEBSOCKET — events + rank updates (/tournament?id=) ---
+  // --- WebSocket — events + live rank updates ---
   useEffect(() => {
     if (!tournamentID) return;
 
@@ -67,11 +60,7 @@ export default function App() {
       }
 
       if (eventName === "MATCH_LIVE_RANK_DATA" && Array.isArray(data)) {
-        if (!wasTopFourRef.current && containerRef.current) {
-          gsap.killTweensOf(".team-row");
-          flipStateRef.current = Flip.getState(".team-row");
-        }
-        setTeams([...data]);
+        setTeams(sortByPoints(data));
       }
 
       if (eventName === "SET_OBSERVING_PLAYER") {
@@ -85,7 +74,7 @@ export default function App() {
     return () => ws.close();
   }, [tournamentID]);
 
-  // --- 📡 HTTP — initial rank data snapshot ---
+  // --- HTTP — initial rank data snapshot ---
   useEffect(() => {
     if (!tournamentID) return;
 
@@ -98,12 +87,7 @@ export default function App() {
         if (!res.ok) return;
         const data = await res.json();
         if (!Array.isArray(data)) return;
-
-        if (!wasTopFourRef.current && containerRef.current) {
-          gsap.killTweensOf(".team-row");
-          flipStateRef.current = Flip.getState(".team-row");
-        }
-        setTeams([...data]);
+        setTeams(sortByPoints(data));
       } catch {
         // Network error on initial load — WS updates will still arrive
       }
@@ -112,30 +96,33 @@ export default function App() {
     fetchRankData();
   }, [tournamentID]);
 
-  // Detect ≤4 alive teams and trigger the list → top-four transition
+  // Manage list ↔ top-four view transitions based on alive team count
   useEffect(() => {
+    if (teams.length === 0) return;
+
     const aliveTeams = teams.filter(
-      (t) => !t.players.every((p) => p.liveState === 5),
+      (t) => !(t.players ?? []).every((p) => p.liveState === 5),
     );
-    const isTopFour = aliveTeams.length <= 4 && aliveTeams.length > 0;
 
-    if (isTopFour && !wasTopFourRef.current) {
-      wasTopFourRef.current = true;
-      setTopFourTeams(aliveTeams);
-
-      if (listPanelRef.current) {
-        gsap.to(listPanelRef.current, {
-          x: "110vw",
-          duration: 0.5,
-          ease: "power2.in",
-          onComplete: () => setShowTopFour(true),
-        });
-      } else {
-        setShowTopFour(true);
-      }
+    // New match started — more than 4 alive while in top-four mode → reset
+    if (wasTopFourRef.current && aliveTeams.length > 4) {
+      wasTopFourRef.current = false;
+      setTopFourTeams([]);
+      setShowTopFour(false);
+      return;
     }
 
-    if (wasTopFourRef.current && showTopFour) {
+    // Transition to top-four view
+    if (!wasTopFourRef.current && aliveTeams.length <= 4 && aliveTeams.length > 0) {
+      wasTopFourRef.current = true;
+      setTopFourTeams(aliveTeams);
+      setShowTopFour(true);
+      return;
+    }
+
+    // Keep top-four player data live — only runs on genuine teams updates,
+    // not when showTopFour flips (showTopFour is intentionally not in deps)
+    if (wasTopFourRef.current) {
       const liveById = Object.fromEntries(teams.map((t) => [t.team._id, t]));
       setTopFourTeams((prev) =>
         prev.map((frozen) => {
@@ -149,25 +136,7 @@ export default function App() {
         }),
       );
     }
-  }, [teams, showTopFour]);
-
-  // GSAP Flip layout animation — list view only
-  useLayoutEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    if (showTopFour) return;
-
-    if (flipStateRef.current) {
-      Flip.from(flipStateRef.current, {
-        duration: 0.8,
-        ease: "power3.inOut",
-        stagger: 0.05,
-      });
-      flipStateRef.current = null;
-    }
-  }, [teams, showTopFour]);
+  }, [teams]);
 
   if (!isMatchConnected) return null;
 
@@ -180,7 +149,7 @@ export default function App() {
       )}
 
       {!showTopFour && teams.length > 0 && (
-        <div ref={listPanelRef} className="fixed right-4 bottom-4 w-full max-w-100">
+        <div className="fixed right-4 bottom-4 w-full max-w-100">
           <div className="grid grid-cols-7 border-b border-white bg-linear-to-r from-blue-900 via-blue-400 to-blue-900 text-sm text-white">
             {tableHeader.map((header) => (
               <div
@@ -195,8 +164,8 @@ export default function App() {
             ))}
           </div>
 
-          <div ref={containerRef} className="relative flex flex-col bg-slate-900">
-            {teams.map((entry,index) => (
+          <div className="relative flex flex-col bg-slate-900">
+            {teams.map((entry, index) => (
               <TeamRow
                 key={entry.team._id}
                 entry={entry}
