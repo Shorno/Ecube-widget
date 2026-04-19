@@ -6,6 +6,8 @@ import { useGetWwcdTeamStatsQuery } from "@/lib/services/widget-api";
 import { cn } from "@/lib/utils";
 import WidgetStage from "@/components/WidgetStage";
 
+// DEPRICATED: This page is no longer used and will be removed in the future. Please refer to the new WWCD team stats page for the latest information.
+
 function WWC({ params }) {
   const { tournamentID } = use(params);
   const { data } = useGetWwcdTeamStatsQuery({ tournamentID });
@@ -17,42 +19,42 @@ function WWC({ params }) {
 
   return (
     <WidgetStage dataReady={!!data}>
-    <div className="flex h-screen w-full items-center justify-center overflow-hidden p-2">
-      <div className="w-490 space-y-4 overflow-hidden">
-        <h1 className="text-primary text-5xl font-bold uppercase">
-          wwcd team stats
-        </h1>
-        <div className="border-primary grid h-185.25 grid-cols-6 border-2">
-          <div className="border-r-primary h-full border-r-2 font-bold">
-            <div className="flex h-[80%] flex-col items-center justify-center overflow-hidden">
-              <Image
-                alt=""
-                src={data?.data[0]?.team_image}
-                width={250}
-                height={250}
-                priority
-              />
+      <div className="flex h-screen w-full items-center justify-center overflow-hidden p-2">
+        <div className="w-490 space-y-4 overflow-hidden">
+          <h1 className="text-primary text-5xl font-bold uppercase">
+            wwcd team stats
+          </h1>
+          <div className="border-primary grid h-185.25 grid-cols-6 border-2">
+            <div className="border-r-primary h-full border-r-2 font-bold">
+              <div className="flex h-[80%] flex-col items-center justify-center overflow-hidden">
+                <Image
+                  alt=""
+                  src={data?.data[0]?.team_image}
+                  width={250}
+                  height={250}
+                  priority
+                />
+              </div>
+              <div className="bg-primary mt-1 grid h-[20%] place-content-center">
+                <p className="mx-auto text-5xl font-bold text-white">
+                  {data?.data[0]?.clan_tag}
+                </p>
+              </div>
             </div>
-            <div className="bg-primary mt-1 grid h-[20%] place-content-center">
-              <p className="mx-auto text-5xl font-bold text-white">
-                {data?.data[0]?.clan_tag}
-              </p>
+            <div className="col-span-5 grid grid-cols-4">
+              {team?.map((player, idx) => (
+                <Player
+                  key={player?.id || idx}
+                  player={player}
+                  className={
+                    idx === team.length - 1 ? "" : "border-primary border-r-2"
+                  }
+                />
+              ))}
             </div>
-          </div>
-          <div className="col-span-5 grid grid-cols-4">
-            {team?.map((player, idx) => (
-              <Player
-                key={player?.id || idx}
-                player={player}
-                className={
-                  idx === team.length - 1 ? "" : "border-primary border-r-2"
-                }
-              />
-            ))}
           </div>
         </div>
       </div>
-    </div>
     </WidgetStage>
   );
 }

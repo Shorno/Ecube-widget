@@ -31,7 +31,7 @@ const PlayerCard = ({ player, showTeamLogo = false, type = "", rank }) => {
           <p className="text-center text-3xl">
             {type === "MATCH" || type === "OVERALL"
               ? player?.damages
-              : player?.total_damage}
+              : player?.damages}
           </p>
         </div>
         <div className="border-primary border-t-2 border-r-2 bg-black">
@@ -41,7 +41,7 @@ const PlayerCard = ({ player, showTeamLogo = false, type = "", rank }) => {
           <p className="text-center text-3xl">
             {type === "MATCH" || type === "OVERALL"
               ? player?.assists
-              : player?.total_assists}
+              : player?.assists}
           </p>
         </div>
         <div className="border-primary border-t-2 border-l-2 bg-black">
