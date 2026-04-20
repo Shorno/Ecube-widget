@@ -11,6 +11,7 @@ import {
 export default function ControllerPage() {
   const [tournamentId, setTournamentId] = useState("");
   const [isSaved, setIsSaved] = useState(false);
+  const [scoreGroupView, setScoreGroupView] = useState("");
   const [activeUrl, setActiveUrl] = useState(undefined);
   const [activeLabel, setActiveLabel] = useState(null);
   const [sendStatus, setSendStatus] = useState("idle");
@@ -22,6 +23,7 @@ export default function ControllerPage() {
     const saved = localStorage.getItem("tournamentId") ?? "";
     setTournamentId(saved);
     setIsSaved(!!saved);
+    setScoreGroupView(localStorage.getItem("scoreGroupView") ?? "");
 
     setOrigin(window.location.origin);
 
@@ -129,6 +131,18 @@ export default function ControllerPage() {
             {sendStatus === "error" && (
               <span className="text-xs font-bold text-red-400">Error ✗</span>
             )}
+
+            <select
+              value={scoreGroupView}
+              onChange={(e) => {
+                setScoreGroupView(e.target.value);
+                localStorage.setItem("scoreGroupView", e.target.value);
+              }}
+              className="border border-gray-600 bg-gray-900 px-2 py-1.5 text-xs text-white outline-none focus:border-blue-500"
+            >
+              <option value="">Score Group: Default</option>
+              <option value="full">Score Group: Full</option>
+            </select>
 
             <input
               type="text"
@@ -299,7 +313,8 @@ export default function ControllerPage() {
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {AFTER_MATCH_WIDGETS.map((w) => {
-              const url = getWidgetPath(w, tid);
+              const extraQuery = w.id === "after-match-score-group" && scoreGroupView ? { view: scoreGroupView } : {};
+              const url = getWidgetPath(w, tid, extraQuery);
               return (
                 <WidgetBtn
                   key={w.id}

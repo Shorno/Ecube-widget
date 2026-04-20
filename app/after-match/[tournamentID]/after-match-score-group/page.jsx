@@ -6,6 +6,7 @@ import TableRow from "@/components/TableRow";
 import Title from "@/components/Title";
 import { useGetAfterMatchScoreGroupQuery } from "@/lib/services/widget-api";
 import { use, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import WidgetStage from "@/components/WidgetStage";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -13,10 +14,14 @@ import gsap from "gsap";
 function AfterMatchScoreGroup({ params }) {
   const { tournamentID } = use(params);
   const { data } = useGetAfterMatchScoreGroupQuery({ tournamentID });
+  const searchParams = useSearchParams();
   const containerRef = useRef(null);
+
   const teams = data?.data || [];
-  const colOne = teams.slice(0, 8);
-  const colTwo = teams.slice(8, 16);
+  const isFull = searchParams.get("view") === "full";
+  const mid = Math.ceil(teams.length / 2);
+  const colOne = isFull ? teams.slice(0, mid) : teams.slice(0, 8);
+  const colTwo = isFull ? teams.slice(mid) : teams.slice(8, 16);
 
   useGSAP(
     () => {

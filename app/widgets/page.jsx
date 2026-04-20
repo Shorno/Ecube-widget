@@ -14,12 +14,14 @@ export default function WidgetsPage() {
   const [tournamentId, setTournamentId] = useState("");
   const [isSaved, setIsSaved] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(null);
+  const [scoreGroupView, setScoreGroupView] = useState("");
 
   useEffect(() => {
     setOrigin(window.location.origin);
     const saved = localStorage.getItem("tournamentId") ?? "";
     setTournamentId(saved);
     setIsSaved(!!saved);
+    setScoreGroupView(localStorage.getItem("scoreGroupView") ?? "");
   }, []);
 
   function copy(url) {
@@ -105,6 +107,27 @@ export default function WidgetsPage() {
           </div>
         </section>
 
+        {/* Score Group View */}
+        <section>
+          <SectionLabel color="blue" title="Score Group View" />
+          <div className="mt-3 flex items-center gap-2">
+            <select
+              value={scoreGroupView}
+              onChange={(e) => {
+                setScoreGroupView(e.target.value);
+                localStorage.setItem("scoreGroupView", e.target.value);
+              }}
+              className="border border-gray-600 bg-gray-950 px-2 py-1.5 text-xs text-white outline-none focus:border-blue-500"
+            >
+              <option value="">Default (8 / 8)</option>
+              <option value="full">Full (split all teams evenly)</option>
+            </select>
+            {scoreGroupView === "full" && (
+              <span className="text-xs font-bold text-blue-400">Full mode active</span>
+            )}
+          </div>
+        </section>
+
         {/* In-game */}
         <section>
           <div className="mb-3 flex items-center gap-3">
@@ -160,7 +183,8 @@ export default function WidgetsPage() {
 
           <div className="space-y-2">
             {AFTER_MATCH_WIDGETS.map((w) => {
-              const path = getWidgetPath(w, tid);
+              const extraQuery = w.id === "after-match-score-group" && scoreGroupView ? { view: scoreGroupView } : {};
+              const path = getWidgetPath(w, tid, extraQuery);
               const url = toDisplayUrl(path, origin);
               return (
                 <UrlRow
