@@ -45,12 +45,22 @@ function AfterMatchScore({ params }) {
         // 3. Both row columns stagger simultaneously — each horizontal pair in sync
         .to(
           ".anim-row-left",
-          { opacity: 1, x: 0, duration: 1.1, stagger: { each: 0.08, from: "start" } },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 1.1,
+            stagger: { each: 0.08, from: "start" },
+          },
           "<0.2",
         )
         .to(
           ".anim-row-right",
-          { opacity: 1, x: 0, duration: 1.1, stagger: { each: 0.08, from: "start" } },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 1.1,
+            stagger: { each: 0.08, from: "start" },
+          },
           "<",
         );
     },
@@ -61,34 +71,46 @@ function AfterMatchScore({ params }) {
 
   return (
     <WidgetStage dataReady={!!data}>
-    <div ref={containerRef}>
-    <Layout top>
-      <div className="anim-title opacity-0">
-        <Title title="Match Standing" stageOnly data={data?.info} />
+      <div ref={containerRef}>
+        <Layout top>
+          <div className="anim-title opacity-0">
+            <Title title="Match Standing" stageOnly data={data?.info} />
+          </div>
+          <div className="wrapper mx-auto grid h-auto! w-full! grid-cols-2 gap-4">
+            <div className="mx-auto w-215 space-y-2">
+              <div className="anim-highlight opacity-0">
+                <HighLightTeam teamOne={teamOne} />
+              </div>
+              <div className="anim-header-left opacity-0">
+                <Tableheader showMatchPlayed={false} />
+              </div>
+              <div className="space-y-2">
+                {colOne.map((team) => (
+                  <TableRow showMatchPlayed={false}
+                    key={team.team_id}
+                    team={team}
+                    className="anim-row-left opacity-0"
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="mx-auto w-215 space-y-2">
+              <div className="anim-header-right opacity-0">
+                <Tableheader showMatchPlayed={false} />
+              </div>
+              <div className="space-y-2">
+                {colTwo.map((team) => (
+                  <TableRow showMatchPlayed={false}
+                    key={team.team_id}
+                    team={team}
+                    className="anim-row-right opacity-0"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </Layout>
       </div>
-      <div className="wrapper mx-auto grid h-auto! w-full! grid-cols-2 gap-4">
-        <div className="mx-auto w-215 space-y-2">
-          <div className="anim-highlight opacity-0">
-            <HighLightTeam teamOne={teamOne} />
-          </div>
-          <div className="anim-header-left opacity-0"><Tableheader /></div>
-          <div className="space-y-2">
-            {colOne.map((team) => (
-              <TableRow key={team.team_id} team={team} className="anim-row-left opacity-0" />
-            ))}
-          </div>
-        </div>
-        <div className="mx-auto w-215 space-y-2">
-          <div className="anim-header-right opacity-0"><Tableheader /></div>
-          <div className="space-y-2">
-            {colTwo.map((team) => (
-              <TableRow key={team.team_id} team={team} className="anim-row-right opacity-0" />
-            ))}
-          </div>
-        </div>
-      </div>
-    </Layout>
-    </div>
     </WidgetStage>
   );
 }
