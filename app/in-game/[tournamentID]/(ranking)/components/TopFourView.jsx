@@ -141,6 +141,7 @@ export function TopFourView({ teams, observingTeamId = null }) {
               />
             )}
             */}
+
             {hasWinProb && (
               <div className="flex h-7 w-full">
                 <div className="flex flex-1 items-center justify-center bg-[#4F63CE] text-xs font-bold text-white">
