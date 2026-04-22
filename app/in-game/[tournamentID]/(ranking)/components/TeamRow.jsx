@@ -42,7 +42,12 @@ export function TeamRow({
       </div>
 
       {/* Team — 3 cols */}
-      <div className={cn("col-span-3 flex items-center gap-2 bg-blue-900 p-2", isObserved && "bg-yellow-700 text-black")}>
+      <div
+        className={cn(
+          "col-span-3 flex items-center gap-2 bg-blue-900 p-2",
+          isObserved && "bg-yellow-700 text-black",
+        )}
+      >
         <Image
           src={entry.team.logo}
           alt={entry.team.name}
@@ -102,13 +107,13 @@ export function TeamRow({
       {/* Blue zone — above observer ring */}
 
       {hasBlueZone && (
-        <div
-          className="pointer-events-none absolute inset-0 z-50"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(147,197,253,0.5) 100%, rgba(59,130,246,0.5) 100%, transparent 100%)",
-          }}
-        />
+      <div
+        className="pointer-events-none absolute inset-0 z-50 animate-pulse ring-2 ring-blue-400 ring-inset"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(147,197,253,0.5) 50%, rgba(59,130,246,0.5) 100%, transparent 100%)",
+        }}
+      />
       )}
     </div>
   );

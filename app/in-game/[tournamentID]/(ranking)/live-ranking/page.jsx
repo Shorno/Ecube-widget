@@ -10,17 +10,17 @@ import { TopFourView } from "../components/TopFourView";
 gsap.registerPlugin(Flip);
 
 const tableHeader = [
-  { label: "Rank",  key: "rank"    },
-  { label: "TEAM",  key: "player"  },
-  { label: "ALIVE", key: "score"   },
-  { label: "PTS",   key: "kills"   },
+  { label: "Rank", key: "rank" },
+  { label: "TEAM", key: "player" },
+  { label: "ALIVE", key: "score" },
+  { label: "PTS", key: "kills" },
   { label: "ELMIS", key: "assists" },
 ];
 
 const stateList = [
-  { label: "ALIVE",      color: "bg-green-500" },
-  { label: "KNOCKED",    color: "bg-red-500"   },
-  { label: "ELIMINATED", color: "bg-gray-500"  },
+  { label: "ALIVE", color: "bg-green-500" },
+  { label: "KNOCKED", color: "bg-red-500" },
+  { label: "ELIMINATED", color: "bg-gray-500" },
 ];
 
 function sortByPoints(data) {
@@ -28,20 +28,20 @@ function sortByPoints(data) {
 }
 
 export default function App() {
-  const [teams,            setTeams]            = useState([]);
-  const [showTopFour,      setShowTopFour]       = useState(false);
-  const [topFourTeams,     setTopFourTeams]      = useState([]);
+  const [teams, setTeams] = useState([]);
+  const [showTopFour, setShowTopFour] = useState(false);
+  const [topFourTeams, setTopFourTeams] = useState([]);
   const wasTopFourRef = useRef(false);
-  const [observingTeamId,  setObservingTeamId]   = useState(null);
-  const [isMatchConnected, setIsMatchConnected]  = useState(false);
+  const [observingTeamId, setObservingTeamId] = useState(null);
+  const [isMatchConnected, setIsMatchConnected] = useState(false);
 
   // Animation refs
-  const containerRef     = useRef(null);
-  const listPanelRef     = useRef(null);
-  const flipStateRef     = useRef(null);
+  const containerRef = useRef(null);
+  const listPanelRef = useRef(null);
+  const flipStateRef = useRef(null);
   const isFirstRenderRef = useRef(true);
-  const isAnimatingRef   = useRef(false);
-  const pendingDataRef   = useRef(null);
+  const isAnimatingRef = useRef(false);
+  const pendingDataRef = useRef(null);
   const applyTeamsDataRef = useRef(null);
 
   const { tournamentID: rawTournamentID } = useParams();
@@ -70,16 +70,22 @@ export default function App() {
 
     const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
     if (!apiBase) {
-      console.warn("LiveRanking: NEXT_PUBLIC_API_BASE_URL is not set — WebSocket skipped");
+      console.warn(
+        "LiveRanking: NEXT_PUBLIC_API_BASE_URL is not set — WebSocket skipped",
+      );
       return;
     }
 
     const wsBase = apiBase.replace(/^https/, "wss").replace(/^http/, "ws");
-    const ws     = new WebSocket(`${wsBase}/tournament?id=${tournamentID}`);
+    const ws = new WebSocket(`${wsBase}/tournament?id=${tournamentID}`);
 
     ws.onmessage = (event) => {
       let parsed;
-      try { parsed = JSON.parse(event.data); } catch { return; }
+      try {
+        parsed = JSON.parse(event.data);
+      } catch {
+        return;
+      }
 
       const { event: eventName, data } = parsed;
 
@@ -111,7 +117,9 @@ export default function App() {
 
     async function fetchRankData() {
       try {
-        const res  = await fetch(`${apiBase}/matches/active-match/rank-data/${tournamentID}`);
+        const res = await fetch(
+          `${apiBase}/matches/active-match/rank-data/${tournamentID}`,
+        );
         if (!res.ok) return;
         const data = await res.json();
         if (!Array.isArray(data)) return;
@@ -160,7 +168,11 @@ export default function App() {
     }
 
     // Transition to top-four — slide list out then swap views
-    if (!wasTopFourRef.current && aliveTeams.length <= 4 && aliveTeams.length > 0) {
+    if (
+      !wasTopFourRef.current &&
+      aliveTeams.length <= 4 &&
+      aliveTeams.length > 0
+    ) {
       wasTopFourRef.current = true;
       const captured = aliveTeams;
 
@@ -192,7 +204,7 @@ export default function App() {
           if (!live) return frozen;
           return {
             ...frozen,
-            players:        live.players,
+            players: live.players,
             winProbability: live.winProbability ?? frozen.winProbability,
           };
         }),
@@ -218,7 +230,10 @@ export default function App() {
       )}
 
       {!showTopFour && teams.length > 0 && (
-        <div ref={listPanelRef} className="fixed right-4 bottom-4 w-full max-w-100">
+        <div
+          ref={listPanelRef}
+          className="fixed right-4 bottom-4 w-full max-w-100"
+        >
           <div className="grid grid-cols-7 border-b border-white bg-linear-to-r from-blue-900 via-blue-400 to-blue-900 text-sm text-white">
             {tableHeader.map((header) => (
               <div
@@ -233,7 +248,10 @@ export default function App() {
             ))}
           </div>
 
-          <div ref={containerRef} className="relative flex flex-col bg-slate-900">
+          <div
+            ref={containerRef}
+            className="relative flex flex-col bg-slate-900"
+          >
             {teams.map((entry, index) => (
               <TeamRow
                 key={entry.team.id}
