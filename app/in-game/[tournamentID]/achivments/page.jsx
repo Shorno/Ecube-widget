@@ -13,7 +13,6 @@ const ALLOWED_EVENTS = [
   "vehicle_elimination",
   "grenade_elimination",
   "FIRST_BLOOD",
-  "PLAYER_ELIMINATION",
   "PLAYER_ACHIEVEMENT",
   "TEAM_ELIMINATION",
 ];
