@@ -19,9 +19,7 @@ function isTeamEliminated(players) {
 
 export function TopFourView({ teams, observingTeamId = null }) {
   const [visibleIds, setVisibleIds] = useState(() =>
-    teams
-      .filter((t) => !isTeamEliminated(t.players))
-      .map((t) => t.team.id),
+    teams.filter((t) => !isTeamEliminated(t.players)).map((t) => t.team.id),
   );
 
   const exitedIds = useRef(new Set());
@@ -55,7 +53,9 @@ export function TopFourView({ teams, observingTeamId = null }) {
       const tl = gsap.timeline({
         onComplete: () => {
           flipStateRef.current = containerRef.current
-            ? Flip.getState(containerRef.current.querySelectorAll(".top-four-card"))
+            ? Flip.getState(
+                containerRef.current.querySelectorAll(".top-four-card"),
+              )
             : null;
           setVisibleIds((prev) => prev.filter((v) => v !== id));
         },
@@ -111,7 +111,7 @@ export function TopFourView({ teams, observingTeamId = null }) {
                   className="shrink-0 rounded object-contain"
                   unoptimized
                 />
-                <span className="truncate text-sm font-bold uppercase text-white">
+                <span className="truncate text-sm font-bold text-white uppercase">
                   {entry.team.name}
                 </span>
               </div>
@@ -131,7 +131,7 @@ export function TopFourView({ teams, observingTeamId = null }) {
               </div>
             </div>
 
-            {hasBlueZone && (
+            {/* {hasBlueZone && (
               <div
                 className="pointer-events-none absolute inset-0 z-50"
                 style={{
@@ -140,7 +140,7 @@ export function TopFourView({ teams, observingTeamId = null }) {
                 }}
               />
             )}
-
+            */}
             {hasWinProb && (
               <div className="flex h-7 w-full">
                 <div className="flex flex-1 items-center justify-center bg-[#4F63CE] text-xs font-bold text-white">
@@ -157,7 +157,7 @@ export function TopFourView({ teams, observingTeamId = null }) {
             )}
 
             {observingTeamId === entry.team.id && (
-              <div className="pointer-events-none absolute inset-0 ring-2 ring-inset ring-yellow-400/80" />
+              <div className="pointer-events-none absolute inset-0 ring-2 ring-yellow-400/80 ring-inset" />
             )}
           </div>
         );
