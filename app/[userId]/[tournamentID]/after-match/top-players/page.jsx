@@ -1,33 +1,9 @@
-"use client";
+import { getUserDesign } from "@/lib/design/get-user-design";
+import { getDesignRegistry } from "@/lib/design/registry";
 
-import Layout from "@/components/layout";
-import PlayerCard from "@/components/PlayerCard";
-import Title from "@/components/Title";
-import { use } from "react";
-import { useGetTopPlayersQuery } from "@/lib/services/widget-api";
-import WidgetStage from "@/components/WidgetStage";
-
-function TopPlayers({ params }) {
-  const { tournamentID } = use(params);
-  const { data }         = useGetTopPlayersQuery({ tournamentID });
-  const team             = data?.data || [];
-
-  if (!data || !data.data) return null;
-
-  return (
-    <WidgetStage dataReady={!!data}>
-      <Layout top>
-        <Title title={"Top Players"} data={data?.game[0]} />
-        <div className="mx-auto mt-16 flex h-127 w-max gap-6 px-16">
-          <div className="grid grid-cols-5 gap-4">
-            {team?.map((player, idx) => (
-              <PlayerCard key={player.id} player={player} type="MATCH" rank={idx + 1} showTeamLogo />
-            ))}
-          </div>
-        </div>
-      </Layout>
-    </WidgetStage>
-  );
+export default async function TopPlayers({ params }) {
+  const { userId, tournamentID } = await params;
+  const variant = await getUserDesign(userId);
+  const { TopPlayers: View } = getDesignRegistry(variant);
+  return <View tournamentID={tournamentID} />;
 }
-
-export default TopPlayers;

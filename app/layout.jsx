@@ -1,6 +1,6 @@
 import { Oswald } from "next/font/google";
 import "./globals.css";
-import StoreProvider from "../components/StoreProvider";
+import StoreProvider from "@/components/common/StoreProvider";
 
 const oswald = Oswald({
   variable: "--font-oswald",

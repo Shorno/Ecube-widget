@@ -1,6 +1,6 @@
 # Plan: Multi-Tenant Widget Platform
 **Created:** 2026-04-25
-**Status:** draft
+**Status:** in-progress
 **Goal:** Multi-tenant broadcast widget system. Each user gets isolated routes (/[userId]/[tournamentId]/...), isolated SSE state, MongoDB-backed user config, CSS-variable theming, and a color config page.
 
 ---

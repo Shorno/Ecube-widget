@@ -1,4 +1,4 @@
-import RampDom from "@/components/RampDom";
+import RampDom from "@/components/widgets/RampDom";
 
 function RampDomPage() {
   return (

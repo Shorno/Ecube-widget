@@ -1,4 +1,4 @@
-import Layout from "@/components/layout";
+import Layout from "@/components/common/Layout";
 import Image from "next/image";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 

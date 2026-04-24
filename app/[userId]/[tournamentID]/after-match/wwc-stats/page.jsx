@@ -1,46 +1,9 @@
-"use client";
-import Layout from "@/components/layout";
-import PlayerCard from "@/components/PlayerCard";
-import Title from "@/components/Title";
-import { use } from "react";
-import { useGetWwcdTeamStatsQuery } from "@/lib/services/widget-api";
-import Image from "next/image";
-import WidgetStage from "@/components/WidgetStage";
+import { getUserDesign } from "@/lib/design/get-user-design";
+import { getDesignRegistry } from "@/lib/design/registry";
 
-function WWCStats({ params }) {
-  const { tournamentID } = use(params);
-  const { data }         = useGetWwcdTeamStatsQuery({ tournamentID });
-  const team             = data?.data?.[0]?.players || [];
-
-  if (!data || !data.data) return null;
-
-  return (
-    <WidgetStage dataReady={!!data}>
-      <Layout top className={""}>
-        <Title title={"WWCD Stats"} data={data?.game[0]} />
-        <div className="mx-auto mt-16 flex h-127 w-max gap-6 px-16">
-          <div className="space-y-8 uppercase">
-            <div className="bg-primary-shade-two mx-auto w-max">
-              <p className="bg-primary-shade-one p-1 text-center text-2xl font-bold text-white">{data?.data[0]?.team_name}</p>
-              <Image priority src={data?.data[0]?.team_image} width={180} height={180} alt="" className="mx-auto" />
-            </div>
-            <Databox title="Eliminations" value={data?.data[0]?.total_kills} />
-            <Databox title="Total Damage" value={data?.data[0]?.total_damage} />
-          </div>
-          <div className="grid grid-cols-4 gap-4">
-            {team?.map((player) => <PlayerCard key={player.id} player={player} />)}
-          </div>
-        </div>
-      </Layout>
-    </WidgetStage>
-  );
+export default async function WWCStats({ params }) {
+  const { userId, tournamentID } = await params;
+  const variant = await getUserDesign(userId);
+  const { WWCStats: View } = getDesignRegistry(variant);
+  return <View tournamentID={tournamentID} />;
 }
-
-export default WWCStats;
-
-const Databox = ({ title, value }) => (
-  <div className="bg-primary relative w-55 px-18 py-8">
-    <div className="bg-primary-shade-one absolute -top-3.75 left-1/2 h-7.5 translate-x-[-50%] p-1 whitespace-nowrap">{title}</div>
-    <p className="text-center text-5xl font-bold text-black">{value}</p>
-  </div>
-);

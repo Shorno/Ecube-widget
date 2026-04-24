@@ -1,22 +1,9 @@
-"use client";
-import { use, useState } from "react";
-import { useGetMvpMatchQuery } from "@/lib/services/widget-api";
-import MVPPage from "@/components/MVPPage";
-import WidgetStage from "@/components/WidgetStage";
+import { getUserDesign } from "@/lib/design/get-user-design";
+import { getDesignRegistry } from "@/lib/design/registry";
 
-function MvpMatch({ params }) {
-  const { tournamentID } = use(params);
-  const { data }         = useGetMvpMatchQuery({ tournamentID });
-  const [stageReady, setStageReady] = useState(false);
-  const mvp = data?.data || [];
-
-  if (!data || !data.data) return null;
-
-  return (
-    <WidgetStage dataReady={!!data} onReady={() => setStageReady(true)}>
-      <MVPPage mvp={mvp} stageReady={stageReady} />
-    </WidgetStage>
-  );
+export default async function MVP({ params }) {
+  const { userId, tournamentID } = await params;
+  const variant = await getUserDesign(userId);
+  const { MVP: View } = getDesignRegistry(variant);
+  return <View tournamentID={tournamentID} />;
 }
-
-export default MvpMatch;

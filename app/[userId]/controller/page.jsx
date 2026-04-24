@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { AFTER_MATCH_WIDGETS, IN_GAME_WIDGETS } from "@/lib/widget-catalog";
+import { AFTER_MATCH_WIDGETS, getWidgetPath } from "@/lib/widget-catalog";
 
 export default function ControllerPage() {
   const { userId } = useParams();
@@ -86,14 +86,10 @@ export default function ControllerPage() {
   }
 
   function getWidgetUrl(widget) {
-    if (widget.path) return widget.path;
-    if (!tid) return null;
-    const extra =
-      widget.id === "after-match-score-group" && scoreGroupView
-        ? `?view=${scoreGroupView}`
-        : "";
-    const section = widget.section === "in-game" ? "in-game" : "after-match";
-    return `/${userId}/${tid}/${section}/${widget.slug}${extra}`;
+    const url = getWidgetPath(widget, tid, userId);
+    if (!url) return null;
+    const extra = widget.id === "after-match-score-group" && scoreGroupView ? `?view=${scoreGroupView}` : "";
+    return `${url}${extra}`;
   }
 
   return (
@@ -225,30 +221,6 @@ export default function ControllerPage() {
             ⬛ Clear Screen
           </button>
         </div>
-
-        <section>
-          <div className="mb-3 flex items-center gap-3">
-            <span className="block h-4 w-1 shrink-0 rounded-sm bg-green-500" />
-            <span className="text-xs font-bold tracking-widest text-green-400 uppercase">In-Game Widgets</span>
-            {!tid && <span className="text-xs text-gray-600">— Save a Tournament ID to enable</span>}
-            <span className="h-px flex-1 bg-gray-700" />
-          </div>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-            {IN_GAME_WIDGETS.map((w) => {
-              const url = getWidgetUrl(w);
-              return (
-                <WidgetBtn
-                  key={w.id}
-                  label={w.label}
-                  color="green"
-                  isActive={activeUrl === url}
-                  disabled={!url}
-                  onClick={url ? () => sendCommand(url, w.label) : undefined}
-                />
-              );
-            })}
-          </div>
-        </section>
 
         <section>
           <div className="mb-3 flex items-center gap-3">
