@@ -22,7 +22,7 @@ function WwcTwo({ params }) {
       gsap.set(".anim-player", { opacity: 0, y: 80 });
       gsap.set(".anim-big-title", { opacity: 0, scale: 0.8 });
       gsap.set(".anim-team-header", { opacity: 0, y: -40 });
-      gsap.set(".anim-databox", { opacity: 1, y: 500 });
+      gsap.set(".anim-databox", { opacity: 0, y: 40 });
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
@@ -54,47 +54,34 @@ function WwcTwo({ params }) {
     <WidgetStage dataReady={!!data}>
       <div ref={containerRef}>
         <Layout>
-          <div className="absolute bottom-16 z-10 h-[calc(100%-64px)] w-full overflow-hidden px-16">
-            <div className="absolute bottom-0 w-[70%] left-1/2 -translate-x-1/2 z-10 ">
-              <div className="anim-team-header relative z-10 mx-auto mb-8 flex max-h-45 w-max opacity-0">
-                <div className="grid aspect-square place-content-center bg-black px-4">
+          <div className="fixed bottom-16 z-10 h-[calc(100%-64px)] w-full overflow-hidden px-16">
+            <div className="absolute bottom-0 w-full">
+              <div className="relative z-10 mx-auto w-[70%]">
+                <div className="relative mx-auto flex h-auto w-full items-center justify-between bg-white">
+                  <p className="p-2 px-10 text-center text-custom-green text-5xl font-bold uppercase">
+                    {data?.data?.team_name}
+                  </p>
+                  <div className="flex gap-3 p-3">
+                    <div className="w-64.5 bg-[#00473C] p-3 text-center text-5xl font-bold uppercase">
+                      {data?.info?.match_name}
+                    </div>
+                    <div className="w-64.5 bg-[#00473C] p-3 text-center text-5xl font-bold uppercase">
+                      {data?.info?.day}
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute -top-46 -left-10 grid aspect-square w-50 place-content-center bg-linear-to-tl from-[#00B194] to-[#00473C]">
                   <Image
                     priority
                     src={data?.data?.team_logoUrl}
                     alt="Team Logo"
                     className="aspect-square"
-                    width={100}
-                    height={100}
-                  />
-                </div>
-                <div className="bg-primary-shade-two grid place-content-center px-24">
-                  <p className="text-5xl font-extrabold">
-                    {data?.data?.team_name}
-                  </p>
-                </div>
-              </div>
-              <div className="relative z-10 grid grid-cols-3 gap-8">
-                <div className="anim-databox opacity-0">
-                  <DataBox
-                    title="Elimanations"
-                    data={data?.data?.total_kills}
-                  />
-                </div>
-                <div className="anim-databox opacity-0">
-                  <DataBox
-                    title="Total Damage"
-                    data={data?.data?.total_damages}
-                  />
-                </div>
-                <div className="anim-databox opacity-0">
-                  <DataBox
-                    title="Total Points"
-                    data={data?.data?.totalPoints}
+                    width={180}
+                    height={180}
                   />
                 </div>
               </div>
             </div>
-
             {/* player images */}
             <div className="absolute bottom-0 left-1/2 z-5 flex -translate-x-1/2">
               {team?.map((player, index) => (
@@ -116,11 +103,11 @@ function WwcTwo({ params }) {
                   />
                 </div>
               ))}
-              <p className="anim-big-title text-primary absolute -top-10 left-1/2 -z-20 w-max -translate-x-1/2 text-center text-[220px] leading-70 font-extrabold uppercase opacity-0">
-                <span className="stroked-text">Winner </span>
+              <p className="anim-big-title absolute -top-25 left-1/2 -z-20 w-max -translate-x-1/2 text-center text-[220px] leading-70 font-extrabold text-white uppercase opacity-0">
+                <span className="">Winner </span>
                 Winner
                 <br />
-                Chicken <span className="stroked-text">Dinner </span>
+                Chicken <span className="">Dinner </span>
               </p>
             </div>
           </div>

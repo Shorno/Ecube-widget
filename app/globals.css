@@ -6,6 +6,8 @@
   --primary: #a54e26;
   --primary-shade-one: #008e88;
   --primary-shade-two: #007570;
+  --custom-yellow: #ffdd75;
+  --custom-green: #00473c;
 }
 
 @theme inline {
@@ -14,6 +16,8 @@
   --color-primary: var(--primary);
   --color-primary-shade-one: var(--primary-shade-one);
   --color-primary-shade-two: var(--primary-shade-two);
+  --color-custom-yellow: var(--custom-yellow);
+  --color-custom-green: var(--custom-green);
   --font-sans: var(--font-oswald);
 }
 
@@ -24,6 +28,8 @@
     --primary: #26a599;
     --primary-shade-one: #008e88;
     --primary-shade-two: #007570;
+    --custom-yellow: #ffdd75;
+    --custom-green: #00473c;
   }
 }
 
