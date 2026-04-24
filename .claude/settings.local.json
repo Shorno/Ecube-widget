@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(mkdir -p \"e:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done\" \"e:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/todos/done\")",
+      "Bash(mv \"e:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-04-25_fix-animation-timing.md\" \"e:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
+      "Bash(mv \"e:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/todos/fix-animation-timing_steps.md\" \"e:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/todos/done/\")"
     ]
   }
 }

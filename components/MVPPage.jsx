@@ -11,12 +11,12 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
-const MVPPage = ({ mvp, isGroup = false }) => {
+const MVPPage = ({ mvp, isGroup = false, stageReady = false }) => {
   const containerRef = useRef(null);
 
   useGSAP(
     () => {
-      if (!mvp) return;
+      if (!mvp || !stageReady) return;
 
       // gsap.set() is synchronous — applies instantly with no RAF frame delay.
       // This pre-positions every element at its starting state before the first
@@ -77,7 +77,7 @@ const MVPPage = ({ mvp, isGroup = false }) => {
           "<", // <-- Tweak here
         );
     },
-    { scope: containerRef, dependencies: [mvp] },
+    { scope: containerRef, dependencies: [mvp, stageReady] },
   );
 
   return (

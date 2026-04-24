@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useRef } from "react";
+import { use, useRef, useState } from "react";
 import HighLightTeam from "@/components/HighLightTeam";
 import Layout from "@/components/layout";
 import Tableheader from "@/components/Tableheader";
@@ -15,13 +15,14 @@ function AfterMatchScore({ params }) {
   const { tournamentID } = use(params);
   const { data } = useGetAfterMatchScoreQuery({ tournamentID });
   const containerRef = useRef(null);
+  const [stageReady, setStageReady] = useState(false);
   const teamOne = data?.data?.[0] || {};
   const colOne = data?.data?.slice(1, 7) || [];
   const colTwo = data?.data?.slice(7, 16) || [];
 
   useGSAP(
     () => {
-      if (!data || !containerRef.current) return;
+      if (!data || !stageReady || !containerRef.current) return;
 
       gsap.set(".anim-title", { opacity: 0, y: -40 });
       // HighlightTeam animates with the headers — not part of the row stagger
@@ -54,13 +55,13 @@ function AfterMatchScore({ params }) {
           "<",
         );
     },
-    { scope: containerRef, dependencies: [data] },
+    { scope: containerRef, dependencies: [data, stageReady] },
   );
 
   if (!data || !data.data) return null;
 
   return (
-    <WidgetStage dataReady={!!data}>
+    <WidgetStage dataReady={!!data} onReady={() => setStageReady(true)}>
     <div ref={containerRef}>
     <Layout top>
       <div className="anim-title opacity-0">

@@ -1,3 +1,107 @@
+# Project: PUBG Esports Widget Platform
+
+A Next.js 16 broadcast widget system for PUBG esports tournaments. Operators control which widget is live via `/controller`; OBS captures `/display` (an SSE-driven iframe). Widgets are animated with GSAP and data-fetched via RTK Query.
+
+## Project Tree
+
+```
+pubg-widget/
+├── app/
+│   ├── globals.css                        # CSS vars (--primary, --primary-shade-one, etc.) + Tailwind base
+│   ├── layout.jsx                         # Root layout: fonts (Oswald), StoreProvider, body
+│   ├── page.jsx                           # Redirects / → /controller
+│   ├── api/
+│   │   ├── sse/route.js                   # SSE endpoint — streams widget-change events to /display
+│   │   ├── sse/command/route.js           # POST { url, label } → broadcasts to all SSE clients
+│   │   ├── sse/state/route.js             # GET current widget state (for reconnect replay)
+│   │   ├── widget-status/route.js         # POST image-load errors from widgets → broadcasts to /controller
+│   │   ├── getcircleinfo/route.js         # Proxy → PCOB backend (circle overlay data)
+│   │   ├── getgameglobalinfo/route.js     # Proxy → PCOB
+│   │   └── gettotalplayerlist/route.js    # Proxy → PCOB
+│   ├── controller/page.jsx                # Operator panel: save tournamentId, send widget commands
+│   ├── display/page.jsx                   # OBS browser source: SSE listener + iframe renderer
+│   ├── widgets/page.jsx                   # Index of all direct widget URLs
+│   ├── after-match/[tournamentID]/
+│   │   ├── after-match-score/page.jsx     # Two-col team standings, GSAP slide-in
+│   │   ├── after-match-score-group/page.jsx # Grouped standings (?view=full query)
+│   │   ├── matchsummary/page.jsx          # 6 stat boxes, clip-path wipe + count-up
+│   │   ├── mvp-match/page.jsx             # Match MVP showcase
+│   │   ├── mvp-group/page.jsx             # Tournament MVP
+│   │   ├── head-to-head/page.jsx          # Top-2 teams comparison
+│   │   ├── top-player-match/page.jsx      # Top-5 players (single match)
+│   │   ├── top-players-group/page.jsx     # Top-5 players (tournament)
+│   │   ├── wwcd/page.jsx                  # WWCD display
+│   │   ├── wwcdstats/page.jsx             # WWCD statistics
+│   │   └── mythical/
+│   │       ├── after-match-score-group/page.jsx  # Mythical variant: yellow/green theme
+│   │       └── wwcd/page.jsx
+│   └── in-game/[tournamentID]/
+│       ├── live-ranking/page.jsx          # Real-time rank table, GSAP Flip plugin
+│       ├── match-overall-live-ranking/page.jsx
+│       ├── topfour/page.jsx               # Top-4 alive teams view transition
+│       ├── elmis/page.jsx                 # Elimination feed
+│       ├── firstblood/page.jsx            # First blood notification
+│       ├── rampdom/page.jsx               # Team elimination dashboard
+│       └── achivments/page.jsx            # Event cards queue (WebSocket consumer)
+├── components/
+│   ├── WidgetStage.jsx                    # Keeps widget opacity-0 until all <img> load
+│   ├── TableRow.jsx                       # Team standings row (position, name, stats)
+│   ├── Tableheader.jsx                    # Column headers (rank, team, pts, kills, total)
+│   ├── Title.jsx                          # Tournament title + stage/day info
+│   ├── HighLightTeam.jsx                  # Winner showcase (4 player images + team logo)
+│   ├── MVPPage.jsx                        # Full-screen MVP reveal with GSAP orchestration
+│   ├── MVPStats.jsx                       # MVP stat boxes
+│   ├── MVPStatsIdentity.jsx               # MVP name + team card
+│   ├── PlayerCard.jsx                     # Individual player stat card
+│   ├── RampDom.jsx                        # Team elimination tracker
+│   ├── layout.jsx                         # Full-screen wrapper (h-screen w-screen, overflow-hidden)
+│   └── StoreProvider.jsx                  # Redux Provider (singleton store)
+├── hooks/
+│   └── useWidgetReady.js                  # Scans <img> subtree; resolves when all loaded
+├── lib/
+│   ├── redux/
+│   │   ├── store.js                       # configureStore with 3 RTK Query middlewares
+│   │   ├── rootReducer.js                 # Combines all slices
+│   │   └── hooks.js                       # useAppDispatch, useAppSelector
+│   ├── services/
+│   │   ├── widget-api/index.js            # RTK Query: /vmix/{tid}/* endpoints (5s cache)
+│   │   ├── api/index.js                   # RTK Query: generic endpoints (5min cache)
+│   │   └── pcob-api/index.js              # RTK Query: PCOB base (no endpoints yet)
+│   ├── sse-store.js                       # Server-side widget state: currentUrl, clients Set, broadcast()
+│   ├── utils.js                           # cn() — Tailwind + clsx merge
+│   └── widget-catalog.js                  # Widget definitions (id, label, path) + getWidgetPath()
+├── utils/
+│   ├── getCircleInfo.js
+│   ├── getGameGlobalInfo.js
+│   └── getPlayerMapdata.js
+├── next.config.js                         # React Compiler on, image domains, /api/proxy rewrite
+├── jsconfig.json                          # @/* path alias
+└── .claude/
+    ├── CLAUDE.md                          # This file
+    └── plans/
+        └── multi-tenant-platform.md       # Active plan: multi-tenant + design system + animation fix
+```
+
+## Key Patterns
+
+- **SSE widget control**: `/controller` POSTs to `/api/sse/command` → `sse-store.js` broadcasts → `/display` receives → iframe re-mounts with new `key`
+- **Animation gating**: Each widget page uses `useGSAP({ dependencies: [data] })` with `gsap.set()` pre-setting opacity-0, then `gsap.timeline()` animating in. `WidgetStage` hides the container until images load.
+- **Theming**: CSS variables in `globals.css`, consumed via Tailwind utilities (`bg-primary`, `text-primary-shade-one`). Mythical variant currently uses `if/else` on a `mythical` prop — being replaced by design catalog.
+- **Data fetching**: RTK Query via `useGetAfterMatchScoreQuery({ tournamentID })` etc. No manual `useEffect` for data.
+- **WebSocket**: Live ranking and achievements pages open a WebSocket to `/tournament?id={tournamentID}`.
+
+## Environment Variables
+
+```
+NEXT_PUBLIC_API_BASE_URL   # vMix widget API base URL
+NEXT_PUBLIC_BASE_URL       # Generic API base URL
+NEXT_PUBLIC_PCOB_URL       # PCOB backend base URL
+NEXT_PUBLIC_HIDE_ON_IMAGE_ERROR  # "false" = show widget even on broken images
+REDIRECT_TO_RENDER         # If set, redirects root to Render.com deployment
+```
+
+---
+
 # Identity
 
 I'm a full-stack developer working primarily with the Node.js/React ecosystem.

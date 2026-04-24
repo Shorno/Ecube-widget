@@ -5,7 +5,7 @@ import Tableheader from "@/components/Tableheader";
 import TableRow from "@/components/TableRow";
 import Title from "@/components/Title";
 import { useGetAfterMatchScoreGroupQuery } from "@/lib/services/widget-api";
-import { use, useRef } from "react";
+import { use, useRef, useState } from "react";
 import WidgetStage from "@/components/WidgetStage";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -14,13 +14,14 @@ function AfterMatchScoreGroup({ params }) {
   const { tournamentID } = use(params);
   const { data } = useGetAfterMatchScoreGroupQuery({ tournamentID });
   const containerRef = useRef(null);
+  const [stageReady, setStageReady] = useState(false);
   const teams = data?.data || [];
   const colOne = teams.slice(0, 8);
   const colTwo = teams.slice(8, 16);
 
   useGSAP(
     () => {
-      if (!data || !containerRef.current) return;
+      if (!data || !stageReady || !containerRef.current) return;
 
       gsap.set(".anim-title", { opacity: 0, y: -40 });
       gsap.set(".anim-header-left", { opacity: 0, x: -100 });
@@ -49,13 +50,13 @@ function AfterMatchScoreGroup({ params }) {
           "<", // same time as left column
         );
     },
-    { scope: containerRef, dependencies: [data] },
+    { scope: containerRef, dependencies: [data, stageReady] },
   );
 
   if (!data || !data.data) return null;
 
   return (
-    <WidgetStage dataReady={!!data}>
+    <WidgetStage dataReady={!!data} onReady={() => setStageReady(true)}>
     <div ref={containerRef}>
     <Layout top>
       <div className="anim-title opacity-0">

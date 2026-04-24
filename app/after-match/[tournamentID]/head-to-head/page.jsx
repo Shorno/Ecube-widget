@@ -1,7 +1,7 @@
 "use client";
 import Layout from "@/components/layout";
 import Title from "@/components/Title";
-import { use, useRef } from "react";
+import { use, useRef, useState } from "react";
 import { useGetHeadToHeadQuery } from "@/lib/services/widget-api";
 import Image from "next/image";
 import WidgetStage from "@/components/WidgetStage";
@@ -20,6 +20,7 @@ function HeadToHead({ params }) {
   const { tournamentID } = use(params);
   const { data } = useGetHeadToHeadQuery({ tournamentID });
   const containerRef = useRef(null);
+  const [stageReady, setStageReady] = useState(false);
   const getMaxSurvivalTime = (team) => {
     const players = team?.players ?? [];
     if (!players.length) return null;
@@ -48,7 +49,7 @@ function HeadToHead({ params }) {
 
   useGSAP(
     () => {
-      if (!data || !containerRef.current) return;
+      if (!data || !stageReady || !containerRef.current) return;
 
       gsap.set(".anim-title", { opacity: 0, y: -30 });
       gsap.set(".anim-team-left", { opacity: 0, x: -60 });
@@ -76,13 +77,13 @@ function HeadToHead({ params }) {
           "<0.2",
         );
     },
-    { scope: containerRef, dependencies: [data] },
+    { scope: containerRef, dependencies: [data, stageReady] },
   );
 
   if (!data || !data.data) return null;
 
   return (
-    <WidgetStage dataReady={!!data}>
+    <WidgetStage dataReady={!!data} onReady={() => setStageReady(true)}>
     <div ref={containerRef}>
     <Layout top>
       <div className="anim-title opacity-0">
