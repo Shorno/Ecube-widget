@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import User from "@/lib/db/models/User";
 
-const EXTERNAL_API = process.env.NEXT_PUBLIC_API_BASE_URL;
+const EXTERNAL_API = process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function POST(request) {
   let body;

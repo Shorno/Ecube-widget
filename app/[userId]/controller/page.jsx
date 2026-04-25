@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { AFTER_MATCH_WIDGETS, getWidgetPath } from "@/lib/widget-catalog";
 
 export default function ControllerPage() {
   const { userId } = useParams();
+  const router = useRouter();
 
   const [tournamentId, setTournamentId] = useState("");
   const [isSaved, setIsSaved]           = useState(false);
@@ -155,6 +156,16 @@ export default function ControllerPage() {
             >
               Theme
             </Link>
+
+            <button
+              onClick={async () => {
+                await fetch("/api/auth/logout", { method: "POST" });
+                router.push("/login");
+              }}
+              className="border border-gray-700 px-3 py-1.5 text-xs font-bold tracking-wider text-gray-500 uppercase hover:border-red-700 hover:text-red-400"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </header>

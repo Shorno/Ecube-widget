@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-const EXTERNAL_API = process.env.NEXT_PUBLIC_API_BASE_URL;
+const EXTERNAL_API = process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function POST() {
   const cookieStore = await cookies();
