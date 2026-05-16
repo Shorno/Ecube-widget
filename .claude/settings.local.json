@@ -6,7 +6,14 @@
       "Bash(mv \"e:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-04-25_fix-animation-timing.md\" \"e:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
       "Bash(mv \"e:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/todos/fix-animation-timing_steps.md\" \"e:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/todos/done/\")",
       "Bash(cat)",
-      "Bash(curl -s http://localhost:3001/api/admin/seed-designs)"
+      "Bash(curl -s http://localhost:3001/api/admin/seed-designs)",
+      "Bash(not exist *)",
+      "Bash(New-Item -ItemType Directory -Force -Path \"E:\\\\E-Cube-Projects\\\\Effinity-pubg\\\\pubg-widget\\\\.claude\\\\plans\")",
+      "Bash(Out-Null)",
+      "Bash(awk '{print $2}')",
+      "Bash(xargs '-I{}' sh -c ' *)",
+      "Bash(python3 -c \"import sys,json; [print\\(json.dumps\\(json.loads\\(l\\), indent=2\\)[:500]\\) for l in sys.stdin]\")",
+      "Bash(python3 *)"
     ]
   }
 }

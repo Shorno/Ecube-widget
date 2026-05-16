@@ -15,7 +15,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${oswald.variable} bg-transparent antialiased`}>
+      <body className={`${oswald.variable} bg-transparent antialiased`} suppressHydrationWarning>
         <StoreProvider>{children}</StoreProvider>
       </body>
     </html>

@@ -7,7 +7,12 @@
       "Bash(npm install *)",
       "Bash(npm run build*)",
       "Bash(npm run dev*)",
-      "Bash(rm -rf *)"
+      "Bash(rm -rf *)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(docker compose ps)",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "WebFetch(*)",
+      "WebSearch(*)"
     ]
   }
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { broadcastWidgetStatus } from "@/lib/sse-store";
+import { broadcastWidgetStatus } from "@/lib/sse/store";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +17,9 @@ export async function POST(request) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 
-  broadcastWidgetStatus(widgetUrl, failedImages);
+  // widgetUrl is the widget's pathname: /{tournamentId}/after-match/...
+  const tournamentId = widgetUrl.split("/")[1] ?? "";
+  broadcastWidgetStatus(tournamentId, widgetUrl, failedImages);
 
   return NextResponse.json({ ok: true });
 }
