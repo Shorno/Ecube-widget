@@ -1,11 +1,27 @@
-import { Oswald } from "next/font/google";
+import {
+  Oswald,
+  Geist,
+  Rajdhani,
+  Barlow_Condensed,
+  Bebas_Neue,
+  Exo_2,
+  Russo_One,
+} from "next/font/google";
 import "./globals.css";
 import StoreProvider from "@/components/common/StoreProvider";
+import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
 
-const oswald = Oswald({
-  variable: "--font-oswald",
-  subsets: ["latin"],
-});
+// UI font (admin/settings/controller)
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+
+// Widget fonts — all loaded globally so per-user CSS vars resolve at runtime
+const oswald         = Oswald({         subsets: ["latin"], variable: "--font-oswald",           weight: ["400","500","600","700"] });
+const rajdhani       = Rajdhani({       subsets: ["latin"], variable: "--font-rajdhani",         weight: ["400","500","600","700"] });
+const barlowCond     = Barlow_Condensed({ subsets: ["latin"], variable: "--font-barlow-condensed", weight: ["400","500","600","700"] });
+const bebasNeue      = Bebas_Neue({     subsets: ["latin"], variable: "--font-bebas-neue",       weight: ["400"] });
+const exo2           = Exo_2({          subsets: ["latin"], variable: "--font-exo-2",            weight: ["400","500","600","700"] });
+const russoOne       = Russo_One({      subsets: ["latin"], variable: "--font-russo-one",        weight: ["400"] });
 
 export const metadata = {
   title: "PUBG WIDGET",
@@ -13,10 +29,21 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const fontVars = [
+    geist.variable,
+    oswald.variable,
+    rajdhani.variable,
+    barlowCond.variable,
+    bebasNeue.variable,
+    exo2.variable,
+    russoOne.variable,
+  ].join(" ");
+
   return (
-    <html lang="en">
-      <body className={`${oswald.variable} bg-transparent antialiased`} suppressHydrationWarning>
+    <html lang="en" className={cn("font-sans", fontVars)}>
+      <body className={cn(oswald.variable, "bg-transparent antialiased")} suppressHydrationWarning>
         <StoreProvider>{children}</StoreProvider>
+        <Toaster />
       </body>
     </html>
   );

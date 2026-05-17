@@ -42,3 +42,9 @@ next-env.d.ts
 
 # map-exe standalone build (separate sub-project)
 /map-exe/
+
+# Playwright test artifacts
+/.playwright-mcp/
+/playwright-report/
+/test-results/
+playwright.config.*

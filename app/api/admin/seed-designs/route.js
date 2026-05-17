@@ -1,21 +1,30 @@
-// ONE-TIME SEED ROUTE — delete this file after running.
-// Hit GET /api/admin/seed-designs once to populate DESIGN_REGISTRY collection.
+// Hit GET /api/admin/seed-designs after each deploy that adds new design bundles.
+// Upserts any BUNDLE_MAP key not yet in DESIGN_REGISTRY with safe defaults.
+// Existing documents are NOT overwritten — labels/flags set in the DB are preserved.
 
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import DesignRegistry from "@/lib/db/models/DesignRegistry";
+import { requireAdmin } from "@/lib/auth/session";
 
-const DESIGNS = [
-  { _id: "default",  bundle: "default",  label: "Default Theme",  active: true },
-  { _id: "mythical", bundle: "mythical", label: "Mythical Theme",  active: false },
+// Keep in sync with BUNDLE_MAP in lib/design/registry.js
+const KNOWN_DESIGNS = [
+  { _id: "default",  bundle: "default",  label: "Default",  isExclusive: false },
+  { _id: "mythical", bundle: "mythical", label: "Mythical", isExclusive: false },
+  // Add new designs here as you create their folders
 ];
 
 export async function GET() {
+  await requireAdmin();
   await connectDB();
 
   const results = [];
-  for (const design of DESIGNS) {
-    await DesignRegistry.findByIdAndUpdate(design._id, design, { upsert: true, new: true });
+  for (const design of KNOWN_DESIGNS) {
+    await DesignRegistry.findByIdAndUpdate(
+      design._id,
+      { $setOnInsert: { ...design, active: true, description: "", assignedTo: [] } },
+      { upsert: true },
+    );
     results.push(design._id);
   }
 

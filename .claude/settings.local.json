@@ -13,7 +13,26 @@
       "Bash(awk '{print $2}')",
       "Bash(xargs '-I{}' sh -c ' *)",
       "Bash(python3 -c \"import sys,json; [print\\(json.dumps\\(json.loads\\(l\\), indent=2\\)[:500]\\) for l in sys.stdin]\")",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(npx shadcn@latest init --yes)",
+      "Bash(npx shadcn@latest init -d)",
+      "Bash(npx shadcn@latest add input label card badge table dialog dropdown-menu separator sonner --yes)",
+      "Bash(Start-Sleep -Seconds 8)",
+      "Bash(Invoke-WebRequest -Uri http://localhost:3000 -UseBasicParsing -TimeoutSec 5)",
+      "Bash(Select-Object -ExpandProperty StatusCode)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_fill_form",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "Bash(npx shadcn@latest add switch alert-dialog --yes)",
+      "mcp__plugin_playwright_playwright__browser_type",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "Bash(npx shadcn@latest add calendar popover --yes)",
+      "Skill(architect)",
+      "Bash(npx shadcn@latest add select --yes)",
+      "Bash(npx shadcn@latest add scroll-area --yes)"
     ]
   }
 }
