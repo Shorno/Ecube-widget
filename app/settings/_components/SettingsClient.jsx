@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -45,6 +45,7 @@ function toHex(val) {
 }
 
 export default function SettingsClient({
+  userId,
   variant: initialVariant,
   font: initialFont,
   savedColors,
@@ -73,8 +74,22 @@ export default function SettingsClient({
   // null = global scope; a tid string = tournament scope
   const [scope, setScope] = useState(null);
 
-  const [saving, setSaving]     = useState(false);
+  const [saving, setSaving]         = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
+
+  // Custom themes — persisted in localStorage per user
+  const CUSTOM_KEY = `effinity-custom-themes-${userId}`;
+  const [customThemes, setCustomThemes] = useState([]);
+  const [newThemeName, setNewThemeName] = useState("");
+
+  // localStorage is client-only, load after mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(CUSTOM_KEY);
+      if (raw) setCustomThemes(JSON.parse(raw));
+    } catch {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Derived values for current scope ──────────────────────────────────────
   const scopedVariant = scope ? (tournamentDesigns[scope] ?? "") : activeVariant;
@@ -148,6 +163,29 @@ export default function SettingsClient({
     }
   }
 
+  function saveCustomTheme() {
+    const name = newThemeName.trim();
+    if (!name) return;
+    const c = scopedColors;
+    const theme = {
+      key:      `custom-${Date.now()}`,
+      label:    name,
+      swatches: [c.primary?.DEFAULT, c.secondary?.DEFAULT, c.background].filter(Boolean),
+      colors:   structuredClone(c),
+    };
+    const next = [...customThemes, theme];
+    setCustomThemes(next);
+    localStorage.setItem(CUSTOM_KEY, JSON.stringify(next));
+    setNewThemeName("");
+    toast.success(`Theme "${name}" saved.`);
+  }
+
+  function deleteCustomTheme(key) {
+    const next = customThemes.filter((t) => t.key !== key);
+    setCustomThemes(next);
+    localStorage.setItem(CUSTOM_KEY, JSON.stringify(next));
+  }
+
   function clearTournamentOverrides(tid) {
     setTournamentDesigns((prev) => { const n = { ...prev }; delete n[tid]; return n; });
     setTournamentColors((prev)  => { const n = { ...prev }; delete n[tid]; return n; });
@@ -182,8 +220,11 @@ export default function SettingsClient({
         }),
       });
       const data = await res.json();
-      if (res.ok) toast.success("Saved — reload your OBS sources to apply.", { id });
-      else        toast.error(data.error ?? "Save failed", { id });
+      if (res.ok) {
+        toast.success("Saved — reload your OBS sources to apply.", { id });
+      } else {
+        toast.error(data.error ?? "Save failed", { id });
+      }
     } catch {
       toast.error("Network error", { id });
     } finally {
@@ -225,7 +266,7 @@ export default function SettingsClient({
         {/* Tournament scope picker — only shown when user has tournaments */}
         {hasTournaments && (
           <div className="flex items-center justify-center gap-2 border-t border-gray-800/60 px-6 py-2.5">
-            <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-gray-600">Scope:</span>
+            <span className="shrink-0 text-sm font-bold uppercase tracking-widest text-gray-400">Scope:</span>
             <div className="flex flex-wrap items-center justify-center gap-1.5">
               <ScopeTab
                 label="All Tournaments"
@@ -303,7 +344,7 @@ export default function SettingsClient({
                         ].join(" ")}>
                         <div>
                           <p className={["text-sm font-semibold", (isExplicit || isActive) ? "text-violet-300" : isInherited ? "text-gray-300" : "text-white"].join(" ")}>{d}</p>
-                          <p className="font-mono text-[10px] text-gray-600">{d}</p>
+                          <p className="text-xs text-gray-600">{d}</p>
                         </div>
                         {isExplicit && <Badge variant="outline" className="border-violet-600/60 text-[11px] text-violet-400">Active</Badge>}
                         {isInherited && <Badge variant="outline" className="border-gray-600 text-[11px] text-gray-500">Inherited</Badge>}
@@ -356,59 +397,87 @@ export default function SettingsClient({
 
         {/* RIGHT — Themes + Colors */}
         <ScrollArea className="flex-1">
-          <div className="max-w-2xl space-y-5 p-5">
+          <div className="space-y-5 p-5">
 
             {/* Quick themes */}
-            {predefinedThemes.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
-                  Quick Themes {scopeLabel ? <span className="normal-case text-amber-500/70">({scopeLabel})</span> : null}
+            <div className="space-y-4">
+              <div>
+                <p className="mb-1 text-xs font-bold uppercase tracking-widest text-gray-500">
+                  Quick Themes {scopeLabel ? <span className="normal-case text-amber-500/70">— {scopeLabel}</span> : null}
                 </p>
-                <p className="text-xs text-gray-500">Click to fill colors for the selected scope. Press Save to apply.</p>
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                  {predefinedThemes.map((theme) => (
-                    <button key={theme.key}
-                      onClick={() => applyTheme(theme.colors)}
-                      className="flex flex-col gap-2 rounded border border-gray-700 bg-gray-900/60 p-3 text-left transition-all hover:border-gray-500 hover:bg-gray-800/60">
-                      <div className="flex gap-1">
-                        {theme.swatches.map((c, i) => (
-                          <div key={i} className="h-4 w-4 shrink-0 rounded-sm border border-gray-700/50"
-                            style={{ backgroundColor: c }} />
-                        ))}
-                      </div>
-                      <p className="text-xs font-medium leading-tight text-gray-300">{theme.label}</p>
-                    </button>
-                  ))}
+                <p className="mb-2 text-xs text-gray-500">Click to apply colors to the current scope.</p>
+                {predefinedThemes.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                    {predefinedThemes.map((theme) => (
+                      <ThemeCard key={theme.key} theme={theme} onApply={() => applyTheme(theme.colors)} />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* My Themes */}
+              <div>
+                <p className="mb-2 text-xs font-bold uppercase tracking-widest text-gray-500">My Themes</p>
+                {customThemes.length > 0 ? (
+                  <div className="mb-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
+                    {customThemes.map((theme) => (
+                      <ThemeCard key={theme.key} theme={theme} onApply={() => applyTheme(theme.colors)}
+                        onDelete={() => deleteCustomTheme(theme.key)} />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mb-2 text-xs text-gray-600">No saved themes yet. Configure colors below and save.</p>
+                )}
+                {/* Save current as theme */}
+                <div className="flex gap-2">
+                  <Input
+                    value={newThemeName}
+                    onChange={(e) => setNewThemeName(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); saveCustomTheme(); } }}
+                    placeholder="Theme name…"
+                    className="h-8 flex-1 border-gray-700 bg-gray-800 text-sm text-white placeholder:text-gray-600"
+                  />
+                  <Button
+                    onClick={saveCustomTheme}
+                    disabled={!newThemeName.trim()}
+                    className="h-8 shrink-0 bg-gray-700 px-3 text-xs font-medium text-white hover:bg-gray-600 disabled:opacity-40"
+                  >
+                    Save current
+                  </Button>
                 </div>
               </div>
-            )}
+            </div>
 
-            {/* Color groups */}
-            <ColorGroup title="Primary" path={["primary"]}
-              value={scopedColors.primary} onChange={setColor}
-              fields={["DEFAULT","background","border","dark"]}
-              labels={["Default","Background","Border","Dark"]}
-            />
-            <ColorGroup title="Secondary" path={["secondary"]}
-              value={scopedColors.secondary} onChange={setColor}
-              fields={["DEFAULT","background","border","dark"]}
-              labels={["Default","Background","Border","Dark"]}
-            />
-            <ColorGroup title="Status" path={["status"]}
-              value={scopedColors.status} onChange={setColor}
-              fields={["alive","knocked","dead"]}
-              labels={["Alive","Knocked","Dead"]}
-            />
-            <ColorGroup title="Global" path={[]}
-              value={{ background: scopedColors.background, text: scopedColors.text, gradStart: scopedColors.gradient?.start, gradEnd: scopedColors.gradient?.end }}
-              onChange={(path, v) => {
-                if (path[0] === "gradStart") setColor(["gradient","start"], v);
-                else if (path[0] === "gradEnd") setColor(["gradient","end"], v);
-                else setColor(path, v);
-              }}
-              fields={["background","text","gradStart","gradEnd"]}
-              labels={["Background","Text","Gradient Start","Gradient End"]}
-            />
+            {/* Color groups — Primary & Secondary side by side */}
+            <div className="grid grid-cols-2 gap-3">
+              <ColorGroup title="Primary" path={["primary"]}
+                value={scopedColors.primary} onChange={setColor}
+                fields={["DEFAULT","background","border","dark"]}
+                labels={["Default","Background","Border","Dark"]}
+              />
+              <ColorGroup title="Secondary" path={["secondary"]}
+                value={scopedColors.secondary} onChange={setColor}
+                fields={["DEFAULT","background","border","dark"]}
+                labels={["Default","Background","Border","Dark"]}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <ColorGroup title="Status" path={["status"]}
+                value={scopedColors.status} onChange={setColor}
+                fields={["alive","knocked","dead"]}
+                labels={["Alive","Knocked","Dead"]}
+              />
+              <ColorGroup title="Global" path={[]}
+                value={{ background: scopedColors.background, text: scopedColors.text, gradStart: scopedColors.gradient?.start, gradEnd: scopedColors.gradient?.end }}
+                onChange={(path, v) => {
+                  if (path[0] === "gradStart") setColor(["gradient","start"], v);
+                  else if (path[0] === "gradEnd") setColor(["gradient","end"], v);
+                  else setColor(path, v);
+                }}
+                fields={["background","text","gradStart","gradEnd"]}
+                labels={["Background","Text","Gradient Start","Gradient End"]}
+              />
+            </div>
 
             <div className="flex justify-end pb-2">
               <button onClick={resetColors}
@@ -442,19 +511,44 @@ export default function SettingsClient({
   );
 }
 
+function ThemeCard({ theme, onApply, onDelete }) {
+  return (
+    <div className="group relative flex flex-col gap-2 rounded border border-gray-700 bg-gray-900/60 p-3 transition-all hover:border-gray-500 hover:bg-gray-800/60">
+      <button onClick={onApply} className="flex flex-col gap-2 text-left">
+        <div className="flex gap-1">
+          {theme.swatches.map((c, i) => (
+            <div key={i} className="h-4 w-4 shrink-0 rounded-sm border border-gray-700/50"
+              style={{ backgroundColor: c }} />
+          ))}
+        </div>
+        <p className="text-xs font-medium leading-tight text-gray-300">{theme.label}</p>
+      </button>
+      {onDelete && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onDelete(); }}
+          className="absolute right-1.5 top-1.5 hidden rounded p-0.5 text-gray-600 hover:text-red-400 group-hover:block"
+          title="Delete"
+        >
+          ×
+        </button>
+      )}
+    </div>
+  );
+}
+
 function ScopeTab({ label, sublabel, active, hasOverride, onClick }) {
   return (
     <button
       onClick={onClick}
       className={[
-        "flex items-center gap-1.5 rounded border px-3 py-1 text-xs font-medium transition-all",
+        "flex items-center gap-2 rounded border px-4 py-1.5 text-sm font-medium transition-all",
         active
           ? "border-violet-500 bg-violet-950/50 text-violet-300"
           : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-300",
       ].join(" ")}
     >
       {label}
-      {sublabel && <span className="font-mono text-[9px] text-gray-600">{sublabel}</span>}
+      {sublabel && <span className="text-xs text-gray-500">{sublabel}</span>}
       {hasOverride && <span className={active ? "text-violet-400" : "text-amber-500"}>●</span>}
     </button>
   );
@@ -463,17 +557,17 @@ function ScopeTab({ label, sublabel, active, hasOverride, onClick }) {
 function PanelSection({ title, children }) {
   return (
     <div>
-      <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-600">{title}</p>
+      <p className="mb-2 text-xs font-bold uppercase tracking-widest text-gray-500">{title}</p>
       {children}
     </div>
   );
 }
 
-function ColorGroup({ title, path, value, onChange, fields, labels }) {
+function ColorGroup({ title, path, value, onChange, fields, labels, cols = 2 }) {
   return (
-    <div className="space-y-3 rounded border border-gray-800 bg-gray-900/60 p-4">
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{title}</h3>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+    <div className="space-y-3 rounded border border-gray-800 bg-gray-900/60 p-3">
+      <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400">{title}</h3>
+      <div className={cols === 1 ? "space-y-3" : "grid grid-cols-2 gap-x-4 gap-y-3"}>
         {fields.map((field, i) => (
           <ColorInput
             key={field}
@@ -492,7 +586,7 @@ function ColorInput({ label, value, onChange }) {
 
   return (
     <div className="space-y-1">
-      <Label className="text-[11px] font-medium text-gray-500">{label}</Label>
+      <Label className="text-xs font-medium text-gray-400">{label}</Label>
       <div className="flex items-center gap-1.5">
         <div className="relative shrink-0">
           <div
@@ -513,7 +607,7 @@ function ColorInput({ label, value, onChange }) {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="#000 or rgba(…)"
-          className="h-6 w-36 min-w-0 border-gray-700 bg-gray-800 font-mono text-[10px] text-white placeholder:text-gray-700"
+          className="h-6 w-28 min-w-0 border-gray-700 bg-gray-800 font-mono text-[10px] text-white placeholder:text-gray-700"
         />
       </div>
     </div>

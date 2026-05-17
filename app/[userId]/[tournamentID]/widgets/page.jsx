@@ -67,16 +67,16 @@ export default function WidgetsPage() {
           <SectionLabel color="blue" title="Score Group View" />
           <div className="mt-3 flex items-center gap-2">
             <Select
-              value={scoreGroupView || "__default__"}
+              value={scoreGroupView || "default"}
               onValueChange={(v) => {
-                const val = v === "__default__" ? "" : v;
+                const val = v === "default" ? "" : v;
                 setScoreGroupView(val);
                 localStorage.setItem("scoreGroupView", val);
               }}
             >
               <SelectTrigger className="w-52 text-xs"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="__default__">Default (8 / 8)</SelectItem>
+                <SelectItem value="default">Default (8 / 8)</SelectItem>
                 <SelectItem value="full">Full (split all teams evenly)</SelectItem>
               </SelectContent>
             </Select>

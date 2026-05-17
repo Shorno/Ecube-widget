@@ -25,7 +25,7 @@ export async function middleware(request) {
     return NextResponse.next();
   }
 
-  // /controller and /settings — require any valid session
+  // /controller/* and /settings/* — require any valid session
   if (pathname.startsWith("/controller") || pathname.startsWith("/settings")) {
     if (!session) return NextResponse.redirect(new URL("/login", request.url));
     return NextResponse.next();
@@ -35,5 +35,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/controller", "/settings/:path*"],
+  matcher: ["/admin/:path*", "/controller/:path*", "/controller", "/settings/:path*"],
 };

@@ -23,6 +23,11 @@ export async function POST(request) {
     return NextResponse.json({ error: "Invalid url" }, { status: 400 });
   }
 
+  // In-game widget paths are not controllable via the controller
+  if (url && /\/in-game\//i.test(url)) {
+    return NextResponse.json({ error: "In-game widgets cannot be sent via the controller" }, { status: 403 });
+  }
+
   const errors = validate({
     label:       str(label,       { max: 200, optional: true }),
     tournamentId: str(tournamentId, { max: 100, optional: true }),
