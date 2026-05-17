@@ -274,17 +274,12 @@ export default function SettingsClient({
                 onClick={() => setScope(null)}
               />
               {allowedTournamentIds.map((tid) => {
-                const hasOverride =
-                  Boolean(tournamentDesigns[tid]) ||
-                  Boolean(tournamentColors[tid]) ||
-                  Boolean(tournamentFonts[tid]);
                 return (
                   <ScopeTab
                     key={tid}
                     label={tournamentNames[tid] || tid}
                     sublabel={tournamentNames[tid] ? tid : null}
                     active={scope === tid}
-                    hasOverride={hasOverride}
                     onClick={() => setScope(tid)}
                   />
                 );
@@ -317,41 +312,42 @@ export default function SettingsClient({
           <div className="space-y-6 p-5">
 
             <PanelSection title="Design">
-              <p className="mb-3 text-xs text-gray-500">
-                {scope
-                  ? "Overrides the design for this tournament. Clear overrides to revert."
-                  : "Applied to all tournaments unless a tournament override is set."}
-              </p>
               {allowedDesignIds.length === 0 ? (
                 <p className="text-sm text-gray-600">No designs assigned. Contact your admin.</p>
               ) : (
-                <div className="space-y-2">
-                  {allowedDesignIds.map((d) => {
-                    // In tournament scope: highlight the explicit override; if no override,
-                    // highlight whichever design matches the global default (inherited).
-                    const override   = scope ? tournamentDesigns[scope] : null;
-                    const isExplicit = override === d;
-                    const isInherited = scope && !override && activeVariant === d;
-                    const isActive   = scope ? isExplicit : activeVariant === d;
-                    return (
-                      <button key={d} onClick={() => handleVariantChange(d)}
-                        className={[
-                          "flex w-full items-center justify-between rounded border px-4 py-3 text-left transition-all",
-                          isExplicit  ? "border-violet-500 bg-violet-950/40 ring-1 ring-violet-500/30"
-                          : isInherited ? "border-gray-500 bg-gray-800/60"
-                          : isActive    ? "border-violet-500 bg-violet-950/40 ring-1 ring-violet-500/30"
-                                        : "border-gray-700 hover:border-gray-600",
-                        ].join(" ")}>
-                        <div>
-                          <p className={["text-sm font-semibold", (isExplicit || isActive) ? "text-violet-300" : isInherited ? "text-gray-300" : "text-white"].join(" ")}>{d}</p>
-                          <p className="text-xs text-gray-600">{d}</p>
-                        </div>
-                        {isExplicit && <Badge variant="outline" className="border-violet-600/60 text-[11px] text-violet-400">Active</Badge>}
-                        {isInherited && <Badge variant="outline" className="border-gray-600 text-[11px] text-gray-500">Inherited</Badge>}
-                        {!scope && isActive && <Badge variant="outline" className="border-violet-600/60 text-[11px] text-violet-400">Active</Badge>}
-                      </button>
-                    );
-                  })}
+                <div className="rounded border border-gray-800 bg-gray-900/60 px-4 py-3">
+                  {allowedTournamentIds.length > 0 ? (
+                    <div className="space-y-2">
+                      {/* Global default */}
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-400">All Tournaments</span>
+                        <span className="font-semibold text-violet-300">{activeVariant}</span>
+                      </div>
+                      {/* Per-tournament active design */}
+                      {allowedTournamentIds.map((tid) => {
+                        const active = tournamentDesigns[tid] || activeVariant;
+                        const isOverride = Boolean(tournamentDesigns[tid]);
+                        return (
+                          <div key={tid} className="flex items-center justify-between text-sm">
+                            <span className="truncate text-gray-400">{tournamentNames[tid] || tid}</span>
+                            <span className={["font-semibold", isOverride ? "text-violet-300" : "text-gray-500"].join(" ")}>
+                              {active}
+                              {!isOverride && <span className="ml-1 text-[10px] text-gray-600">inherited</span>}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-400">Active design</span>
+                      <span className="font-semibold text-violet-300">{activeVariant}</span>
+                    </div>
+                  )}
+                  <Link href="/settings/design"
+                    className="mt-3 flex items-center justify-end text-xs text-gray-600 transition-colors hover:text-violet-400">
+                    Change design →
+                  </Link>
                 </div>
               )}
             </PanelSection>
@@ -536,7 +532,7 @@ function ThemeCard({ theme, onApply, onDelete }) {
   );
 }
 
-function ScopeTab({ label, sublabel, active, hasOverride, onClick }) {
+function ScopeTab({ label, sublabel, active, onClick }) {
   return (
     <button
       onClick={onClick}
@@ -549,7 +545,6 @@ function ScopeTab({ label, sublabel, active, hasOverride, onClick }) {
     >
       {label}
       {sublabel && <span className="text-xs text-gray-500">{sublabel}</span>}
-      {hasOverride && <span className={active ? "text-violet-400" : "text-amber-500"}>●</span>}
     </button>
   );
 }

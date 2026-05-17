@@ -13,8 +13,14 @@ async function verify(token) {
   }
 }
 
-export async function middleware(request) {
+export async function proxy(request) {
   const { pathname } = request.nextUrl;
+
+  // Stamp request start time — API routes read this header to compute duration.
+  const requestWithTs = new Request(request, {
+    headers: { ...Object.fromEntries(request.headers), "x-req-start": String(Date.now()) },
+  });
+
   const token   = request.cookies.get(COOKIE)?.value ?? null;
   const session = token ? await verify(token) : null;
 
@@ -22,18 +28,29 @@ export async function middleware(request) {
   if (pathname.startsWith("/admin")) {
     if (!session) return NextResponse.redirect(new URL("/login", request.url));
     if (session.role !== "admin") return NextResponse.redirect(new URL("/controller", request.url));
-    return NextResponse.next();
+    const res = NextResponse.next({ request: requestWithTs });
+    res.headers.set("x-req-start", String(Date.now()));
+    return res;
   }
 
   // /controller/* and /settings/* — require any valid session
   if (pathname.startsWith("/controller") || pathname.startsWith("/settings")) {
     if (!session) return NextResponse.redirect(new URL("/login", request.url));
-    return NextResponse.next();
+    const res = NextResponse.next({ request: requestWithTs });
+    res.headers.set("x-req-start", String(Date.now()));
+    return res;
+  }
+
+  // Stamp all /api/* routes for timing
+  if (pathname.startsWith("/api/")) {
+    const res = NextResponse.next({ request: requestWithTs });
+    res.headers.set("x-req-start", String(Date.now()));
+    return res;
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/controller/:path*", "/controller", "/settings/:path*"],
+  matcher: ["/admin/:path*", "/controller/:path*", "/controller", "/settings/:path*", "/api/:path*"],
 };

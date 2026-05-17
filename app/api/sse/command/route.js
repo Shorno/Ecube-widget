@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import { broadcast } from "@/lib/sse/store";
 import { requireSession } from "@/lib/auth/session";
 import { str, validate } from "@/lib/validation";
+import { logSSECommand, flushLogs } from "@/lib/metrics/logger";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request) {
+  const start = parseInt(request.headers.get("x-req-start") ?? "0", 10) || Date.now();
+
   await requireSession();
 
   let body;
@@ -14,7 +18,6 @@ export async function POST(request) {
 
   const { url, label, tournamentId } = body;
 
-  // url: null = clear screen, "/" path, or external http(s) (Map overlay)
   if (url !== null && (
     typeof url !== "string" ||
     url.length > 500 ||
@@ -23,18 +26,29 @@ export async function POST(request) {
     return NextResponse.json({ error: "Invalid url" }, { status: 400 });
   }
 
-  // In-game widget paths are not controllable via the controller
   if (url && /\/in-game\//i.test(url)) {
     return NextResponse.json({ error: "In-game widgets cannot be sent via the controller" }, { status: 403 });
   }
 
   const errors = validate({
-    label:       str(label,       { max: 200, optional: true }),
+    label:        str(label,        { max: 200, optional: true }),
     tournamentId: str(tournamentId, { max: 100, optional: true }),
   });
   if (errors) return NextResponse.json({ error: Object.values(errors)[0] }, { status: 400 });
 
   const resolvedLabel = url ? (label ?? url) : "Clear Screen";
+
+  // Measure only the broadcast itself to isolate SSE delivery time
+  const broadcastStart = Date.now();
   broadcast(tournamentId ?? "", url, resolvedLabel);
-  return NextResponse.json({ ok: true, url });
+  const broadcastMs = Date.now() - broadcastStart;
+
+  const totalMs = Date.now() - start;
+
+  after(async () => {
+    logSSECommand({ tournamentId, url, label: resolvedLabel, durationMs: totalMs, broadcastMs });
+    await flushLogs();
+  });
+
+  return NextResponse.json({ ok: true, url, durationMs: totalMs });
 }

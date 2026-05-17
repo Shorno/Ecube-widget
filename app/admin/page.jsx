@@ -156,6 +156,12 @@ export default async function AdminDashboard({ searchParams }) {
         <StatCard label="Expired"       value={expiredCount}   color="text-red-400" />
       </div>
 
+      {/* Quick links */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <AdminNavCard href="/admin/designs" label="Design Registry" desc="Manage bundles, isDefault, isExclusive" />
+        <AdminNavCard href="/admin/metrics" label="API Metrics" desc="Latency, p50/p95, error rates" />
+      </div>
+
       {/* Controls row */}
       <div className="flex flex-wrap items-center gap-3">
         <Suspense fallback={<div className="h-9 w-56 animate-pulse rounded border border-gray-800 bg-gray-800" />}>
@@ -318,6 +324,16 @@ function PagLink({ href, disabled, children }) {
                  : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white",
       ].join(" ")}>
       {children}
+    </Link>
+  );
+}
+
+function AdminNavCard({ href, label, desc }) {
+  return (
+    <Link href={href}
+      className="rounded border border-gray-800 bg-gray-900/60 px-5 py-4 transition-colors hover:border-gray-600 hover:bg-gray-800/60">
+      <p className="text-sm font-semibold text-white">{label}</p>
+      <p className="mt-0.5 text-xs text-gray-500">{desc}</p>
     </Link>
   );
 }

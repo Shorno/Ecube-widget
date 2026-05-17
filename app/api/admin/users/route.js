@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { connectDB } from "@/lib/db/mongoose";
 import User from "@/lib/db/models/User";
+import DesignRegistry from "@/lib/db/models/DesignRegistry";
 import { hashPassword } from "@/lib/auth/password";
 import { requireAdmin } from "@/lib/auth/session";
 import { str, email, isoDate, validate } from "@/lib/validation";
@@ -33,6 +34,12 @@ export async function POST(request) {
   const exists = await User.findOne({ email: body.email.toLowerCase().trim() });
   if (exists) return NextResponse.json({ error: "Email already in use" }, { status: 409 });
 
+  // Auto-grant all designs marked isDefault in the registry
+  const defaultDesigns = await DesignRegistry.find({ isDefault: true, active: true }, { _id: 1 }).lean();
+  const allowedDesignIds = defaultDesigns.length > 0
+    ? defaultDesigns.map((d) => d._id)
+    : ["default"];
+
   const passwordHash = await hashPassword(body.password);
   const user = await User.create({
     _id:                  `effinity-${nanoid(16)}`,
@@ -42,9 +49,9 @@ export async function POST(request) {
     role:                 "user",
     isActive:             true,
     allowedTournamentIds: [],
-    allowedDesignIds:     ["default"],
+    allowedDesignIds,
     subscriptionExpiry:   body.subscriptionExpiry ? new Date(body.subscriptionExpiry) : null,
-    themeConfig:          { designVariant: "default", colors: {} },
+    themeConfig:          { designVariant: allowedDesignIds[0] ?? "default", colors: {} },
   });
 
   const { passwordHash: _, ...safe } = user.toObject();

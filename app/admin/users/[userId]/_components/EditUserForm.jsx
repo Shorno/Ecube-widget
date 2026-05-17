@@ -54,7 +54,8 @@ function subDaysLeft(dateStr) {
   return Math.ceil((new Date(dateStr).getTime() - Date.now()) / 86400000);
 }
 
-export default function EditUserForm({ user, designs }) {
+export default function EditUserForm({ user, designs = [] }) {
+  const defaultDesignIds = designs.filter((d) => d.isDefault).map((d) => d._id);
   const router = useRouter();
 
   const [name, setName]           = useState(user.name);
@@ -318,7 +319,19 @@ export default function EditUserForm({ user, designs }) {
               <p className="text-sm text-gray-600">No designs registered. Click "Register Designs" first.</p>
             ) : (
               <div className="space-y-2">
-                <p className="text-xs text-gray-600">Check to grant access. Star to set as active design.</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-gray-600">Check to grant access. Star to set as active design.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAllowedDesignIds(defaultDesignIds);
+                      if (!defaultDesignIds.includes(activeDesign)) setActiveDesign(defaultDesignIds[0] ?? "default");
+                    }}
+                    className="text-xs text-amber-500/80 hover:text-amber-400 transition-colors"
+                  >
+                    Reset to defaults
+                  </button>
+                </div>
                 {designs.map((d) => {
                   const isAllowed = allowedDesignIds.includes(d._id);
                   const isActive  = activeDesign === d._id;
@@ -343,6 +356,11 @@ export default function EditUserForm({ user, designs }) {
                         <p className="text-sm font-medium text-white">{d.label}</p>
                         <p className="font-mono text-[11px] text-gray-600">{d._id}</p>
                       </div>
+                      {d.isDefault && (
+                        <Badge variant="outline" className="border-amber-700/60 text-[11px] text-amber-400 shrink-0">
+                          Default
+                        </Badge>
+                      )}
                       {d.isExclusive && (
                         <Badge variant="outline" className="border-violet-700/60 text-[11px] text-violet-400 shrink-0">
                           Exclusive

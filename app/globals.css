@@ -11,22 +11,24 @@
   --custom-yellow: #ffdd75;
   --custom-green: #00473c;
 
-  /* Widget theme tokens — overridden per-user in [userId]/layout.jsx */
-  --color-primary: #a54e26;
-  --color-primary-bg: #7a3a1c;
-  --color-primary-border: #5c2c14;
-  --color-primary-dark: #c45e30;
-  --color-secondary: #008e88;
-  --color-secondary-bg: #006e69;
-  --color-secondary-border: #005550;
-  --color-secondary-dark: #00a89f;
-  --color-status-alive: rgba(255,255,255,1);
-  --color-status-knocked: rgba(244,63,94,1);
-  --color-status-dead: rgba(0,0,0,0.5);
-  --color-bg: #0d0d0d;
-  --color-text: #f5f5f5;
-  --color-gradient-start: #a54e26;
-  --color-gradient-end: #c45e30;
+  /* Widget theme tokens — overridden per-user in [userId]/[tournamentID]/layout.jsx.
+     --widget-* prefix avoids collision with Tailwind's own --color-* namespace.
+     Consumed in components via: bg-widget-primary, text-widget-text, etc. */
+  --widget-primary: #a54e26;
+  --widget-primary-bg: #7a3a1c;
+  --widget-primary-border: #5c2c14;
+  --widget-primary-dark: #c45e30;
+  --widget-secondary: #008e88;
+  --widget-secondary-bg: #006e69;
+  --widget-secondary-border: #005550;
+  --widget-secondary-dark: #00a89f;
+  --widget-status-alive: rgba(255,255,255,1);
+  --widget-status-knocked: rgba(244,63,94,1);
+  --widget-status-dead: rgba(0,0,0,0.5);
+  --widget-bg: #0d0d0d;
+  --widget-text: #f5f5f5;
+  --widget-gradient-start: #a54e26;
+  --widget-gradient-end: #c45e30;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -69,20 +71,23 @@
   --color-custom-yellow: var(--custom-yellow);
   --color-custom-green: var(--custom-green);
 
-  /* Widget theme token aliases for Tailwind utilities */
-  --color-widget-primary: var(--color-primary);
-  --color-widget-primary-bg: var(--color-primary-bg);
-  --color-widget-primary-border: var(--color-primary-border);
-  --color-widget-primary-dark: var(--color-primary-dark);
-  --color-widget-secondary: var(--color-secondary);
-  --color-widget-secondary-bg: var(--color-secondary-bg);
-  --color-widget-secondary-border: var(--color-secondary-border);
-  --color-widget-secondary-dark: var(--color-secondary-dark);
-  --color-widget-status-alive: var(--color-status-alive);
-  --color-widget-status-knocked: var(--color-status-knocked);
-  --color-widget-status-dead: var(--color-status-dead);
-  --color-widget-bg: var(--color-bg);
-  --color-widget-text: var(--color-text);
+  /* Widget theme token aliases → Tailwind utility classes.
+     bg-widget-primary, text-widget-text, bg-widget-secondary-bg, etc. */
+  --color-widget-primary: var(--widget-primary);
+  --color-widget-primary-bg: var(--widget-primary-bg);
+  --color-widget-primary-border: var(--widget-primary-border);
+  --color-widget-primary-dark: var(--widget-primary-dark);
+  --color-widget-secondary: var(--widget-secondary);
+  --color-widget-secondary-bg: var(--widget-secondary-bg);
+  --color-widget-secondary-border: var(--widget-secondary-border);
+  --color-widget-secondary-dark: var(--widget-secondary-dark);
+  --color-widget-status-alive: var(--widget-status-alive);
+  --color-widget-status-knocked: var(--widget-status-knocked);
+  --color-widget-status-dead: var(--widget-status-dead);
+  --color-widget-bg: var(--widget-bg);
+  --color-widget-text: var(--widget-text);
+  --color-widget-gradient-start: var(--widget-gradient-start);
+  --color-widget-gradient-end: var(--widget-gradient-end);
   --font-sans: var(--font-sans);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);

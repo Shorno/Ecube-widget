@@ -4,10 +4,12 @@ import { connectDB } from "@/lib/db/mongoose";
 import User from "@/lib/db/models/User";
 import { str, strObj, oneOf, validate } from "@/lib/validation";
 import { WIDGET_FONTS } from "@/lib/design/catalog";
+import { trackRequest } from "@/lib/metrics/track";
 
 const FONT_KEYS    = WIDGET_FONTS.map((f) => f.key);
 
-export async function GET() {
+export async function GET(request) {
+  trackRequest(request, "/api/user/settings", "GET");
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -31,6 +33,7 @@ export async function GET() {
 }
 
 export async function PUT(request) {
+  trackRequest(request, "/api/user/settings", "PUT");
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

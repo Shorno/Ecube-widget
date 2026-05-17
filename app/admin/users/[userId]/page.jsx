@@ -15,11 +15,7 @@ export default async function EditUserPage({ params }) {
 
   if (!user) notFound();
 
-  const availableDesigns = designs.filter(
-    (d) => !d.isExclusive || d.assignedTo.includes(userId),
-  );
-
-  // Serialize Date objects → ISO strings so Client Component receives plain JSON
+  // Admin sees all active designs so they can grant any of them
   const safeUser = {
     ...user,
     subscriptionExpiry: user.subscriptionExpiry?.toISOString() ?? null,
@@ -27,5 +23,5 @@ export default async function EditUserPage({ params }) {
     updatedAt:          user.updatedAt?.toISOString()          ?? null,
   };
 
-  return <EditUserForm user={safeUser} designs={availableDesigns} />;
+  return <EditUserForm user={safeUser} designs={designs} />;
 }

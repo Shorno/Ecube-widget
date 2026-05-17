@@ -32,7 +32,19 @@
       "Bash(npx shadcn@latest add calendar popover --yes)",
       "Skill(architect)",
       "Bash(npx shadcn@latest add select --yes)",
-      "Bash(npx shadcn@latest add scroll-area --yes)"
+      "Bash(npx shadcn@latest add scroll-area --yes)",
+      "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-05-17_css-variable-contract.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
+      "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-05-17_new-design-bundle.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
+      "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-05-17_monitoring-layer-1.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
+      "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/todos/css-variable-contract_steps.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/todos/done/\")",
+      "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/todos/new-design-bundle_steps.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/todos/done/\")",
+      "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-05-16_auth-middleware-routes.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
+      "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-05-16_foundation.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
+      "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-05-16_remove-auth-flatten-routes.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
+      "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-05-17_login-redirect.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
+      "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-05-17_settings-overhaul.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
+      "Bash(curl *)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(x.get\\('name'\\), x.get\\('canWrite'\\)\\) for x in d if 'pubg' in x.get\\('name',''\\)]\")"
     ]
   }
 }
