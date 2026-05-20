@@ -1,0 +1,1 @@
+- [ ] Change `split("/")[1]` to `split("/")[2]` in `app/api/widget-status/route.js`

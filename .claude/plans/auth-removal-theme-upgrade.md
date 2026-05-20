@@ -1,4 +1,5 @@
 # Plan: Auth Removal + Theme System Upgrade
+
 **Created:** 2026-05-16
 **Status:** draft
 **Goal:** Strip all login/auth machinery so the platform runs without user accounts, then upgrade the theme system from a flat 5-color-slot model to a Tournalink-style structured color API — giving every widget access to a rich, semantically-named color palette injected via CSS custom properties.
@@ -8,6 +9,7 @@
 ## Research Findings
 
 ### Animation System (current — keep as-is)
+
 The existing pattern is solid and should not change:
 
 1. Widget page (Server Component) → resolves design bundle → renders View (Client Component)
@@ -26,20 +28,22 @@ The existing pattern is solid and should not change:
 
 **Decision: SSR shell + CSR view — the current architecture is correct.**
 
-| Layer | Rendering | Why |
-|---|---|---|
-| `[userId]/layout.jsx` | Server Component | Theme CSS vars in HTML before paint — zero FOUC |
-| Widget `page.jsx` | Server Component | Resolves design bundle key from DB, no client JS cost |
-| Widget `*View.jsx` | Client Component | GSAP, RTK Query, useState, useRef all require client |
-| `display/page.jsx` | Client Component | SSE listener, iframe re-mount via `key` |
-| `controller/page.jsx` | Client Component | Full interactivity needed |
+| Layer                 | Rendering        | Why                                                   |
+| --------------------- | ---------------- | ----------------------------------------------------- |
+| `[userId]/layout.jsx` | Server Component | Theme CSS vars in HTML before paint — zero FOUC       |
+| Widget `page.jsx`     | Server Component | Resolves design bundle key from DB, no client JS cost |
+| Widget `*View.jsx`    | Client Component | GSAP, RTK Query, useState, useRef all require client  |
+| `display/page.jsx`    | Client Component | SSE listener, iframe re-mount via `key`               |
+| `controller/page.jsx` | Client Component | Full interactivity needed                             |
 
 **Why SSR theme injection wins for broadcast:**
+
 - OBS browser source loads the URL, renders to a Chromium frame. The CSS vars are in the first HTML byte — the widget paints with correct colors before any JS executes.
 - A Tournalink-style client-side theme fetch would add a round-trip before colors appear, creating a brief unstyled flash that could hit the stream.
 - `[userId]/layout.jsx` (Server Component) injecting `<style>:root { ... }</style>` is the fastest possible path for broadcast widgets.
 
 **Tournalink's separate theme API is useful for:**
+
 - Live preview in the settings UI (client-side color updates)
 - Future external integrations (tournament software reading widget theme)
 - Real-time theme hot-swap without reloading the widget URL
@@ -53,45 +57,61 @@ The existing pattern is solid and should not change:
 **Request:** `GET https://tournalink.com/widget-api/9/theme`
 
 **Response:**
+
 ```json
 {
   "success": true,
   "data": {
-    "primary":   { "DEFAULT": "rgb(...)", "background": "rgb(...)", "border": "rgb(...)", "dark": "rgb(...)" },
-    "secondary": { "DEFAULT": "rgb(...)", "background": "rgba(...)", "border": "rgba(...)", "dark": "rgba(...)" },
-    "status":    { "alive": "rgba(...)", "knocked": "rgba(...)", "dead": "rgba(...)" },
+    "primary": {
+      "DEFAULT": "rgb(...)",
+      "background": "rgb(...)",
+      "border": "rgb(...)",
+      "dark": "rgb(...)"
+    },
+    "secondary": {
+      "DEFAULT": "rgb(...)",
+      "background": "rgba(...)",
+      "border": "rgba(...)",
+      "dark": "rgba(...)"
+    },
+    "status": {
+      "alive": "rgba(...)",
+      "knocked": "rgba(...)",
+      "dead": "rgba(...)"
+    },
     "background": "rgb(...)",
     "text": "rgb(...)",
-    "gradient":  { "start": "#...", "end": "#..." }
+    "gradient": { "start": "#...", "end": "#..." }
   }
 }
 ```
 
 **CSS var mapping (what we will adopt):**
 
-| Token | CSS Variable |
-|---|---|
-| primary.DEFAULT | --color-primary |
-| primary.background | --color-primary-bg |
-| primary.border | --color-primary-border |
-| primary.dark | --color-primary-dark |
-| secondary.DEFAULT | --color-secondary |
-| secondary.background | --color-secondary-bg |
-| secondary.border | --color-secondary-border |
-| secondary.dark | --color-secondary-dark |
-| status.alive | --color-status-alive |
-| status.knocked | --color-status-knocked |
-| status.dead | --color-status-dead |
-| background | --color-bg |
-| text | --color-text |
-| gradient.start | --color-gradient-start |
-| gradient.end | --color-gradient-end |
+| Token                | CSS Variable             |
+| -------------------- | ------------------------ |
+| primary.DEFAULT      | --color-primary          |
+| primary.background   | --color-primary-bg       |
+| primary.border       | --color-primary-border   |
+| primary.dark         | --color-primary-dark     |
+| secondary.DEFAULT    | --color-secondary        |
+| secondary.background | --color-secondary-bg     |
+| secondary.border     | --color-secondary-border |
+| secondary.dark       | --color-secondary-dark   |
+| status.alive         | --color-status-alive     |
+| status.knocked       | --color-status-knocked   |
+| status.dead          | --color-status-dead      |
+| background           | --color-bg               |
+| text                 | --color-text             |
+| gradient.start       | --color-gradient-start   |
+| gradient.end         | --color-gradient-end     |
 
 **Tailwind integration in `globals.css`:**
+
 ```css
 @theme inline {
-  --color-primary:          var(--color-primary);
-  --color-primary-bg:       var(--color-primary-bg);
+  --color-primary: var(--color-primary);
+  --color-primary-bg: var(--color-primary-bg);
   /* ... etc */
 }
 ```
@@ -102,17 +122,17 @@ This gives every widget access to `bg-primary`, `text-primary`, `border-primary-
 
 ### Current Auth Surface (everything to delete)
 
-| File | Role | Action |
-|---|---|---|
-| `app/(auth)/login/page.jsx` | Login UI | **DELETE** whole `(auth)` group |
-| `app/api/auth/login/route.js` | Auth proxy + cookie | **DELETE** |
-| `app/api/auth/logout/route.js` | Cookie clear | **DELETE** |
-| `app/page.jsx` | Reads JWT, redirects to controller or /login | **REPLACE** — simple redirect to `/controller` (new design) |
-| `app/[userId]/controller/page.jsx` | Has Logout button | **PATCH** — remove logout button only |
-| `app/api/user-config/route.js` | PUT requires JWT; GET allows ?userId | **PATCH** — remove all JWT cookie checks, use `userId` param only |
-| `lib/db/models/User.js` | Stores themeConfig (keep!) | **PATCH** — remove email/firstName/lastName if no longer needed, OR keep for future |
-| `lib/design/get-user-design.js` | Reads User.themeConfig.designVariant | **KEEP** — still needed |
-| `lib/db/mongoose.js` | DB connection | **KEEP** — still needed for themeConfig |
+| File                               | Role                                         | Action                                                                              |
+| ---------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `app/(auth)/login/page.jsx`        | Login UI                                     | **DELETE** whole `(auth)` group                                                     |
+| `app/api/auth/login/route.js`      | Auth proxy + cookie                          | **DELETE**                                                                          |
+| `app/api/auth/logout/route.js`     | Cookie clear                                 | **DELETE**                                                                          |
+| `app/page.jsx`                     | Reads JWT, redirects to controller or /login | **REPLACE** — simple redirect to `/controller` (new design)                         |
+| `app/[userId]/controller/page.jsx` | Has Logout button                            | **PATCH** — remove logout button only                                               |
+| `app/api/user-config/route.js`     | PUT requires JWT; GET allows ?userId         | **PATCH** — remove all JWT cookie checks, use `userId` param only                   |
+| `lib/db/models/User.js`            | Stores themeConfig (keep!)                   | **PATCH** — remove email/firstName/lastName if no longer needed, OR keep for future |
+| `lib/design/get-user-design.js`    | Reads User.themeConfig.designVariant         | **KEEP** — still needed                                                             |
+| `lib/db/mongoose.js`               | DB connection                                | **KEEP** — still needed for themeConfig                                             |
 
 No `middleware.js` exists at the project root (the old plan mentioned it but it was never created) — nothing to remove there.
 
@@ -121,12 +141,14 @@ No `middleware.js` exists at the project root (the old plan mentioned it but it 
 ## Context
 
 ### Current Theme System
+
 - **Model:** 5 flat color slots (`color1`–`color5`) stored in `User.themeConfig.colors`
 - **CSS vars:** `--primary`, `--primary-shade-one`, `--primary-shade-two`, `--custom-yellow`, `--custom-green`
 - **Injection:** `[userId]/layout.jsx` (Server Component) calls `buildThemeCss()` → `<style>:root{...}</style>`
 - **Settings UI:** `[userId]/settings/design/page.jsx` — color pickers for 5 slots
 
 ### Tournalink-Style Theme System (target)
+
 - **Model:** 15 semantic tokens across nested groups (primary, secondary, status, background, text, gradient)
 - **CSS vars:** Prefixed `--color-*` namespace to avoid conflicts with existing Tailwind vars
 - **Injection:** Same SSR mechanism — layout fetches and injects
@@ -137,10 +159,13 @@ No `middleware.js` exists at the project root (the old plan mentioned it but it 
 ## Strategy
 
 ### Task 1 — Remove Auth (immediate, clean-up)
+
 Surgical removal of all auth machinery. The routing structure (`[userId]` segment) stays — userId is still used to scope theme config and SSE state per operator.
 
 ### Task 2 — Upgrade Theme Color Model
+
 Replace the flat 5-slot model with the Tournalink-style nested structure. Update:
+
 - `User.js` Mongoose schema
 - `lib/design/catalog.js` (rename to `lib/design/theme.js`, add defaults for all 15 tokens)
 - `[userId]/layout.jsx` — inject all new CSS vars
@@ -148,6 +173,7 @@ Replace the flat 5-slot model with the Tournalink-style nested structure. Update
 - `settings/design/page.jsx` — new UI for all color groups
 
 ### Task 3 — Add Theme API Endpoint
+
 `GET /api/theme/[userId]` → returns Tournalink-format JSON. Consumed by the settings live preview and available for external tools.
 
 ---

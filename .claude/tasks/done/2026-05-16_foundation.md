@@ -1,12 +1,15 @@
 # Task: Foundation
+
 **Plan:** [[auth-system]]
 **Created:** 2026-05-16
 **Status:** completed — 2026-05-16
 
 ## Objective
+
 Install auth packages, rebuild the User model with the new schema, write self-contained auth utilities (JWT, password hashing, session reading), and produce a seed script that creates the admin user. Also initialise shadcn/ui so all future UI tasks can use its components.
 
 ## Files Involved
+
 - `package.json` — add bcryptjs, jose, nanoid
 - `lib/db/models/User.js` — full replacement with new schema
 - `lib/auth/jwt.js` — new: signToken / verifyToken (jose)

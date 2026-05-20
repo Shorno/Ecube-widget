@@ -18,10 +18,7 @@ export default function WidgetStage({ dataReady, children, onReady }) {
   }, [ready]);
 
   return (
-    <div
-      ref={ref}
-      className={ready ? "opacity-100" : "opacity-0"}
-    >
+    <div ref={ref} className={ready ? "opacity-100" : "opacity-0"}>
       {children}
     </div>
   );

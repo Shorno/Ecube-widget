@@ -2,24 +2,25 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-const URI  = process.env.MONGODB_URI;
-const DB   = "WIDGET_CONTROL";
+const URI = process.env.MONGODB_URI;
+const DB = "WIDGET_CONTROL";
 
 const userSchema = new mongoose.Schema(
   {
-    _id:                  String,
-    name:                 String,
-    email:                { type: String, lowercase: true },
-    passwordHash:         String,
-    role:                 String,
-    isActive:             Boolean,
+    _id: String,
+    name: String,
+    email: { type: String, lowercase: true },
+    passwordHash: String,
+    role: String,
+    isActive: Boolean,
     allowedTournamentIds: [String],
-    themeConfig:          mongoose.Schema.Types.Mixed,
+    themeConfig: mongoose.Schema.Types.Mixed,
   },
   { timestamps: true },
 );
 
-const User = mongoose.models.User || mongoose.model("User", userSchema, "USER_DATA");
+const User =
+  mongoose.models.User || mongoose.model("User", userSchema, "USER_DATA");
 
 await mongoose.connect(URI, { dbName: DB });
 
@@ -29,13 +30,13 @@ await User.findByIdAndUpdate(
   "effinity-admin",
   {
     $set: {
-      name:                 "Admin",
-      email:                "admin",
+      name: "Admin",
+      email: "admin",
       passwordHash,
-      role:                 "admin",
-      isActive:             true,
+      role: "admin",
+      isActive: true,
       allowedTournamentIds: [],
-      themeConfig:          { designVariant: "default", colors: {} },
+      themeConfig: { designVariant: "default", colors: {} },
     },
   },
   { upsert: true, new: true },

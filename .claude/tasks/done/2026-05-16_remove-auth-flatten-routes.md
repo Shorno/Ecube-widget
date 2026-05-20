@@ -1,14 +1,17 @@
 # Task: Remove Auth + Flatten Routes
+
 **Plan:** [[auth-removal-theme-upgrade]]
 **Created:** 2026-05-16
 **Status:** pending
 
 ## Objective
+
 Strip all login/logout/JWT machinery and collapse the `[userId]/[tournamentID]` double-segment routing into a flat `[tournamentID]` structure. Result: `/controller`, `/[tournamentID]/display`, `/[tournamentID]/after-match/*`, `/[tournamentID]/in-game/*`. No user accounts, no cookies, no auth guards.
 
 ## Files Involved
 
 ### Delete
+
 - `app/(auth)/login/page.jsx` (+ directory)
 - `app/api/auth/login/route.js` (+ `api/auth/` directory)
 - `app/api/auth/logout/route.js`
@@ -23,6 +26,7 @@ Strip all login/logout/JWT machinery and collapse the `[userId]/[tournamentID]` 
 - `lib/sse-store.js` (old global singleton — superseded by lib/sse/store.js)
 
 ### Modify
+
 - `app/page.jsx` → redirect straight to `/controller`
 - `lib/sse/store.js` → remove userId from all function signatures; key = tournamentId only
 - `app/api/sse/route.js` → remove dual-mode; use V2 store with tournamentId only
@@ -32,6 +36,7 @@ Strip all login/logout/JWT machinery and collapse the `[userId]/[tournamentID]` 
 - `lib/widget-catalog.js` → remove userId param; flat paths `/${tournamentId}/${section}/${slug}`
 
 ### Create (new flat routes)
+
 - `app/controller/page.jsx`
 - `app/[tournamentID]/display/page.jsx`
 - `app/[tournamentID]/widgets/page.jsx`
@@ -57,6 +62,7 @@ Strip all login/logout/JWT machinery and collapse the `[userId]/[tournamentID]` 
 - `app/[tournamentID]/in-game/_components/TopFourView.jsx`
 
 ### Keep untouched (future user system)
+
 - `lib/db/models/User.js`
 - `lib/db/mongoose.js`
 - `lib/design/get-user-design.js`

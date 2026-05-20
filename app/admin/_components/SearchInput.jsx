@@ -5,8 +5,8 @@ import { useTransition, useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 
 export default function SearchInput({ defaultValue = "" }) {
-  const router       = useRouter();
-  const pathname     = usePathname();
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [value, setValue] = useState(defaultValue);
   const [isPending, startTransition] = useTransition();
@@ -38,11 +38,17 @@ export default function SearchInput({ defaultValue = "" }) {
   return (
     <div className="relative">
       <svg
-        className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
-        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-500"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
-        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.35-4.35" />
       </svg>
       <Input
         value={value}

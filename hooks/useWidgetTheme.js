@@ -14,8 +14,11 @@ export function useWidgetTheme() {
   useEffect(() => {
     if (!userId || !tournamentID) return;
     fetch(`/api/theme/${userId}/${tournamentID}`)
-      .then((r) => r.ok ? r.json() : null)
-      .then((data) => { setTheme(data); setLoading(false); })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        setTheme(data);
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   }, [userId, tournamentID]);
 

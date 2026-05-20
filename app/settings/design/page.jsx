@@ -9,11 +9,11 @@ export default async function DesignPickerPage() {
 
   await connectDB();
   const user = await User.findById(session.userId, {
-    themeConfig:          1,
-    allowedDesignIds:     1,
+    themeConfig: 1,
+    allowedDesignIds: 1,
     allowedTournamentIds: 1,
-    tournamentDesigns:    1,
-    tournamentNames:      1,
+    tournamentDesigns: 1,
+    tournamentNames: 1,
   }).lean();
   if (!user) redirect("/api/auth/logout");
 

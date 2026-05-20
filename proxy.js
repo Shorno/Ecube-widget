@@ -6,7 +6,9 @@ const COOKIE = "accessToken";
 
 async function verify(token) {
   try {
-    const { payload } = await jwtVerify(token, secret, { algorithms: ["HS256"] });
+    const { payload } = await jwtVerify(token, secret, {
+      algorithms: ["HS256"],
+    });
     return payload;
   } catch {
     return null;
@@ -18,16 +20,20 @@ export async function proxy(request) {
 
   // Stamp request start time — API routes read this header to compute duration.
   const requestWithTs = new Request(request, {
-    headers: { ...Object.fromEntries(request.headers), "x-req-start": String(Date.now()) },
+    headers: {
+      ...Object.fromEntries(request.headers),
+      "x-req-start": String(Date.now()),
+    },
   });
 
-  const token   = request.cookies.get(COOKIE)?.value ?? null;
+  const token = request.cookies.get(COOKIE)?.value ?? null;
   const session = token ? await verify(token) : null;
 
   // /admin/* — requires admin role
   if (pathname.startsWith("/admin")) {
     if (!session) return NextResponse.redirect(new URL("/login", request.url));
-    if (session.role !== "admin") return NextResponse.redirect(new URL("/controller", request.url));
+    if (session.role !== "admin")
+      return NextResponse.redirect(new URL("/controller", request.url));
     const res = NextResponse.next({ request: requestWithTs });
     res.headers.set("x-req-start", String(Date.now()));
     return res;
@@ -52,5 +58,11 @@ export async function proxy(request) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/controller/:path*", "/controller", "/settings/:path*", "/api/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/controller/:path*",
+    "/controller",
+    "/settings/:path*",
+    "/api/:path*",
+  ],
 };

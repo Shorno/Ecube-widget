@@ -6,7 +6,7 @@ import ControllerClient from "./_components/ControllerClient";
 export default async function TournamentControllerPage({ params }) {
   const { tournamentID } = await params;
   const session = await requireSession();
-  const user    = await getUser(session.userId);
+  const user = await getUser(session.userId);
   if (!user) redirect("/api/auth/logout");
 
   const tids = user.allowedTournamentIds ?? [];
@@ -17,6 +17,7 @@ export default async function TournamentControllerPage({ params }) {
   return (
     <ControllerClient
       userId={user._id}
+      userName={user?.name ?? ""}
       tournamentId={tournamentID}
       tournamentName={names[tournamentID] ?? null}
       allTournaments={tids.map((tid) => ({ tid, name: names[tid] ?? null }))}

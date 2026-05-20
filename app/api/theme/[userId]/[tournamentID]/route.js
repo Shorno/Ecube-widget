@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/db/queries";
-import { buildThemeStyle, WIDGET_FONTS, VARIANT_DEFAULTS } from "@/lib/design/catalog";
+import {
+  buildThemeStyle,
+  WIDGET_FONTS,
+  VARIANT_DEFAULTS,
+} from "@/lib/design/catalog";
 
 // Public — no auth. Widgets fetch their own effective theme (colors, font, variant).
 export async function GET(_, { params }) {
@@ -17,16 +21,13 @@ export async function GET(_, { params }) {
     "default";
 
   const fontKey =
-    user.tournamentFonts?.[tournamentID] ??
-    user.themeConfig?.font ??
-    "oswald";
+    user.tournamentFonts?.[tournamentID] ?? user.themeConfig?.font ?? "oswald";
 
-  const fontEntry = WIDGET_FONTS.find((f) => f.key === fontKey) ?? WIDGET_FONTS[0];
+  const fontEntry =
+    WIDGET_FONTS.find((f) => f.key === fontKey) ?? WIDGET_FONTS[0];
 
   const effectiveColors =
-    user.tournamentColors?.[tournamentID] ??
-    user.themeConfig?.colors ??
-    {};
+    user.tournamentColors?.[tournamentID] ?? user.themeConfig?.colors ?? {};
 
   const cssVars = buildThemeStyle(effectiveColors, variant);
 

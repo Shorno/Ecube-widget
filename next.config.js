@@ -5,14 +5,9 @@ const nextConfig = {
   reactCompiler: true,
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "tournalink.com",
-      },
-      {
-        protocol: "https",
-        hostname: "api.esportsawardsbd.com",
-      },
+      { protocol: "https", hostname: "tournalink.com" },
+      { protocol: "https", hostname: "api.esportsawardsbd.com" },
+      { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
   async redirects() {

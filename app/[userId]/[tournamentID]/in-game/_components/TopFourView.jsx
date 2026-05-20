@@ -1,5 +1,12 @@
 "use client";
-import { useRef, useEffect, useLayoutEffect, useCallback, createRef, useState } from "react";
+import {
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+  createRef,
+  useState,
+} from "react";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import { TopFourCard } from "./TopFourCard";
@@ -9,7 +16,9 @@ function isTeamEliminated(players) {
 }
 
 export function TopFourView({ teams, observingTeamId = null }) {
-  const [visibleIds, setVisibleIds] = useState(() => new Set(teams.map((t) => t.team._id)));
+  const [visibleIds, setVisibleIds] = useState(
+    () => new Set(teams.map((t) => t.team._id)),
+  );
 
   const cardRefs = useRef({});
   teams.forEach((entry) => {
@@ -18,20 +27,42 @@ export function TopFourView({ teams, observingTeamId = null }) {
     }
   });
 
-  const exitedIds    = useRef(new Set());
+  const exitedIds = useRef(new Set());
   const flipStateRef = useRef(null);
 
   const runExitAnimation = useCallback((el, teamId) => {
     const tl = gsap.timeline({
       onComplete: () => {
         flipStateRef.current = Flip.getState(".top-four-card");
-        setVisibleIds((prev) => { const next = new Set(prev); next.delete(teamId); return next; });
+        setVisibleIds((prev) => {
+          const next = new Set(prev);
+          next.delete(teamId);
+          return next;
+        });
       },
     });
-    tl.to(el, { backgroundColor: "rgba(239,68,68,0.4)", duration: 0.15, ease: "power1.in" })
-      .to(el, { backgroundColor: "rgba(239,68,68,0)",   duration: 0.15, ease: "power1.out" })
-      .to(el, { keyframes: { x: [0, -7, 7, -5, 5, -3, 3, 0], easeEach: "none" }, duration: 0.32, ease: "none" })
-      .to(el, { y: 70, opacity: 0, scale: 0.88, duration: 0.45, ease: "power2.in" });
+    tl.to(el, {
+      backgroundColor: "rgba(239,68,68,0.4)",
+      duration: 0.15,
+      ease: "power1.in",
+    })
+      .to(el, {
+        backgroundColor: "rgba(239,68,68,0)",
+        duration: 0.15,
+        ease: "power1.out",
+      })
+      .to(el, {
+        keyframes: { x: [0, -7, 7, -5, 5, -3, 3, 0], easeEach: "none" },
+        duration: 0.32,
+        ease: "none",
+      })
+      .to(el, {
+        y: 70,
+        opacity: 0,
+        scale: 0.88,
+        duration: 0.45,
+        ease: "power2.in",
+      });
   }, []);
 
   useLayoutEffect(() => {

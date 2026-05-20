@@ -1,4 +1,5 @@
 # Plan: Design System Wiring + Infrastructure Monitoring
+
 **Created:** 2026-05-17
 **Status:** draft
 **Goal:** Fix the broken CSS variable injection so new widget designs actually consume user theme colors, establish a clean workflow for integrating the new production design as the default bundle, and build a lightweight API/SSE latency monitoring layer visible from the admin dashboard — with a path to a real observability backend.
@@ -10,11 +11,13 @@
 ### 1. CSS Variable Injection — Currently Broken
 
 The layout at `app/[userId]/[tournamentID]/layout.jsx` injects CSS custom properties via `buildThemeStyle()`:
+
 ```
 --color-primary, --color-primary-bg, --color-secondary, --color-bg, ...
 ```
 
 But every existing widget component (in `components/designs/default/` and `components/widgets/`) uses OLD Tailwind utilities:
+
 ```
 bg-primary           → maps to --primary         (hardcoded dark gray in :root)
 bg-primary-shade-one → maps to --primary-shade-one (hardcoded teal in :root)
@@ -35,6 +38,7 @@ The user-specific colors sit under `--color-primary` (with `color-` prefix), exp
 ### 3. New Design Integration Path
 
 The user has a full production design ready. It will:
+
 1. Start as `isDefault: true` — every user gets it
 2. Later flip to `isExclusive: true` / `isDefault: false` — manually granted only
 
@@ -43,6 +47,7 @@ Steps: create the component bundle folder → register in `BUNDLE_MAP` → seed 
 ### 4. Figma MCP
 
 **No Figma MCP is available in this environment.** However I can work with:
+
 - Figma REST API (read-only, requires a Personal Access Token from you)
 - Figma file exports: CSS tokens, JSON design tokens, SVG assets
 - You share the Figma link → I fetch via API → extract colors, typography, spacing
@@ -56,12 +61,15 @@ Zero instrumentation. No timing data anywhere. The SSE `broadcast()` call is syn
 ## Strategy
 
 ### Design System
+
 - **Don't patch the old prototype widgets.** They will be deleted when the real design is ready.
 - **Define the contract:** new design components MUST use `bg-widget-primary`, `text-widget-text`, `bg-widget-secondary`, etc. (the Tailwind aliases that read from `--color-*`).
 - **Create the new bundle** under `components/designs/<new-key>/index.js`, register it in `BUNDLE_MAP`, seed it, flip `isDefault: true` in the admin panel.
 
 ### Monitoring
+
 Two-layer approach:
+
 - **Layer 1 (immediate):** Custom Next.js instrumentation middleware — measures every API route duration, logs structured JSON. An in-memory ring buffer (last 1000 requests) feeds a `/api/admin/metrics` endpoint. Admin dashboard shows a live table grouped by route.
 - **Layer 2 (production):** Plug into [Axiom](https://axiom.co) (free 30-day retention, generous free tier) or BetterStack — ship logs via HTTP. Gives you full-text search, grouping, percentiles, dashboards without self-hosting Grafana.
 
@@ -128,15 +136,19 @@ graph TD
 ## Answers to Your Questions
 
 ### Does color injection work currently?
+
 **No.** The infrastructure is in place (layout injects `--color-primary` etc.) but every widget uses `bg-primary` / `bg-primary-shade-one` which point to completely different CSS variables. The prototype designs are wired to the old hardcoded `:root` values, not the user theme.
 
 ### Can admin change isDefault/isExclusive from the admin panel?
+
 **Yes — already built.** The `DesignsPanel` component on `/admin` has live toggle switches for `Auto-grant` (isDefault), `Exclusive`, and `Active` per design. Changes take effect immediately via PATCH.
 
 ### Can you work with Figma MCP?
+
 **No Figma MCP is available.** But I can read your Figma file via the Figma REST API if you give me your Personal Access Token and the file URL. I can extract colors, typography, spacing tokens and map them to our `--widget-*` CSS variable contract. Alternatively, export your design tokens from Figma as JSON/CSS and share them here.
 
 ### How to get started with the new design?
+
 1. Create `components/designs/<your-key>/index.js` — export all widget view components
 2. Add `"<your-key>": () => import("@/components/designs/<your-key>")` to `BUNDLE_MAP`
 3. Add `{ _id: "<your-key>", bundle: "<your-key>", label: "...", isDefault: true, isExclusive: false }` to `KNOWN_DESIGNS` in the seed route
@@ -145,4 +157,5 @@ graph TD
 6. Components must use `bg-widget-primary`, `text-widget-text`, `bg-widget-secondary` etc.
 
 ### How to monitor infrastructure?
+
 See Tasks 3 & 4. Layer 1 gives you real-time latency per endpoint in the admin dashboard within hours of work. Layer 2 (Axiom) gives you persistent history, p95, grouping, alerts.

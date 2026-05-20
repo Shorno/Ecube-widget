@@ -13,7 +13,7 @@ const HighLightTeam = ({ teamOne }) => {
         </p>
       </div>
       <div className="flex h-full w-[30%] flex-col">
-        <div className="flex h-[50%] items-center justify-center  gap-1 p-1">
+        <div className="flex h-[50%] items-center justify-center gap-1 p-1">
           {teamOne?.team_logoUrl && (
             <Image
               src={teamOne.team_logoUrl}

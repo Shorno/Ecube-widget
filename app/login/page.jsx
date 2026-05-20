@@ -8,24 +8,27 @@ import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail]       = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError]       = useState("");
-  const [loading, setLoading]   = useState(false);
-  const [showPw, setShowPw]     = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPw, setShowPw] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      const res  = await fetch("/api/auth/login", {
-        method:  "POST",
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error || "Login failed"); return; }
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+        return;
+      }
       router.push(data.role === "admin" ? "/admin" : "/controller");
     } catch {
       setError("Network error. Try again.");
@@ -39,21 +42,34 @@ export default function LoginPage() {
       {/* subtle blue radial glow at top-center */}
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(59,130,246,0.10) 0%, transparent 70%)" }}
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(59,130,246,0.10) 0%, transparent 70%)",
+        }}
       />
       {/* faint grid lines */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.03]"
-        style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "48px 48px" }}
+        style={{
+          backgroundImage:
+            "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
       />
 
       {/* font-sans switches to Geist — Oswald is too condensed for a login form */}
       <div className="relative w-full max-w-sm font-sans">
         {/* Brand mark */}
         <div className="mb-10 text-center">
-          <p className="text-xs font-semibold tracking-[0.3em] text-gray-600 uppercase">Effinity</p>
-          <h1 className="mt-4 text-4xl font-bold tracking-tight text-white">Sign In</h1>
-          <p className="mt-2 text-base text-gray-500">Enter your credentials to access the panel</p>
+          <p className="text-xs font-semibold tracking-[0.3em] text-gray-600 uppercase">
+            Effinity
+          </p>
+          <h1 className="mt-4 text-4xl font-bold tracking-tight text-white">
+            Sign In
+          </h1>
+          <p className="mt-2 text-base text-gray-500">
+            Enter your credentials to access the panel
+          </p>
         </div>
 
         {/* Form box */}
@@ -66,7 +82,10 @@ export default function LoginPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium text-gray-400">
+              <Label
+                htmlFor="email"
+                className="text-sm font-medium text-gray-400"
+              >
                 Username or Email
               </Label>
               <Input
@@ -77,12 +96,15 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="username"
-                className="h-11 rounded-none border-gray-700 bg-gray-800/80 text-base text-white placeholder:text-gray-600 focus-visible:ring-blue-500/50 focus-visible:border-blue-600"
+                className="h-11 rounded-none border-gray-700 bg-gray-800/80 text-base text-white placeholder:text-gray-600 focus-visible:border-blue-600 focus-visible:ring-blue-500/50"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-gray-400">
+              <Label
+                htmlFor="password"
+                className="text-sm font-medium text-gray-400"
+              >
                 Password
               </Label>
               <div className="relative">
@@ -94,22 +116,42 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  className="h-11 rounded-none border-gray-700 bg-gray-800/80 pr-11 text-base text-white placeholder:text-gray-600 focus-visible:ring-blue-500/50 focus-visible:border-blue-600"
+                  className="h-11 rounded-none border-gray-700 bg-gray-800/80 pr-11 text-base text-white placeholder:text-gray-600 focus-visible:border-blue-600 focus-visible:ring-blue-500/50"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw((v) => !v)}
-                  className="absolute right-0 top-0 flex h-11 w-11 items-center justify-center text-gray-500 hover:text-gray-300"
+                  className="absolute top-0 right-0 flex h-11 w-11 items-center justify-center text-gray-500 hover:text-gray-300"
                   aria-label={showPw ? "Hide password" : "Show password"}
                 >
                   {showPw ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
                       <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
                       <line x1="1" y1="1" x2="23" y2="23" />
                     </svg>
                   ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                       <circle cx="12" cy="12" r="3" />
                     </svg>

@@ -3,10 +3,10 @@ import { NextResponse } from "next/server";
 function clearCookie(response) {
   response.cookies.set("accessToken", "", {
     httpOnly: true,
-    secure:   process.env.NODE_ENV === "production",
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    path:     "/",
-    maxAge:   0,
+    path: "/",
+    maxAge: 0,
   });
   return response;
 }

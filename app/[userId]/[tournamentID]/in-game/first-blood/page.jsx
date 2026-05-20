@@ -8,7 +8,12 @@ function FirstBlood() {
       <div className="absolute top-1/2 left-0 -translate-y-1/2 border-t border-yellow-400 bg-blue-900">
         <div className="flex w-full items-center justify-between text-yellow-400">
           <div className="flex items-center gap-2 p-1">
-            <Image src="/KS_AXE_2020.png" alt="firstblood" width={20} height={20} />
+            <Image
+              src="/KS_AXE_2020.png"
+              alt="firstblood"
+              width={20}
+              height={20}
+            />
             <p>Player 1</p>
           </div>
           <div className="flex items-center">
@@ -16,7 +21,12 @@ function FirstBlood() {
             <MdKeyboardDoubleArrowRight />
           </div>
           <div className="flex items-center gap-1 p-1">
-            <Image src="/KS_AXE_2020.png" alt="firstblood" width={20} height={20} />
+            <Image
+              src="/KS_AXE_2020.png"
+              alt="firstblood"
+              width={20}
+              height={20}
+            />
             <p>Player 2</p>
           </div>
         </div>

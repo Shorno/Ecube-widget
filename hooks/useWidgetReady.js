@@ -14,9 +14,10 @@ export function useWidgetReady(containerRef, dataReady) {
     // Collect every <img> tag in the entire widget subtree, including deeply nested ones
     const images = Array.from(containerRef.current.querySelectorAll("img"));
 
-    // No images in this widget — nothing to wait for, show immediately
+    // No images in this widget — defer setState out of the synchronous effect
+    // body to satisfy react-hooks/set-state-in-effect (React Compiler rule).
     if (images.length === 0) {
-      setReady(true);
+      queueMicrotask(() => setReady(true));
       return;
     }
 
@@ -85,10 +86,9 @@ export function useWidgetReady(containerRef, dataReady) {
       }
     });
 
-  // Only re-run this effect when `dataReady` changes (false → true).
-  // Running on every render would attach duplicate listeners.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataReady]);
+    // containerRef is a stable object (same reference across renders), so
+    // including it here satisfies the linter without causing extra re-runs.
+  }, [dataReady, containerRef]);
 
   return ready;
 }

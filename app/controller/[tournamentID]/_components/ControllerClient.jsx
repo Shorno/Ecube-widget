@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
+import EcubeBrand from "@/components/common/EcubeBrand";
 import {
   Select,
   SelectContent,
@@ -14,6 +16,7 @@ import { AFTER_MATCH_WIDGETS, getWidgetPath } from "@/lib/widget-catalog";
 
 export default function ControllerClient({
   userId,
+  userName = "",
   tournamentId,
   tournamentName,
   allTournaments,
@@ -101,23 +104,20 @@ export default function ControllerClient({
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
-      <header className="border-b border-gray-700 bg-gray-800 px-5 py-3">
-        <div className="flex items-center justify-between gap-4">
-          {/* Brand + tournament */}
-          <div className="flex shrink-0 items-center gap-2">
-            {hasMultipleTournaments ? (
+      <header className="bg-gray-800">
+        {/* Row 1 — logo + tournament info | brand pill */}
+        <div className="flex items-center justify-between border-b border-gray-700 px-5 py-3">
+          <div className="flex items-center gap-3">
+            <Image src="/EcubeOG.svg" width={26} height={26} alt="ECube" />
+            <span className="h-4 w-px bg-gray-600" />
+            {hasMultipleTournaments && (
               <Link
                 href="/controller"
-                className="text-xs font-bold tracking-widest text-gray-500 uppercase transition-colors hover:text-gray-300"
+                className="text-xs text-gray-500 transition-colors hover:text-gray-300"
               >
                 ← Tournaments
               </Link>
-            ) : (
-              <span className="text-xs font-bold tracking-widest text-gray-500 uppercase">
-                EFFINITY
-              </span>
             )}
-            <span className="text-gray-600">·</span>
             <div>
               {tournamentName && (
                 <span className="block text-sm leading-tight font-bold text-white">
@@ -129,9 +129,13 @@ export default function ControllerClient({
               </span>
             </div>
           </div>
+          <EcubeBrand />
+        </div>
 
+        {/* Row 2 — live status center | username + controls */}
+        <div className="flex items-center justify-between border-b border-gray-700 px-5 py-2.5">
           {/* Live status */}
-          <div className="flex-1 text-center">
+          <div className="flex-1">
             {activeLabel && activeUrl ? (
               <span className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-green-400 uppercase">
                 <span className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
@@ -157,7 +161,9 @@ export default function ControllerClient({
             {sendStatus === "error" && (
               <span className="text-xs font-bold text-red-400">Error ✗</span>
             )}
-
+            {userName && (
+              <span className="text-sm text-gray-400">{userName}</span>
+            )}
             <Select
               value={scoreGroupView || "default"}
               onValueChange={(v) => {
@@ -174,10 +180,9 @@ export default function ControllerClient({
                 <SelectItem value="full">Score Group: Full</SelectItem>
               </SelectContent>
             </Select>
-
             <Link
               href="/settings"
-              className="inline-flex items-center gap-1.5 rounded border border-violet-600 bg-violet-700/30 px-3 py-1.5 text-xs font-bold tracking-wider text-violet-300 uppercase transition-colors hover:bg-violet-700/60 hover:text-white"
+              className="inline-flex items-center gap-1.5 rounded border border-blue-600 bg-blue-700/30 px-3 py-1.5 text-xs font-bold tracking-wider text-blue-300 uppercase transition-colors hover:bg-blue-700/60 hover:text-white"
             >
               ⚙ Settings
             </Link>
@@ -248,7 +253,7 @@ export default function ControllerClient({
           <Link
             href={`/${userId}/${tournamentId}/widgets`}
             target="_blank"
-            className="border border-gray-600 px-3 py-1 text-xs font-bold tracking-wider text-gray-400 uppercase hover:border-purple-500 hover:text-purple-400"
+            className="border border-gray-600 px-3 py-1 text-xs font-bold tracking-wider text-gray-400 uppercase hover:border-blue-500 hover:text-blue-400"
           >
             Individual Links
           </Link>

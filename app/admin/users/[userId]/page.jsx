@@ -10,7 +10,9 @@ export default async function EditUserPage({ params }) {
 
   const [user, designs] = await Promise.all([
     User.findById(userId, { passwordHash: 0 }).lean(),
-    DesignRegistry.find({ active: true }).sort({ isExclusive: 1, label: 1 }).lean(),
+    DesignRegistry.find({ active: true })
+      .sort({ isExclusive: 1, label: 1 })
+      .lean(),
   ]);
 
   if (!user) notFound();
@@ -19,8 +21,8 @@ export default async function EditUserPage({ params }) {
   const safeUser = {
     ...user,
     subscriptionExpiry: user.subscriptionExpiry?.toISOString() ?? null,
-    createdAt:          user.createdAt?.toISOString()          ?? null,
-    updatedAt:          user.updatedAt?.toISOString()          ?? null,
+    createdAt: user.createdAt?.toISOString() ?? null,
+    updatedAt: user.updatedAt?.toISOString() ?? null,
   };
 
   return <EditUserForm user={safeUser} designs={designs} />;

@@ -8,7 +8,7 @@ import WidgetStage from "@/components/common/WidgetStage";
 
 export default function WWCTwoView({ tournamentID }) {
   const { data } = useGetWwcdTeamStatsQuery({ tournamentID });
-  const team     = data?.data?.[0]?.players || [];
+  const team = data?.data?.[0]?.players || [];
 
   if (!data || !data.data) return null;
 
@@ -18,7 +18,14 @@ export default function WWCTwoView({ tournamentID }) {
         <div className="absolute bottom-16 z-10 h-auto w-full px-16">
           <div className="relative z-10 mx-auto mb-8 flex max-h-45 w-max">
             <div className="grid aspect-square place-content-center bg-black px-4">
-              <Image priority src={data?.data[0]?.team_image} alt="Team Logo" className="aspect-square" width={100} height={100} />
+              <Image
+                priority
+                src={data?.data[0]?.team_image}
+                alt="Team Logo"
+                className="aspect-square"
+                width={100}
+                height={100}
+              />
             </div>
             <div className="bg-primary-shade-two grid place-content-center px-24">
               <p className="text-5xl font-extrabold">Team Name</p>
@@ -26,17 +33,33 @@ export default function WWCTwoView({ tournamentID }) {
           </div>
           <div className="relative z-10 grid grid-cols-3 gap-8">
             <DataBox title="Elimanations" data={data?.data[0]?.total_kills} />
-            <DataBox title="Total Damage"  data={data?.data[0]?.total_damage} />
-            <DataBox title="Total Points"  data={data?.data[0]?.total_points} />
+            <DataBox title="Total Damage" data={data?.data[0]?.total_damage} />
+            <DataBox title="Total Points" data={data?.data[0]?.total_points} />
           </div>
           <div className="absolute bottom-0 left-1/2 z-5 flex -translate-x-1/2">
             {team?.map((player, index) => (
-              <div key={player.id} className={cn("relative", { "-ml-28": index !== 0, [`z-[${index}]`]: index !== team.length - 1, "-z-10": index === team.length - 1 })}>
-                <Image priority src={player.image} width={600} height={750} alt={player.name} className="h-187.5 w-150 scale-x-150" />
+              <div
+                key={player.id}
+                className={cn("relative", {
+                  "-ml-28": index !== 0,
+                  [`z-[${index}]`]: index !== team.length - 1,
+                  "-z-10": index === team.length - 1,
+                })}
+              >
+                <Image
+                  priority
+                  src={player.image}
+                  width={600}
+                  height={750}
+                  alt={player.name}
+                  className="h-187.5 w-150 scale-x-150"
+                />
               </div>
             ))}
             <p className="text-primary absolute -top-10 left-1/2 -z-20 w-max -translate-x-1/2 text-center text-[220px] leading-70 font-extrabold uppercase">
-              <span className="stroked-text">Winner </span>Winner<br />Chicken <span className="stroked-text">Dinner </span>
+              <span className="stroked-text">Winner </span>Winner
+              <br />
+              Chicken <span className="stroked-text">Dinner </span>
             </p>
           </div>
         </div>
@@ -47,7 +70,11 @@ export default function WWCTwoView({ tournamentID }) {
 
 const DataBox = ({ title, data }) => (
   <div>
-    <h1 className="bg-primary-shade-two p-2 text-center text-3xl uppercase">{title}</h1>
-    <div className="grid place-content-center bg-black p-8 text-7xl font-extrabold">{data}</div>
+    <h1 className="bg-primary-shade-two p-2 text-center text-3xl uppercase">
+      {title}
+    </h1>
+    <div className="grid place-content-center bg-black p-8 text-7xl font-extrabold">
+      {data}
+    </div>
   </div>
 );

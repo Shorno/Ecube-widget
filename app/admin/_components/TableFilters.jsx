@@ -2,11 +2,18 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
-import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function TableFilters({ status = "", sub = "" }) {
-  const router       = useRouter();
-  const pathname     = usePathname();
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
 
@@ -35,10 +42,7 @@ export default function TableFilters({ status = "", sub = "" }) {
         </SelectContent>
       </Select>
 
-      <Select
-        value={sub || undefined}
-        onValueChange={(v) => update("sub", v)}
-      >
+      <Select value={sub || undefined} onValueChange={(v) => update("sub", v)}>
         <SelectTrigger className="w-44">
           <SelectValue placeholder="All Subscriptions" />
         </SelectTrigger>

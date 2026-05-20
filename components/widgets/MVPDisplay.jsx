@@ -26,7 +26,12 @@ const MVPDisplay = ({ mvp, isGroup = false, stageReady = false }) => {
       // through a semi-transparent character — character is always at opacity:1.
       gsap.set(".anim-bg-text", { zIndex: 1, opacity: 0, scale: 1.05 });
       // opacity: 1 — Layout's overflow-hidden hides it at y:200 until it slides up.
-      gsap.set(".anim-character", { zIndex: 50, opacity: 1, y: 200, scale: 0.85 });
+      gsap.set(".anim-character", {
+        zIndex: 50,
+        opacity: 1,
+        y: 200,
+        scale: 0.85,
+      });
       gsap.set(".anim-identity-box", { x: -50, opacity: 0 });
       gsap.set(".anim-MVPStats", { y: 40, opacity: 0 });
 

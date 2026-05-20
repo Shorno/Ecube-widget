@@ -1,4 +1,5 @@
 # Plan: Multi-Tenant Widget Platform
+
 **Created:** 2026-04-25
 **Status:** in-progress
 **Goal:** Multi-tenant broadcast widget system. Each user gets isolated routes (/[userId]/[tournamentId]/...), isolated SSE state, MongoDB-backed user config, CSS-variable theming, and a color config page.
@@ -30,12 +31,14 @@ Add Mongoose to this Next.js project. One collection:
 ```
 
 **Login flow:**
+
 1. POST external API → get `{ user, accessToken }`
 2. Upsert user into MongoDB by `_id`
 3. Set `accessToken` as httpOnly cookie
 4. Return user + themeConfig to client
 
 **OBS/vMix config loading:**
+
 - Widget layout fetches `GET /api/user-config` → injects CSS vars server-side into layout
 - Client also caches config in localStorage (OBS/vMix use Chromium CEF → localStorage works ✓)
 
@@ -134,15 +137,15 @@ pubg-widget/
 
 ## Key Decisions
 
-| Question | Decision |
-|----------|----------|
-| Database | MongoDB via Mongoose — already in stack |
-| Config persistence | MongoDB → client caches in localStorage |
-| OBS/vMix localStorage | Works — both use Chromium CEF ✓ |
-| JWT storage | httpOnly cookie — middleware reads it |
-| SSE isolation | `Map<\`${userId}_${tid}\`, state>` |
-| Mythical | Not touched until design-system task; tokens extracted from current hardcoded values |
-| Map feature | Stays outside `[userId]` namespace — it's a standalone tool |
+| Question              | Decision                                                                             |
+| --------------------- | ------------------------------------------------------------------------------------ |
+| Database              | MongoDB via Mongoose — already in stack                                              |
+| Config persistence    | MongoDB → client caches in localStorage                                              |
+| OBS/vMix localStorage | Works — both use Chromium CEF ✓                                                      |
+| JWT storage           | httpOnly cookie — middleware reads it                                                |
+| SSE isolation         | `Map<\`${userId}_${tid}\`, state>`                                                   |
+| Mythical              | Not touched until design-system task; tokens extracted from current hardcoded values |
+| Map feature           | Stays outside `[userId]` namespace — it's a standalone tool                          |
 
 ---
 

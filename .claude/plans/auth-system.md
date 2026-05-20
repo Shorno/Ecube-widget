@@ -1,4 +1,5 @@
 # Plan: Auth System — Admin + Widget User Management
+
 **Created:** 2026-05-16
 **Status:** draft
 **Goal:** Build a complete self-contained JWT auth system. Admin (seeded via script) manages widget customers — creates users with a custom prefixed UUID, assigns allowed tournament IDs, manages theme. Widget URLs include both userId and tournamentID making them unique and self-authenticating (server validates the combination). Only controller, settings, and admin require a session cookie. Display and widget pages are public — OBS just uses the full URL.
@@ -8,6 +9,7 @@
 ## Context
 
 ### What exists
+
 - **DB:** MongoDB via Mongoose, `WIDGET_CONTROL` DB, `lib/db/mongoose.js`
 - **User model:** `lib/db/models/User.js` — currently `{ _id: String, email, firstName, lastName, themeConfig }`. Needs full replacement.
 - **Design system:** `lib/design/catalog.js`, `lib/design/get-user-design.js`, `lib/design/registry.js`
@@ -15,6 +17,7 @@
 - **No auth:** All routes open. Old `proxy.js` deleted.
 
 ### Packages needed
+
 - `bcryptjs` — password hashing (pure JS, no native bindings, Node.js only)
 - `jose` — JWT sign/verify (Edge Runtime compatible — required for middleware)
 
@@ -23,6 +26,7 @@
 ## Data Model
 
 ### User (rebuilt)
+
 ```js
 {
   _id:                  String,   // "effinity-{nanoid(16)}" e.g. "effinity-k2f9xm3q8vbz4e1a"
@@ -41,12 +45,13 @@
 ```
 
 ### Seed admin credentials
-| Field | Value |
-|---|---|
-| ID | `effinity-admin` |
-| Email | `adm@efn.io` |
-| Password | `Efn!2k26Xq` |
-| Role | `admin` |
+
+| Field    | Value            |
+| -------- | ---------------- |
+| ID       | `effinity-admin` |
+| Email    | `adm@efn.io`     |
+| Password | `Efn!2k26Xq`     |
+| Role     | `admin`          |
 
 ---
 
@@ -71,6 +76,7 @@ PROTECTED (admin role only):
 ```
 
 ### How widget page auth works (no session needed)
+
 1. Widget URLs contain both `userId` and `tournamentID`
 2. `userId` is `effinity-{16chars}` — practically unguessable
 3. Server Component fetches user from DB, checks `tournamentID ∈ allowedTournamentIds`
@@ -78,6 +84,7 @@ PROTECTED (admin role only):
 5. OBS sets browser source to `/{userId}/{tournamentID}/display` — works without any session
 
 ### Display page update
+
 - Currently: `/{tournamentID}/display` (flat)
 - New: `/{userId}/{tournamentID}/display` (includes userId)
 - Controller generates display URL as `${origin}/${userId}/${tid}/display`
@@ -88,19 +95,24 @@ PROTECTED (admin role only):
 ## Auth implementation — JWT with jose
 
 **Why JWT + jose, not NextAuth:**
+
 - NextAuth is built for OAuth providers (Google, GitHub). Our use case is simple username/password with one custom role.
 - `jose` works in Edge Runtime (middleware) — `jsonwebtoken` does not.
 - Full control over token shape, expiry, cookie settings.
 - No extra abstraction layer, no session DB table needed.
 
 **Flow:**
+
 1. `POST /api/auth/login` → bcrypt verify password → sign JWT with `jose` → set httpOnly cookie
 2. `middleware.js` → read cookie → verify JWT with `jose` → allow/redirect
 3. Server Components → call `getSession()` from `lib/auth/session.js` → reads same cookie
 
 **JWT payload:**
+
 ```js
-{ userId, role, iat, exp }   // exp: 72h
+{
+  (userId, role, iat, exp);
+} // exp: 72h
 ```
 
 ---
@@ -108,18 +120,23 @@ PROTECTED (admin role only):
 ## Strategy
 
 ### Task 1 — Foundation
+
 Rebuild User model. Install `bcryptjs` + `jose`. Write `lib/auth/jwt.js`, `lib/auth/password.js`, `lib/auth/session.js`. Write `scripts/seed-admin.js`. Add `JWT_SECRET` to `.env`.
 
 ### Task 2 — Middleware + Auth API routes
+
 `middleware.js` guards `/controller`, `/settings`, `/admin/*`. Public routes pass through. API: `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`.
 
 ### Task 3 — Login UI
+
 `/login/page.jsx` — email + password. On success: admin → `/admin`, user → `/controller`.
 
 ### Task 4 — Admin Panel
+
 `/admin/page.jsx` user list. `/admin/users/new` create form (generates `effinity-{id}`). `/admin/users/[userId]` edit all fields. API: `/api/admin/users/*` full CRUD.
 
 ### Task 5 — Restore userId routing + wire controller + settings
+
 Move widget routes back to `/[userId]/[tournamentID]/...`. Add server-side tournamentID validation in widget pages. Update controller to read session for userId + allowedTournamentIds. Build `/settings` page (theme pickers, info). Wire `[userId]/layout.jsx` back to inject theme from DB.
 
 ---

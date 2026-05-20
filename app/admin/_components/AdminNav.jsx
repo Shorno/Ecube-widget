@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export default function AdminNav() {
   const pathname = usePathname();
-  const router   = useRouter();
+  const router = useRouter();
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -17,13 +17,19 @@ export default function AdminNav() {
     <header className="border-b border-gray-800 bg-gray-950">
       <div className="mx-auto flex max-w-5xl items-center gap-6 px-6 py-4">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-bold tracking-[0.2em] text-gray-600 uppercase">Effinity</span>
+          <span className="text-sm font-bold tracking-[0.2em] text-gray-600 uppercase">
+            Effinity
+          </span>
           <span className="text-gray-800">/</span>
-          <span className="text-sm font-bold tracking-widest text-white uppercase">Admin</span>
+          <span className="text-sm font-bold tracking-widest text-white uppercase">
+            Admin
+          </span>
         </div>
 
         <nav className="flex flex-1 items-center gap-1">
-          <NavLink href="/admin" active={pathname.startsWith("/admin")}>Dashboard</NavLink>
+          <NavLink href="/admin" active={pathname.startsWith("/admin")}>
+            Dashboard
+          </NavLink>
         </nav>
 
         <Button

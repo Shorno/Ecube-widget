@@ -4,14 +4,14 @@ const MVPStatsIdentity = ({ mvp, isGroup = false }) => {
   return (
     <div className="absolute bottom-48 left-0">
       <div className="absolute bottom-48 ml-4 flex flex-col items-start">
-        <p className="text-primary anim-bg-text opacity-0 -mb-4 ml-8 text-[92px] leading-none font-bold uppercase">
+        <p className="text-primary anim-bg-text -mb-4 ml-8 text-[92px] leading-none font-bold uppercase opacity-0">
           {isGroup ? "OVERALL" : "MATCH"}
         </p>
-        <p className="stroked-text anim-bg-text opacity-0 text-[500px] leading-[0.8] font-extrabold text-white">
+        <p className="stroked-text anim-bg-text text-[500px] leading-[0.8] font-extrabold text-white opacity-0">
           MVP
         </p>
       </div>
-      <div className="bg-primary flex w-100 anim-identity-box opacity-0 z-30">
+      <div className="bg-primary anim-identity-box z-30 flex w-100 opacity-0">
         <div className="grid place-content-center py-2">
           <div className="bg-primary-shade-two">
             <Image

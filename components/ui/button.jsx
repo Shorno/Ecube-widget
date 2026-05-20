@@ -1,8 +1,8 @@
 import * as React from "react";
-import { Button as ButtonPrimitive } from "@base-ui/react/button"
+import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva } from "class-variance-authority";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -36,8 +36,8 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
-)
+  },
+);
 
 function Button({
   className,
@@ -52,7 +52,11 @@ function Button({
     const child = React.Children.only(children);
     return React.cloneElement(child, {
       ...props,
-      className: cn(buttonVariants({ variant, size }), child.props.className, className),
+      className: cn(
+        buttonVariants({ variant, size }),
+        child.props.className,
+        className,
+      ),
     });
   }
 
@@ -67,4 +71,4 @@ function Button({
   );
 }
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

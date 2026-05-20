@@ -1,0 +1,2 @@
+- [ ] Add `getUserTournaments(userId)` to `lib/db/queries.js`
+- [ ] Add tournament ownership check in `app/api/sse/command/route.js`

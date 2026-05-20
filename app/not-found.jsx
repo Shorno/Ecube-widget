@@ -3,7 +3,6 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gray-950 px-6 text-center">
-
       {/* Background grid */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.04]"
@@ -35,7 +34,7 @@ export default function NotFound() {
 
       {/* 404 */}
       <h1
-        className="select-none text-[clamp(120px,22vw,220px)] font-black leading-none tracking-tighter text-white"
+        className="text-[clamp(120px,22vw,220px)] leading-none font-black tracking-tighter text-white select-none"
         style={{ fontFamily: "var(--font-oswald), 'Agency FB', sans-serif" }}
       >
         <span style={{ color: "var(--primary, #a54e26)" }}>4</span>
@@ -56,8 +55,8 @@ export default function NotFound() {
 
       {/* Message */}
       <p className="max-w-xs text-sm leading-relaxed text-gray-400">
-        You wandered outside the safe zone. This page doesn&apos;t exist or
-        has been moved.
+        You wandered outside the safe zone. This page doesn&apos;t exist or has
+        been moved.
       </p>
 
       {/* CTA */}

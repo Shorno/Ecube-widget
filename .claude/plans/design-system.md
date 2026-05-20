@@ -1,4 +1,5 @@
 # Plan: Design System — Registry, Assignment & Folder Structure
+
 **Created:** 2026-05-16
 **Status:** draft
 **Goal:** Formalise the design registry system so generic designs are available to all users and exclusive custom designs are scoped to specific customers. Admin assigns designs from the panel. Developers add new designs via code + one-click registration. Zero config changes needed to assign a design to a user.
@@ -25,6 +26,7 @@ components/designs/
 ```
 
 **Naming convention:**
+
 - Generic: plain name (`default`, `mythical`, `pro-league`)
 - Exclusive: `{orgslug}-{variant}` (`teamalpha-main`, `nexuspro-gold`)
 
@@ -39,6 +41,7 @@ Each slot receives one prop: `tournamentID: string`.
 ## Data Model Updates
 
 ### DesignRegistry (updated)
+
 ```js
 {
   _id:         String,    // bundle key — matches BUNDLE_MAP key and folder name
@@ -52,6 +55,7 @@ Each slot receives one prop: `tournamentID: string`.
 ```
 
 ### User.themeConfig (unchanged)
+
 ```js
 themeConfig: {
   designVariant: String,   // must match a DesignRegistry._id
@@ -67,10 +71,10 @@ Developer adds one line per new design. Static object required by bundler:
 
 ```js
 const BUNDLE_MAP = {
-  default:          () => import("@/components/designs/default"),
-  mythical:         () => import("@/components/designs/mythical"),
+  default: () => import("@/components/designs/default"),
+  mythical: () => import("@/components/designs/mythical"),
   "teamalpha-main": () => import("@/components/designs/teamalpha-main"),
-  "nexuspro-gold":  () => import("@/components/designs/nexuspro-gold"),
+  "nexuspro-gold": () => import("@/components/designs/nexuspro-gold"),
 };
 ```
 
@@ -81,6 +85,7 @@ Each `import()` becomes a separate JS chunk — only the assigned design loads p
 ## Admin Panel — Design Assignment
 
 When editing a user, the design dropdown shows:
+
 - All `isExclusive: false` designs (generic, any user can get these)
 - Exclusive designs where `assignedTo` contains this userId OR `assignedTo` is empty
 - Exclusive designs for OTHER users are hidden (not shown at all)
@@ -109,40 +114,56 @@ Admin also sees a **"Register Designs"** button that hits `GET /api/admin/seed-d
 Colors use a Tournalink-compatible nested structure stored in `User.themeConfig.colors`. Injected as CSS custom properties in `[userId]/layout.jsx` (Server Component — zero client JS, zero flicker in OBS).
 
 ### Color schema (`User.themeConfig.colors`)
+
 ```json
 {
-  "primary":   { "DEFAULT": "rgb(191,49,49)", "background": "rgb(125,10,10)", "border": "rgb(42,3,3)", "dark": "rgb(216,27,67)" },
-  "secondary": { "DEFAULT": "rgb(94,8,8)",    "background": "rgba(244,63,94,0.8)", "border": "rgba(190,18,60,1)", "dark": "rgba(159,18,57,1)" },
-  "status":    { "alive": "rgba(255,255,255,1)", "knocked": "rgba(244,63,94,1)", "dead": "rgba(0,0,0,0.5)" },
+  "primary": {
+    "DEFAULT": "rgb(191,49,49)",
+    "background": "rgb(125,10,10)",
+    "border": "rgb(42,3,3)",
+    "dark": "rgb(216,27,67)"
+  },
+  "secondary": {
+    "DEFAULT": "rgb(94,8,8)",
+    "background": "rgba(244,63,94,0.8)",
+    "border": "rgba(190,18,60,1)",
+    "dark": "rgba(159,18,57,1)"
+  },
+  "status": {
+    "alive": "rgba(255,255,255,1)",
+    "knocked": "rgba(244,63,94,1)",
+    "dead": "rgba(0,0,0,0.5)"
+  },
   "background": "rgb(243,233,195)",
-  "text":       "rgb(248,245,222)",
-  "gradient":  { "start": "#bf3131", "end": "#e11b1b" }
+  "text": "rgb(248,245,222)",
+  "gradient": { "start": "#bf3131", "end": "#e11b1b" }
 }
 ```
 
 ### CSS var mapping (TOKEN_MAP in catalog.js)
 
-| JSON path | CSS variable | Tailwind utility |
-|---|---|---|
-| primary.DEFAULT | `--color-primary` | `bg-widget-primary` |
-| primary.background | `--color-primary-bg` | `bg-widget-primary-bg` |
-| primary.border | `--color-primary-border` | `bg-widget-primary-border` |
-| primary.dark | `--color-primary-dark` | `bg-widget-primary-dark` |
-| secondary.DEFAULT | `--color-secondary` | `bg-widget-secondary` |
-| secondary.background | `--color-secondary-bg` | `bg-widget-secondary-bg` |
-| secondary.border | `--color-secondary-border` | `bg-widget-secondary-border` |
-| secondary.dark | `--color-secondary-dark` | `bg-widget-secondary-dark` |
-| status.alive | `--color-status-alive` | `bg-widget-status-alive` |
-| status.knocked | `--color-status-knocked` | `bg-widget-status-knocked` |
-| status.dead | `--color-status-dead` | `bg-widget-status-dead` |
-| background | `--color-bg` | `bg-widget-bg` |
-| text | `--color-text` | `text-widget-text` |
-| gradient.start | `--color-gradient-start` | — (use in style prop) |
-| gradient.end | `--color-gradient-end` | — (use in style prop) |
+| JSON path            | CSS variable               | Tailwind utility             |
+| -------------------- | -------------------------- | ---------------------------- |
+| primary.DEFAULT      | `--color-primary`          | `bg-widget-primary`          |
+| primary.background   | `--color-primary-bg`       | `bg-widget-primary-bg`       |
+| primary.border       | `--color-primary-border`   | `bg-widget-primary-border`   |
+| primary.dark         | `--color-primary-dark`     | `bg-widget-primary-dark`     |
+| secondary.DEFAULT    | `--color-secondary`        | `bg-widget-secondary`        |
+| secondary.background | `--color-secondary-bg`     | `bg-widget-secondary-bg`     |
+| secondary.border     | `--color-secondary-border` | `bg-widget-secondary-border` |
+| secondary.dark       | `--color-secondary-dark`   | `bg-widget-secondary-dark`   |
+| status.alive         | `--color-status-alive`     | `bg-widget-status-alive`     |
+| status.knocked       | `--color-status-knocked`   | `bg-widget-status-knocked`   |
+| status.dead          | `--color-status-dead`      | `bg-widget-status-dead`      |
+| background           | `--color-bg`               | `bg-widget-bg`               |
+| text                 | `--color-text`             | `text-widget-text`           |
+| gradient.start       | `--color-gradient-start`   | — (use in style prop)        |
+| gradient.end         | `--color-gradient-end`     | — (use in style prop)        |
 
 A customer can have the `default` design bundle but with completely custom colors — they are two independent layers.
 
 ### Theme API endpoint
+
 `GET /api/theme/[userId]` returns the full nested JSON (Tournalink-compatible). Used by the settings live preview and future external integrations.
 
 ---

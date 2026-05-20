@@ -1,6 +1,6 @@
 export default function EditUserLoading() {
   return (
-    <div className="space-y-6 animate-pulse">
+    <div className="animate-pulse space-y-6">
       {/* Back + title */}
       <div className="flex items-center gap-3">
         <div className="h-8 w-16 rounded bg-gray-800" />
@@ -11,7 +11,7 @@ export default function EditUserLoading() {
       </div>
 
       {/* Account section */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900/60 p-6 space-y-4">
+      <div className="space-y-4 rounded-lg border border-gray-800 bg-gray-900/60 p-6">
         <div className="h-5 w-20 rounded bg-gray-800" />
         <div className="grid grid-cols-2 gap-5">
           <div className="space-y-2">
@@ -31,7 +31,7 @@ export default function EditUserLoading() {
       </div>
 
       {/* Design section */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900/60 p-6 space-y-4">
+      <div className="space-y-4 rounded-lg border border-gray-800 bg-gray-900/60 p-6">
         <div className="h-5 w-16 rounded bg-gray-800" />
         <div className="grid grid-cols-3 gap-3">
           {[1, 2].map((i) => (
@@ -41,7 +41,7 @@ export default function EditUserLoading() {
       </div>
 
       {/* Tournament IDs section */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900/60 p-6 space-y-4">
+      <div className="space-y-4 rounded-lg border border-gray-800 bg-gray-900/60 p-6">
         <div className="h-5 w-40 rounded bg-gray-800" />
         <div className="flex gap-3">
           <div className="h-11 flex-1 rounded bg-gray-800" />
@@ -50,7 +50,7 @@ export default function EditUserLoading() {
       </div>
 
       {/* Widget Access section */}
-      <div className="rounded-lg border border-gray-800 bg-gray-900/60 p-6 space-y-4">
+      <div className="space-y-4 rounded-lg border border-gray-800 bg-gray-900/60 p-6">
         <div className="h-5 w-28 rounded bg-gray-800" />
         <div className="h-16 rounded bg-gray-800" />
       </div>

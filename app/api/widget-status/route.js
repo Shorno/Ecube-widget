@@ -6,16 +6,20 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   let body;
-  try { body = await request.json(); }
-  catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
   const errors = validate({
-    widgetUrl:    str(body.widgetUrl,    { min: 1, max: 500 }),
+    widgetUrl: str(body.widgetUrl, { min: 1, max: 500 }),
     failedImages: strArray(body.failedImages, { maxItems: 50, maxLen: 500 }),
   });
-  if (errors) return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+  if (errors)
+    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
 
-  const tournamentId = body.widgetUrl.split("/")[1] ?? "";
+  const tournamentId = body.widgetUrl.split("/")[2] ?? "";
   broadcastWidgetStatus(tournamentId, body.widgetUrl, body.failedImages);
   return NextResponse.json({ ok: true });
 }

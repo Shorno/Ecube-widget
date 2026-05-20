@@ -68,6 +68,7 @@ pubg-widget/
 ## The two database collections
 
 ### `USER_DATA` — one document per user
+
 ```json
 {
   "_id": "69e2b11773000bcffc46799b",
@@ -86,6 +87,7 @@ pubg-widget/
 ```
 
 ### `DESIGN_REGISTRY` — one document per design
+
 ```json
 { "_id": "default",  "bundle": "default",  "label": "Default Theme",  "active": true }
 { "_id": "mythical", "bundle": "mythical", "label": "Mythical Theme",  "active": true }
@@ -126,7 +128,7 @@ flowchart TD
 Colors are stored as generic slots in MongoDB and mapped to CSS variables at the layout level:
 
 | DB slot | CSS variable          | Tailwind utility       |
-|---------|-----------------------|------------------------|
+| ------- | --------------------- | ---------------------- |
 | color1  | `--primary`           | `bg-primary`           |
 | color2  | `--primary-shade-one` | `bg-primary-shade-one` |
 | color3  | `--primary-shade-two` | `bg-primary-shade-two` |
@@ -168,19 +170,19 @@ Any number of users can be assigned the same design at any time.
 
 Every design **must** export these exact names from its `index.js`. The slot name is what the widget page imports.
 
-| Slot name             | Route                          |
-|-----------------------|--------------------------------|
-| `AfterMatchScore`     | `after-match/score`            |
-| `AfterMatchScoreGroup`| `after-match/score-group`      |
-| `MatchSummary`        | `after-match/match-summary`    |
-| `MVP`                 | `after-match/mvp`              |
-| `MVPGroup`            | `after-match/mvp-group`        |
-| `HeadToHead`          | `after-match/head-to-head`     |
-| `TopPlayers`          | `after-match/top-players`      |
-| `TopPlayersGroup`     | `after-match/top-players-group`|
-| `WWC`                 | `after-match/wwc`              |
-| `WWCTwo`              | `after-match/wwc-two`          |
-| `WWCStats`            | `after-match/wwc-stats`        |
+| Slot name              | Route                           |
+| ---------------------- | ------------------------------- |
+| `AfterMatchScore`      | `after-match/score`             |
+| `AfterMatchScoreGroup` | `after-match/score-group`       |
+| `MatchSummary`         | `after-match/match-summary`     |
+| `MVP`                  | `after-match/mvp`               |
+| `MVPGroup`             | `after-match/mvp-group`         |
+| `HeadToHead`           | `after-match/head-to-head`      |
+| `TopPlayers`           | `after-match/top-players`       |
+| `TopPlayersGroup`      | `after-match/top-players-group` |
+| `WWC`                  | `after-match/wwc`               |
+| `WWCTwo`               | `after-match/wwc-two`           |
+| `WWCStats`             | `after-match/wwc-stats`         |
 
 Each view component receives a single prop: `tournamentID: string`.
 
@@ -192,7 +194,7 @@ Every after-match page is now ~7 lines:
 
 ```jsx
 // app/[userId]/[tournamentID]/after-match/score/page.jsx
-import { getUserDesign }    from "@/lib/design/get-user-design";
+import { getUserDesign } from "@/lib/design/get-user-design";
 import { getDesignRegistry } from "@/lib/design/registry";
 
 export default async function AfterMatchScore({ params }) {

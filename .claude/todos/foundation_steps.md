@@ -1,4 +1,5 @@
 # Todo: Foundation
+
 **Task:** [[2026-05-16_foundation]]
 **Plan:** [[auth-system]]
 

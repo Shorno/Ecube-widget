@@ -8,11 +8,14 @@ export default function AdminMetricsPage() {
         <div>
           <h1 className="text-2xl font-bold text-white">API Metrics</h1>
           <p className="mt-1 text-sm text-gray-500">
-            In-process ring buffer — last 1 000 requests. Resets on server restart.
+            In-process ring buffer — last 1 000 requests. Resets on server
+            restart.
           </p>
         </div>
-        <Link href="/admin"
-          className="rounded border border-gray-700 px-3 py-1.5 text-sm text-gray-400 hover:border-gray-500 hover:text-white transition-colors">
+        <Link
+          href="/admin"
+          className="rounded border border-gray-700 px-3 py-1.5 text-sm text-gray-400 transition-colors hover:border-gray-500 hover:text-white"
+        >
           ← Dashboard
         </Link>
       </div>

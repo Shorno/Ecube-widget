@@ -8,12 +8,7 @@ const TableRow = ({ team, overall = false, className = "" }) => {
       </div>
       <div className="flex w-full items-center gap-2 px-2">
         {team?.team_logoUrl && (
-          <Image
-            src={team.team_logoUrl}
-            width={44}
-            height={44}
-            alt=""
-          />
+          <Image src={team.team_logoUrl} width={44} height={44} alt="" />
         )}
         <p className="text-2xl font-bold text-black">{team?.team_name}</p>
       </div>

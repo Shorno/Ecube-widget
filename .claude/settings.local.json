@@ -44,7 +44,13 @@
       "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-05-17_login-redirect.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
       "Bash(mv \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/2026-05-17_settings-overhaul.md\" \"E:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks/done/\")",
       "Bash(curl *)",
-      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(x.get\\('name'\\), x.get\\('canWrite'\\)\\) for x in d if 'pubg' in x.get\\('name',''\\)]\")"
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(x.get\\('name'\\), x.get\\('canWrite'\\)\\) for x in d if 'pubg' in x.get\\('name',''\\)]\")",
+      "Bash(Get-ChildItem -Path \"d:\\\\E-Cube-Projects\\\\Effinity-pubg\\\\pubg-widget\" -Force)",
+      "Bash(Select-Object Name)",
+      "Bash(mkdir -p \"d:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks\" \"d:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/todos\")"
+    ],
+    "additionalDirectories": [
+      "d:\\E-Cube-Projects\\Effinity-pubg\\pubg-widget\\.claude\\tasks"
     ]
   }
 }
