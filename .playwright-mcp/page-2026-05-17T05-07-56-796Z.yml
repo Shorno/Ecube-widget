@@ -1,0 +1,12 @@
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - generic [ref=e11]:
+    - generic [ref=e14]: Player Eliminated
+    - heading "404" [level=1] [ref=e15]
+    - paragraph [ref=e16]: Out of Bounds
+    - paragraph [ref=e18]: You wandered outside the safe zone. This page doesn't exist or has been moved.
+    - link "Return to Base" [ref=e19] [cursor=pointer]:
+      - /url: /
+    - paragraph [ref=e20]: Effinity · Widget Platform
+  - alert [ref=e21]

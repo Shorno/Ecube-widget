@@ -1,0 +1,51 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e22] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e23]:
+      - img [ref=e24]
+    - generic [ref=e29]:
+      - button "Open issues overlay" [ref=e30]:
+        - generic [ref=e31]:
+          - generic [ref=e32]: "0"
+          - generic [ref=e33]: "1"
+        - generic [ref=e34]: Issue
+      - button "Collapse issues badge" [ref=e35]:
+        - img [ref=e36]
+  - alert [ref=e27]
+  - generic [ref=e38]:
+    - banner [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]: Effinity
+        - separator [ref=e42]
+        - generic [ref=e43]: Admin
+        - navigation [ref=e44]:
+          - link "Users" [ref=e45] [cursor=pointer]:
+            - /url: /admin
+        - button "Logout" [ref=e46] [cursor=pointer]
+    - main [ref=e47]:
+      - generic [ref=e92]:
+        - generic [ref=e93]:
+          - button "← Users" [ref=e94] [cursor=pointer]:
+            - link "← Users" [ref=e95]:
+              - /url: /admin
+          - heading "New User" [level=1] [ref=e96]
+        - generic [ref=e97]:
+          - generic [ref=e99]: Account Details
+          - generic [ref=e101]:
+            - generic [ref=e102]:
+              - generic [ref=e103]: Name
+              - textbox "Team Alpha" [ref=e104]
+            - generic [ref=e105]:
+              - generic [ref=e106]: Email
+              - textbox "alpha@team.com" [ref=e107]
+            - generic [ref=e108]:
+              - generic [ref=e109]: Password
+              - textbox "••••••••" [ref=e110]
+            - paragraph [ref=e112]:
+              - text: A unique user ID will be generated automatically in the format
+              - generic [ref=e113]: "effinity-{16chars}"
+              - text: . Tournament IDs and design can be assigned after creation.
+            - generic [ref=e114]:
+              - button "Create User" [ref=e115] [cursor=pointer]
+              - button "Cancel" [ref=e116] [cursor=pointer]:
+                - link "Cancel" [ref=e117]:
+                  - /url: /admin

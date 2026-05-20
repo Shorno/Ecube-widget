@@ -1,0 +1,71 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: Effinity
+        - separator [ref=e6]
+        - generic [ref=e7]: Admin
+        - navigation [ref=e8]:
+          - link "Users" [ref=e9] [cursor=pointer]:
+            - /url: /admin
+        - button "Logout" [ref=e10] [cursor=pointer]
+    - main [ref=e11]:
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]:
+            - heading "Users" [level=1] [ref=e15]
+            - paragraph [ref=e16]: 3 accounts
+          - button "+ New User" [ref=e17] [cursor=pointer]:
+            - link "+ New User" [ref=e18]:
+              - /url: /admin/users/new
+        - table [ref=e21]:
+          - rowgroup [ref=e22]:
+            - row "Name Email Role Status Design Tournaments" [ref=e23]:
+              - columnheader "Name" [ref=e24]
+              - columnheader "Email" [ref=e25]
+              - columnheader "Role" [ref=e26]
+              - columnheader "Status" [ref=e27]
+              - columnheader "Design" [ref=e28]
+              - columnheader "Tournaments" [ref=e29]
+              - columnheader [ref=e30]
+          - rowgroup [ref=e31]:
+            - row "Team Nexus nexus@team.com user Active mythical 1 assigned Edit" [ref=e32]:
+              - cell "Team Nexus" [ref=e33]
+              - cell "nexus@team.com" [ref=e34]
+              - cell "user" [ref=e35]:
+                - generic [ref=e36]: user
+              - cell "Active" [ref=e37]:
+                - generic [ref=e38]: Active
+              - cell "mythical" [ref=e39]
+              - cell "1 assigned" [ref=e40]
+              - cell "Edit" [ref=e41]:
+                - button "Edit" [ref=e42] [cursor=pointer]:
+                  - link "Edit" [ref=e43]:
+                    - /url: /admin/users/effinity-E1FM9QoS0THCywJK
+            - row "Admin admin@ecube.gg admin Active default 0 assigned Edit" [ref=e44]:
+              - cell "Admin" [ref=e45]
+              - cell "admin@ecube.gg" [ref=e46]
+              - cell "admin" [ref=e47]:
+                - generic [ref=e48]: admin
+              - cell "Active" [ref=e49]:
+                - generic [ref=e50]: Active
+              - cell "default" [ref=e51]
+              - cell "0 assigned" [ref=e52]
+              - cell "Edit" [ref=e53]:
+                - button "Edit" [ref=e54] [cursor=pointer]:
+                  - link "Edit" [ref=e55]:
+                    - /url: /admin/users/effinity-admin
+            - row "test@test2.com Disabled default 0 assigned Edit" [ref=e56]:
+              - cell [ref=e57]
+              - cell "test@test2.com" [ref=e58]
+              - cell [ref=e59]
+              - cell "Disabled" [ref=e61]:
+                - generic [ref=e62]: Disabled
+              - cell "default" [ref=e63]
+              - cell "0 assigned" [ref=e64]
+              - cell "Edit" [ref=e65]:
+                - button "Edit" [ref=e66] [cursor=pointer]:
+                  - link "Edit" [ref=e67]:
+                    - /url: /admin/users/69e2b11773000bcffc46799b
+  - button "Open Next.js Dev Tools" [ref=e73] [cursor=pointer]:
+    - img [ref=e74]

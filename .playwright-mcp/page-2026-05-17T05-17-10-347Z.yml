@@ -1,0 +1,154 @@
+- generic [ref=e2]:
+  - generic [ref=e29]:
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - img [ref=e32]
+        - paragraph [ref=e36]: Admin Menu
+      - img "Logo" [ref=e38]
+      - button "Notifications" [ref=e40]:
+        - img [ref=e41]
+        - generic [ref=e44]: "2"
+    - generic [ref=e45]:
+      - generic [ref=e46]:
+        - generic [ref=e48]:
+          - link "Dashboard" [ref=e418] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e51]
+            - generic [ref=e419]: Dashboard
+          - link "Items" [ref=e420] [cursor=pointer]:
+            - /url: /dashboard/items
+            - img [ref=e58]
+            - generic [ref=e421]: Items
+          - link "Live Map" [ref=e422] [cursor=pointer]:
+            - /url: /dashboard/live-map
+            - img [ref=e65]
+            - generic [ref=e423]: Live Map
+          - link "Logs" [ref=e424] [cursor=pointer]:
+            - /url: /dashboard/logs
+            - img [ref=e69]
+            - generic [ref=e425]: Logs
+          - link "Players" [active] [ref=e426] [cursor=pointer]:
+            - /url: /dashboard/players
+            - img [ref=e74]
+            - generic [ref=e427]: Players
+          - link "Staff" [ref=e428] [cursor=pointer]:
+            - /url: /dashboard/staff
+            - img [ref=e81]
+            - generic [ref=e429]: Staff
+          - link "Stores" [ref=e430] [cursor=pointer]:
+            - /url: /dashboard/stores
+            - img [ref=e87]
+            - generic [ref=e431]: Stores
+        - generic [ref=e91]:
+          - generic [ref=e93]: A
+          - generic [ref=e432]:
+            - paragraph [ref=e433]: admin
+            - paragraph [ref=e434]: admin@example.com
+          - button "Logout" [ref=e435] [cursor=pointer]:
+            - img [ref=e436]
+      - main [ref=e94]:
+        - generic [ref=e439]:
+          - generic [ref=e441]:
+            - generic [ref=e443]: No player selected
+            - paragraph [ref=e444]: Select a player from the table below to view details.
+          - generic [ref=e445]:
+            - generic [ref=e447]:
+              - generic [ref=e448]:
+                - text: Players Total - 3
+                - paragraph [ref=e449]: Browse and manage players.
+              - generic [ref=e450]:
+                - textbox "Search by character or username..." [ref=e451]
+                - generic [ref=e452]:
+                  - generic [ref=e453]: Rows
+                  - combobox "Rows Rows" [ref=e455]:
+                    - generic: "10"
+                    - img [ref=e456]
+            - generic [ref=e458]:
+              - table [ref=e461]:
+                - rowgroup [ref=e462]:
+                  - row "Status Player ID Identifier Character Job Cash Bank Ping Warns Last Login" [ref=e463]:
+                    - columnheader "Status" [ref=e464]:
+                      - generic [ref=e465] [cursor=pointer]:
+                        - text: Status
+                        - img [ref=e467]
+                    - columnheader "Player ID" [ref=e470]:
+                      - generic [ref=e471] [cursor=pointer]:
+                        - text: Player ID
+                        - img [ref=e473]
+                    - columnheader "Identifier" [ref=e476]:
+                      - generic [ref=e477] [cursor=pointer]:
+                        - text: Identifier
+                        - img [ref=e479]
+                    - columnheader "Character" [ref=e482]:
+                      - generic [ref=e483] [cursor=pointer]:
+                        - text: Character
+                        - img [ref=e485]
+                    - columnheader "Job" [ref=e488]:
+                      - generic [ref=e489] [cursor=pointer]:
+                        - text: Job
+                        - img [ref=e491]
+                    - columnheader "Cash" [ref=e494]:
+                      - generic [ref=e495] [cursor=pointer]:
+                        - text: Cash
+                        - img [ref=e497]
+                    - columnheader "Bank" [ref=e500]:
+                      - generic [ref=e501] [cursor=pointer]:
+                        - text: Bank
+                        - img [ref=e503]
+                    - columnheader "Ping" [ref=e506]:
+                      - generic [ref=e507] [cursor=pointer]:
+                        - text: Ping
+                        - img [ref=e509]
+                    - columnheader "Warns" [ref=e512]:
+                      - generic [ref=e513] [cursor=pointer]:
+                        - text: Warns
+                        - img [ref=e515]
+                    - columnheader "Last Login" [ref=e518]:
+                      - generic [ref=e519] [cursor=pointer]:
+                        - text: Last Login
+                        - img [ref=e521]
+                - rowgroup [ref=e524]:
+                  - row "Online GnX1Z2A3B4C al Al Police Officer $350 $12650 48 1 10/18/2025, 3:42:00 PM" [ref=e525] [cursor=pointer]:
+                    - cell "Online" [ref=e526]:
+                      - generic [ref=e527]: Online
+                    - cell "GnX1Z2A3B4C" [ref=e529]
+                    - cell "al" [ref=e530]
+                    - cell "Al" [ref=e531]
+                    - cell "Police Officer" [ref=e532]
+                    - cell "$350" [ref=e533]
+                    - cell "$12650" [ref=e534]
+                    - cell "48" [ref=e535]
+                    - cell "1" [ref=e536]
+                    - cell "10/18/2025, 3:42:00 PM" [ref=e537]
+                  - row "Online 4HjK5L6M7N8 al mohaimin Al Mohaimin Mechanic $650 $42600 72 3 10/18/2025, 4:01:00 PM" [ref=e538] [cursor=pointer]:
+                    - cell "Online" [ref=e539]:
+                      - generic [ref=e540]: Online
+                    - cell "4HjK5L6M7N8" [ref=e542]
+                    - cell "al mohaimin" [ref=e543]
+                    - cell "Al Mohaimin" [ref=e544]
+                    - cell "Mechanic" [ref=e545]
+                    - cell "$650" [ref=e546]
+                    - cell "$42600" [ref=e547]
+                    - cell "72" [ref=e548]
+                    - cell "3" [ref=e549]
+                    - cell "10/18/2025, 4:01:00 PM" [ref=e550]
+                  - row "Online Z9Y8X7W6V5 farabi_plays Al Mohaimin Farabi Paramedic $120 $8200 60 0 10/18/2025, 4:15:00 AM" [ref=e551] [cursor=pointer]:
+                    - cell "Online" [ref=e552]:
+                      - generic [ref=e553]: Online
+                    - cell "Z9Y8X7W6V5" [ref=e555]
+                    - cell "farabi_plays" [ref=e556]
+                    - cell "Al Mohaimin Farabi" [ref=e557]
+                    - cell "Paramedic" [ref=e558]
+                    - cell "$120" [ref=e559]
+                    - cell "$8200" [ref=e560]
+                    - cell "60" [ref=e561]
+                    - cell "0" [ref=e562]
+                    - cell "10/18/2025, 4:15:00 AM" [ref=e563]
+              - generic [ref=e564]:
+                - generic [ref=e565]: Page 1 of 1
+                - generic [ref=e566]:
+                  - button "Previous" [disabled] [ref=e567]:
+                    - generic [ref=e568]: Previous
+                  - button "Next" [disabled] [ref=e569]:
+                    - generic [ref=e570]: Next
+  - alert [ref=e1]

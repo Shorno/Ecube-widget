@@ -1,0 +1,217 @@
+- generic [active] [ref=e2]:
+  - generic [ref=e29]:
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - img [ref=e32]
+        - paragraph [ref=e36]: Admin Menu
+      - img "Logo" [ref=e38]
+      - button "Notifications" [ref=e40]:
+        - img [ref=e41]
+        - generic [ref=e44]: "2"
+    - generic [ref=e45]:
+      - generic [ref=e46]:
+        - generic [ref=e48]:
+          - link [ref=e49] [cursor=pointer]:
+            - /url: /dashboard
+            - img [ref=e51]
+          - link [ref=e56] [cursor=pointer]:
+            - /url: /dashboard/items
+            - img [ref=e58]
+          - link [ref=e63] [cursor=pointer]:
+            - /url: /dashboard/live-map
+            - img [ref=e65]
+          - link [ref=e67] [cursor=pointer]:
+            - /url: /dashboard/logs
+            - img [ref=e69]
+          - link [ref=e72] [cursor=pointer]:
+            - /url: /dashboard/players
+            - img [ref=e74]
+          - link [ref=e79] [cursor=pointer]:
+            - /url: /dashboard/staff
+            - img [ref=e81]
+          - link [ref=e85] [cursor=pointer]:
+            - /url: /dashboard/stores
+            - img [ref=e87]
+        - generic [ref=e93]: A
+      - main [ref=e94]:
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - heading "Server Info" [level=1] [ref=e97]
+            - generic [ref=e98]:
+              - generic [ref=e100]:
+                - paragraph [ref=e102]: Online Players - 3
+                - generic [ref=e103]:
+                  - 'button "Al Al #GnX1Z2A3B4C Police Officer 48ms Locate on map" [ref=e104] [cursor=pointer]':
+                    - generic [ref=e105]:
+                      - img "Al" [ref=e107]
+                      - generic [ref=e108]:
+                        - paragraph [ref=e109]: Al
+                        - paragraph [ref=e110]: "#GnX1Z2A3B4C"
+                    - generic [ref=e111]:
+                      - text: Police Officer
+                      - generic [ref=e113]:
+                        - generic [ref=e114]:
+                          - img [ref=e115]
+                          - generic [ref=e119]: 48ms
+                        - button "Locate on map" [ref=e120]:
+                          - img [ref=e121]
+                  - 'button "Al Mohaimin Al Mohaimin #4HjK5L6M7N8 Mechanic 72ms Locate on map" [ref=e124] [cursor=pointer]':
+                    - generic [ref=e125]:
+                      - img "Al Mohaimin" [ref=e127]
+                      - generic [ref=e128]:
+                        - paragraph [ref=e129]: Al Mohaimin
+                        - paragraph [ref=e130]: "#4HjK5L6M7N8"
+                    - generic [ref=e131]:
+                      - text: Mechanic
+                      - generic [ref=e133]:
+                        - generic [ref=e134]:
+                          - img [ref=e135]
+                          - generic [ref=e139]: 72ms
+                        - button "Locate on map" [ref=e140]:
+                          - img [ref=e141]
+                  - 'button "Al Mohaimin Farabi Al Mohaimin Farabi #Z9Y8X7W6V5 Paramedic 60ms Locate on map" [ref=e144] [cursor=pointer]':
+                    - generic [ref=e145]:
+                      - img "Al Mohaimin Farabi" [ref=e147]
+                      - generic [ref=e148]:
+                        - paragraph [ref=e149]: Al Mohaimin Farabi
+                        - paragraph [ref=e150]: "#Z9Y8X7W6V5"
+                    - generic [ref=e151]:
+                      - text: Paramedic
+                      - generic [ref=e153]:
+                        - generic [ref=e154]:
+                          - img [ref=e155]
+                          - generic [ref=e159]: 60ms
+                        - button "Locate on map" [ref=e160]:
+                          - img [ref=e161]
+              - generic [ref=e164]:
+                - generic [ref=e165]:
+                  - generic [ref=e167]:
+                    - generic [ref=e168]: Player & Economy Overview
+                    - img [ref=e170]
+                  - generic [ref=e172]:
+                    - generic [ref=e173]: Active Admins
+                    - img [ref=e175]
+                - generic [ref=e176]:
+                  - generic [ref=e179]:
+                    - img [ref=e181]
+                    - generic [ref=e186]:
+                      - heading "Total Server Cash" [level=2] [ref=e187]
+                      - paragraph [ref=e188]: $5,000
+                  - generic [ref=e191]:
+                    - img [ref=e193]
+                    - generic [ref=e196]:
+                      - heading "Total Server Bank" [level=2] [ref=e197]
+                      - paragraph [ref=e198]: $173,617
+                  - generic [ref=e201]:
+                    - img [ref=e203]
+                    - generic [ref=e206]:
+                      - heading "Staff Online" [level=2] [ref=e207]
+                      - paragraph [ref=e208]: "2"
+                  - generic [ref=e211]:
+                    - img [ref=e213]
+                    - generic [ref=e217]:
+                      - heading "Peak Players Today" [level=2] [ref=e218]
+                      - paragraph [ref=e219]: "142"
+                  - generic [ref=e222]:
+                    - img [ref=e224]
+                    - generic [ref=e228]:
+                      - heading "Total Bans" [level=2] [ref=e229]
+                      - paragraph [ref=e230]: 37 bans
+                  - generic [ref=e233]:
+                    - img [ref=e235]
+                    - generic [ref=e238]:
+                      - heading "Total Warnings" [level=2] [ref=e239]
+                      - paragraph [ref=e240]: 128 warnings
+          - generic [ref=e241]:
+            - heading "Server Actions" [level=2] [ref=e242]
+            - generic [ref=e243]:
+              - generic [ref=e246]:
+                - generic [ref=e248]:
+                  - generic [ref=e249]:
+                    - img [ref=e251]
+                    - generic [ref=e254]:
+                      - generic [ref=e255]: Global Announcement
+                      - generic [ref=e256]: Send a global announcement to all players.
+                  - button "Announce" [ref=e258] [cursor=pointer]
+                - generic [ref=e260]:
+                  - generic [ref=e261]:
+                    - img [ref=e263]
+                    - generic [ref=e265]:
+                      - generic [ref=e266]: Global Revive
+                      - generic [ref=e267]: Revive all players on the server.
+                  - button "Revive" [ref=e269] [cursor=pointer]
+                - generic [ref=e271]:
+                  - generic [ref=e272]:
+                    - img [ref=e274]
+                    - generic [ref=e277]:
+                      - generic [ref=e278]: Global Kick
+                      - generic [ref=e279]: Kick all players on the server.
+                  - button "Kick" [ref=e281] [cursor=pointer]
+                - generic [ref=e283]:
+                  - generic [ref=e284]:
+                    - img [ref=e286]
+                    - generic [ref=e290]:
+                      - generic [ref=e291]: Delete All Vehicles
+                      - generic [ref=e292]: Delete all vehicles on the server.
+                  - button "Delete Vehicles" [ref=e294] [cursor=pointer]
+                - generic [ref=e296]:
+                  - generic [ref=e297]:
+                    - img [ref=e299]
+                    - generic [ref=e302]:
+                      - generic [ref=e303]: Delete All Peds
+                      - generic [ref=e304]: Delete all peds on the server.
+                  - button "Delete Peds" [ref=e306] [cursor=pointer]
+                - generic [ref=e308]:
+                  - generic [ref=e309]:
+                    - img [ref=e311]
+                    - generic [ref=e315]:
+                      - generic [ref=e316]: Delete All Props
+                      - generic [ref=e317]: Delete all props on the server.
+                  - button "Delete Props" [ref=e319] [cursor=pointer]
+                - generic [ref=e321]:
+                  - generic [ref=e322]:
+                    - img [ref=e324]
+                    - generic [ref=e326]:
+                      - generic [ref=e327]: Set Weather
+                      - generic [ref=e328]: Set the weather for your server.
+                  - button "Set Weather" [ref=e330] [cursor=pointer]
+                - generic [ref=e332]:
+                  - generic [ref=e333]:
+                    - img [ref=e335]
+                    - generic [ref=e338]:
+                      - generic [ref=e339]: Set Time
+                      - generic [ref=e340]: Set the time for your server.
+                  - button "Set Time" [ref=e342] [cursor=pointer]
+                - generic [ref=e344]:
+                  - generic [ref=e345]:
+                    - img [ref=e347]
+                    - generic [ref=e360]:
+                      - generic [ref=e361]: Global Freeze
+                      - generic [ref=e362]: Freeze all players on the server.
+                  - button "Global Freeze" [ref=e364] [cursor=pointer]
+                - generic [ref=e366]:
+                  - generic [ref=e367]:
+                    - img [ref=e369]
+                    - generic [ref=e375]:
+                      - generic [ref=e376]: Global Unfreeze
+                      - generic [ref=e377]: Unfreeze all players on the server.
+                  - button "Global Unfreeze" [ref=e379] [cursor=pointer]
+                - generic [ref=e381]:
+                  - generic [ref=e382]:
+                    - img [ref=e384]
+                    - generic [ref=e390]:
+                      - generic [ref=e391]: Global Mute
+                      - generic [ref=e392]: Mute all players on the server.
+                  - button "Global Mute" [ref=e394] [cursor=pointer]
+                - generic [ref=e396]:
+                  - generic [ref=e397]:
+                    - img [ref=e399]
+                    - generic [ref=e402]:
+                      - generic [ref=e403]: Global Unmute
+                      - generic [ref=e404]: Unmute all players on the server.
+                  - button "Global Unmute" [ref=e406] [cursor=pointer]
+              - generic [ref=e408]:
+                - heading "Map Actions" [level=2] [ref=e409]
+                - img "GTA V Map" [ref=e411]
+  - status [ref=e417]: Welcome back!
+  - alert [ref=e1]

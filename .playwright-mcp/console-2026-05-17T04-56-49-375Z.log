@@ -1,0 +1,316 @@
+[      31ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/:0
+[     126ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_react-dom_4411d9bd._.js:15305
+[     194ms] Error: ./lib/redux/rootReducer.js:2:1
+Module not found: Can't resolve '../services/api'
+  1 | import { combineReducers } from "@reduxjs/toolkit";
+> 2 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { widgetApi } from "../services/widget-api";
+  4 |
+  5 |
+
+
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/rootReducer.js [Client Component Browser]
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/rootReducer.js [Client Component SSR]
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./lib/redux/rootReducer.js:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at Object.getCompilationErrors (file://E:\E-Cube-Projects\Effinity-pubg\pubg-widget\node_modules\next\dist\server\dev\hot-reloader-turbopack.js:1008:59)
+    at DevBundlerService.getCompilationError (file://E:\E-Cube-Projects\Effinity-pubg\pubg-widget\node_modules\next\dist\server\lib\dev-bundler-service.js:44:55)
+    at DevServer.getCompilationError (file://E:\E-Cube-Projects\Effinity-pubg\pubg-widget\node_modules\next\dist\server\dev\next-dev-server.js:706:42)
+    at DevServer.findPageComponents (file://E:\E-Cube-Projects\Effinity-pubg\pubg-widget\node_modules\next\dist\server\dev\next-dev-server.js:676:43)
+    at async DevServer.renderErrorToResponseImpl (file://E:\E-Cube-Projects\Effinity-pubg\pubg-widget\node_modules\next\dist\server\base-server.js:1733:26)
+[     188ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:1360
+[     195ms] [ERROR] ./lib/redux/rootReducer.js:2:1
+Module not found: Can't resolve '../services/api'
+  1 | import { combineReducers } from "@reduxjs/toolkit";
+> 2 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { widgetApi } from "../services/widget-api";
+  4 |
+  5 |
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/rootReducer.js [Client Component Browser]
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/rootReducer.js [Client Component SSR]
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:2074
+[     195ms] [ERROR] ./lib/redux/store.js:4:1
+Module not found: Can't resolve '../services/api'
+  2 | import { setupListeners } from "@reduxjs/toolkit/query";
+  3 | import rootReducer from "./rootReducer";
+> 4 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { widgetApi } from "../services/widget-api";
+  6 |
+  7 | export const makeStore = () => {
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:2074
+[     195ms] [ERROR] ./lib/redux/rootReducer.js:2:1
+Module not found: Can't resolve '../services/api'
+  1 | import { combineReducers } from "@reduxjs/toolkit";
+> 2 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { widgetApi } from "../services/widget-api";
+  4 |
+  5 |
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/rootReducer.js [Client Component Browser]
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/rootReducer.js [Client Component SSR]
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:2074
+[     195ms] [ERROR] ./lib/redux/store.js:4:1
+Module not found: Can't resolve '../services/api'
+  2 | import { setupListeners } from "@reduxjs/toolkit/query";
+  3 | import rootReducer from "./rootReducer";
+> 4 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { widgetApi } from "../services/widget-api";
+  6 |
+  7 | export const makeStore = () => {
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:2074
+[     285ms] [ERROR] ./lib/redux/rootReducer.js:2:1
+Module not found: Can't resolve '../services/api'
+  1 | import { combineReducers } from "@reduxjs/toolkit";
+> 2 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { widgetApi } from "../services/widget-api";
+  4 |
+  5 |
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/rootReducer.js [Client Component Browser]
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/rootReducer.js [Client Component SSR]
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:2074
+[     285ms] [ERROR] ./lib/redux/store.js:4:1
+Module not found: Can't resolve '../services/api'
+  2 | import { setupListeners } from "@reduxjs/toolkit/query";
+  3 | import rootReducer from "./rootReducer";
+> 4 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { widgetApi } from "../services/widget-api";
+  6 |
+  7 | export const makeStore = () => {
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:2074
+[     304ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:1360
+[     351ms] [ERROR] ./lib/redux/rootReducer.js:2:1
+Module not found: Can't resolve '../services/api'
+  1 | import { combineReducers } from "@reduxjs/toolkit";
+> 2 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { widgetApi } from "../services/widget-api";
+  4 |
+  5 |
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/rootReducer.js [Client Component Browser]
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/rootReducer.js [Client Component SSR]
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:2074
+[     351ms] [ERROR] ./lib/redux/store.js:4:1
+Module not found: Can't resolve '../services/api'
+  2 | import { setupListeners } from "@reduxjs/toolkit/query";
+  3 | import rootReducer from "./rootReducer";
+> 4 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { widgetApi } from "../services/widget-api";
+  6 |
+  7 | export const makeStore = () => {
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:2074
+[     411ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:1360
+[    4522ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:1360
+[    4631ms] [ERROR] ./lib/redux/rootReducer.js:2:1
+Module not found: Can't resolve '../services/api'
+  1 | import { combineReducers } from "@reduxjs/toolkit";
+> 2 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 | import { widgetApi } from "../services/widget-api";
+  4 |
+  5 |
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/rootReducer.js [Client Component Browser]
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/rootReducer.js [Client Component SSR]
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:2074
+[    4631ms] [ERROR] ./lib/redux/store.js:4:1
+Module not found: Can't resolve '../services/api'
+  2 | import { setupListeners } from "@reduxjs/toolkit/query";
+  3 | import rootReducer from "./rootReducer";
+> 4 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { widgetApi } from "../services/widget-api";
+  6 |
+  7 | export const makeStore = () => {
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:2074
+[   12188ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:1360
+[   12281ms] [ERROR] ./lib/redux/store.js:4:1
+Module not found: Can't resolve '../services/api'
+  2 | import { setupListeners } from "@reduxjs/toolkit/query";
+  3 | import rootReducer from "./rootReducer";
+> 4 | import { api } from "../services/api";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  5 | import { widgetApi } from "../services/widget-api";
+  6 |
+  7 | export const makeStore = () => {
+
+Import traces:
+  Client Component Browser:
+    ./lib/redux/store.js [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Client Component Browser]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+  Client Component SSR:
+    ./lib/redux/store.js [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Client Component SSR]
+    ./components/common/StoreProvider.jsx [Server Component]
+    ./app/layout.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:2074
+[   21306ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:1360
+[   21709ms] [LOG] [Fast Refresh] done in 154ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_fe4545e6._.js:1360
+[   22132ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297
+[   22245ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2297

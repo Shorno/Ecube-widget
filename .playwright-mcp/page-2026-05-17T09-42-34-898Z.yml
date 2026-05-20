@@ -1,0 +1,168 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link [ref=e216] [cursor=pointer]:
+          - /url: /controller
+          - text: ← Controller
+        - generic [ref=e7]: Theme Settings
+      - generic [ref=e8]:
+        - button [ref=e217] [cursor=pointer]: Logout
+        - button [ref=e218] [cursor=pointer]: Save Changes
+    - generic [ref=e11]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - paragraph [ref=e15]: Default Design
+          - paragraph [ref=e16]: Active for all tournaments unless overridden below.
+          - button [ref=e219] [cursor=pointer]:
+            - generic [ref=e19]:
+              - paragraph [ref=e20]: default
+              - paragraph [ref=e21]: default
+            - generic [ref=e22]: Active
+        - generic [ref=e23]:
+          - paragraph [ref=e24]: Widget Font
+          - paragraph [ref=e25]: Applied to all widget text.
+          - generic [ref=e26]:
+            - button [ref=e220] [cursor=pointer]:
+              - generic [ref=e28]:
+                - paragraph [ref=e29]: Oswald
+                - paragraph [ref=e30]: TEAM ALPHA — 14 PTS
+              - generic [ref=e31]: ✓
+            - button [ref=e221] [cursor=pointer]:
+              - generic [ref=e33]:
+                - paragraph [ref=e34]: Rajdhani
+                - paragraph [ref=e35]: TEAM ALPHA — 14 PTS
+            - button [ref=e222] [cursor=pointer]:
+              - generic [ref=e37]:
+                - paragraph [ref=e38]: Barlow Condensed
+                - paragraph [ref=e39]: TEAM ALPHA — 14 PTS
+            - button [ref=e223] [cursor=pointer]:
+              - generic [ref=e41]:
+                - paragraph [ref=e42]: Bebas Neue
+                - paragraph [ref=e43]: TEAM ALPHA — 14 PTS
+            - button [ref=e224] [cursor=pointer]:
+              - generic [ref=e45]:
+                - paragraph [ref=e46]: Exo 2
+                - paragraph [ref=e47]: TEAM ALPHA — 14 PTS
+            - button [ref=e225] [cursor=pointer]:
+              - generic [ref=e49]:
+                - paragraph [ref=e50]: Russo One
+                - paragraph [ref=e51]: TEAM ALPHA — 14 PTS
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - paragraph [ref=e55]: Quick Themes
+          - paragraph [ref=e56]: Click a theme to fill colors. Press Save to apply.
+          - generic [ref=e57]:
+            - button [ref=e226] [cursor=pointer]:
+              - paragraph [ref=e63]: Default Orange
+            - button [ref=e227] [cursor=pointer]:
+              - paragraph [ref=e69]: Mythical Teal
+            - button [ref=e228] [cursor=pointer]:
+              - paragraph [ref=e75]: Crimson Strike
+            - button [ref=e229] [cursor=pointer]:
+              - paragraph [ref=e81]: Ocean Blue
+            - button [ref=e230] [cursor=pointer]:
+              - paragraph [ref=e87]: Neon Purple
+            - button [ref=e231] [cursor=pointer]:
+              - paragraph [ref=e93]: Midnight Gold
+            - button [ref=e232] [cursor=pointer]:
+              - paragraph [ref=e99]: Arctic White
+        - generic [ref=e100]:
+          - heading [level=3] [ref=e233]: Primary
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - generic [ref=e104]: Default
+              - textbox [ref=e234]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#a54e26"
+            - generic [ref=e109]:
+              - generic [ref=e110]: Background
+              - textbox [ref=e235]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#7a3a1c"
+            - generic [ref=e115]:
+              - generic [ref=e116]: Border
+              - textbox [ref=e236]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#5c2c14"
+            - generic [ref=e121]:
+              - generic [ref=e122]: Dark
+              - textbox [ref=e237]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#c45e30"
+        - generic [ref=e127]:
+          - heading [level=3] [ref=e238]: Secondary
+          - generic [ref=e129]:
+            - generic [ref=e130]:
+              - generic [ref=e131]: Default
+              - textbox [ref=e239]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#008e88"
+            - generic [ref=e136]:
+              - generic [ref=e137]: Background
+              - textbox [ref=e240]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#006e69"
+            - generic [ref=e142]:
+              - generic [ref=e143]: Border
+              - textbox [ref=e241]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#005550"
+            - generic [ref=e148]:
+              - generic [ref=e149]: Dark
+              - textbox [ref=e242]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#00a89f"
+        - generic [ref=e154]:
+          - heading [level=3] [ref=e243]: Status
+          - generic [ref=e156]:
+            - generic [ref=e157]:
+              - generic [ref=e158]: Alive
+              - textbox [ref=e244]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: rgba(255,255,255,1)
+            - generic [ref=e163]:
+              - generic [ref=e164]: Knocked
+              - textbox [ref=e245]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: rgba(244,63,94,1)
+            - generic [ref=e169]:
+              - generic [ref=e170]: Dead
+              - textbox [ref=e246]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: rgba(0,0,0,0.5)
+        - generic [ref=e175]:
+          - heading [level=3] [ref=e247]: Global
+          - generic [ref=e177]:
+            - generic [ref=e178]:
+              - generic [ref=e179]: Background
+              - textbox [ref=e248]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#0d0d0d"
+            - generic [ref=e184]:
+              - generic [ref=e185]: Text
+              - textbox [ref=e249]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#f5f5f5"
+            - generic [ref=e190]:
+              - generic [ref=e191]: Gradient Start
+              - textbox [ref=e250]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#a54e26"
+            - generic [ref=e196]:
+              - generic [ref=e197]: Gradient End
+              - textbox [ref=e251]:
+                - /placeholder: "#000 or rgba(…)"
+                - text: "#c45e30"
+        - button [ref=e252] [cursor=pointer]: Reset to default defaults
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e209] [cursor=pointer]:
+    - img [ref=e210]
+  - alert [ref=e215]
+  - alertdialog "Log out?" [ref=e256]:
+    - generic [ref=e257]:
+      - heading "Log out?" [level=2] [ref=e258]
+      - paragraph [ref=e259]: Any unsaved changes will be lost.
+    - generic [ref=e260]:
+      - button "Cancel" [active] [ref=e261] [cursor=pointer]
+      - button "Log out" [ref=e262] [cursor=pointer]

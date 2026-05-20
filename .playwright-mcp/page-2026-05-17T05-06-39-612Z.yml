@@ -1,0 +1,53 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: EFFINITY
+          - generic [ref=e7]: ·
+          - generic [ref=e8]: Controller
+        - generic [ref=e9]: No widget active
+        - generic [ref=e10]:
+          - combobox [ref=e11]:
+            - 'option "Score Group: Default" [selected]'
+            - 'option "Score Group: Full"'
+          - generic [ref=e12]: No tournaments assigned
+          - link "Settings" [ref=e13] [cursor=pointer]:
+            - /url: /settings
+    - generic [ref=e15]:
+      - generic [ref=e16]: OBS Source
+      - generic [ref=e18]: No tournament ID selected
+    - main [ref=e19]:
+      - button "⬛ Clear Screen" [ref=e21] [cursor=pointer]
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e25]: In-Game Widgets
+          - generic [ref=e26]: — No tournament selected
+        - generic [ref=e28]:
+          - button "Ramp Dom" [disabled] [ref=e29] [cursor=pointer]
+          - button "Eliminations" [disabled] [ref=e30] [cursor=pointer]
+          - button "Top Four" [disabled] [ref=e31] [cursor=pointer]
+          - button "First Blood" [disabled] [ref=e32] [cursor=pointer]
+          - button "Live Ranking" [disabled] [ref=e33] [cursor=pointer]
+          - button "Overall Ranking" [disabled] [ref=e34] [cursor=pointer]
+          - button "Map" [ref=e35] [cursor=pointer]
+          - button "Map Control" [ref=e36] [cursor=pointer]
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e40]: After-Match Widgets
+          - generic [ref=e41]: — No tournament selected
+        - generic [ref=e43]:
+          - button "Match Summary" [disabled] [ref=e44] [cursor=pointer]
+          - button "MVP Match" [disabled] [ref=e45] [cursor=pointer]
+          - button "MVP Group" [disabled] [ref=e46] [cursor=pointer]
+          - button "Head to Head" [disabled] [ref=e47] [cursor=pointer]
+          - button "After Match Score" [disabled] [ref=e48] [cursor=pointer]
+          - button "Score Group" [disabled] [ref=e49] [cursor=pointer]
+          - button "Top Players" [disabled] [ref=e50] [cursor=pointer]
+          - button "Top Players Group" [disabled] [ref=e51] [cursor=pointer]
+          - button "WWC" [disabled] [ref=e52] [cursor=pointer]
+          - button "WWC Two" [disabled] [ref=e53] [cursor=pointer]
+          - button "WWC Stats" [disabled] [ref=e54] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e60] [cursor=pointer]:
+    - img [ref=e61]
+  - alert [ref=e64]

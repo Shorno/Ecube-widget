@@ -1,0 +1,63 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e27] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e28]:
+      - img [ref=e29]
+    - generic [ref=e33]:
+      - button "Open issues overlay" [ref=e34]:
+        - generic [ref=e35]:
+          - generic [ref=e36]: "0"
+          - generic [ref=e37]: "1"
+        - generic [ref=e38]: Issue
+      - button "Collapse issues badge" [ref=e39]:
+        - img [ref=e40]
+  - alert [ref=e32]
+  - generic [ref=e42]:
+    - banner [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - generic [ref=e46]: Effinity
+          - generic [ref=e47]: /
+          - generic [ref=e48]: Admin
+        - navigation [ref=e49]:
+          - link "Users" [ref=e50] [cursor=pointer]:
+            - /url: /admin
+        - button "Logout" [ref=e51] [cursor=pointer]
+    - main [ref=e52]:
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - generic [ref=e55]:
+            - heading "Users" [level=1] [ref=e56]
+            - paragraph [ref=e57]: 1 customer registered
+          - generic [ref=e58]:
+            - button "Register Designs" [ref=e59] [cursor=pointer]:
+              - link "Register Designs" [ref=e60]:
+                - /url: /api/admin/seed-designs
+            - button "+ New User" [ref=e61] [cursor=pointer]:
+              - link "+ New User" [ref=e62]:
+                - /url: /admin/users/new
+        - table [ref=e65]:
+          - rowgroup [ref=e66]:
+            - row "User Status Design Tournaments User ID" [ref=e67]:
+              - columnheader "User" [ref=e68]
+              - columnheader "Status" [ref=e69]
+              - columnheader "Design" [ref=e70]
+              - columnheader "Tournaments" [ref=e71]
+              - columnheader "User ID" [ref=e72]
+              - columnheader [ref=e73]
+          - rowgroup [ref=e74]:
+            - row "Team Nexus nexus@team.com Active mythical 1tournament effinity-E1FM9QoS0THCywJK Edit" [ref=e75]:
+              - cell "Team Nexus nexus@team.com" [ref=e76]:
+                - generic [ref=e77]:
+                  - paragraph [ref=e78]: Team Nexus
+                  - paragraph [ref=e79]: nexus@team.com
+              - cell "Active" [ref=e80]:
+                - generic [ref=e83]: Active
+              - cell "mythical" [ref=e84]:
+                - generic [ref=e85]: mythical
+              - cell "1tournament" [ref=e86]:
+                - generic [ref=e87]: 1tournament
+              - cell "effinity-E1FM9QoS0THCywJK" [ref=e88]
+              - cell "Edit" [ref=e89]:
+                - button "Edit" [ref=e90] [cursor=pointer]:
+                  - link "Edit" [ref=e91]:
+                    - /url: /admin/users/effinity-E1FM9QoS0THCywJK

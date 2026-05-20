@@ -1,0 +1,68 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e27] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e28]:
+      - img [ref=e29]
+    - generic [ref=e36]:
+      - button "Open issues overlay" [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e39]: "0"
+          - generic [ref=e40]: "1"
+        - generic [ref=e41]: Issue
+      - button "Collapse issues badge" [ref=e42]:
+        - img [ref=e43]
+  - alert [ref=e32]
+  - generic [ref=e45]:
+    - banner [ref=e46]:
+      - generic [ref=e47]:
+        - generic [ref=e48]: Effinity
+        - separator [ref=e49]
+        - generic [ref=e50]: Admin
+        - navigation [ref=e51]:
+          - link "Users" [ref=e52] [cursor=pointer]:
+            - /url: /admin
+        - button "Logout" [ref=e53] [cursor=pointer]
+    - main [ref=e54]:
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - heading "Users" [level=1] [ref=e58]
+            - paragraph [ref=e59]: 2 accounts
+          - button "+ New User" [ref=e60] [cursor=pointer]:
+            - link "+ New User" [ref=e61]:
+              - /url: /admin/users/new
+        - table [ref=e64]:
+          - rowgroup [ref=e65]:
+            - row "Name Email Role Status Design Tournaments" [ref=e66]:
+              - columnheader "Name" [ref=e67]
+              - columnheader "Email" [ref=e68]
+              - columnheader "Role" [ref=e69]
+              - columnheader "Status" [ref=e70]
+              - columnheader "Design" [ref=e71]
+              - columnheader "Tournaments" [ref=e72]
+              - columnheader [ref=e73]
+          - rowgroup [ref=e74]:
+            - row "Admin admin@ecube.gg admin Active default 0 assigned Edit" [ref=e75]:
+              - cell "Admin" [ref=e76]
+              - cell "admin@ecube.gg" [ref=e77]
+              - cell "admin" [ref=e78]:
+                - generic [ref=e79]: admin
+              - cell "Active" [ref=e80]:
+                - generic [ref=e81]: Active
+              - cell "default" [ref=e82]
+              - cell "0 assigned" [ref=e83]
+              - cell "Edit" [ref=e84]:
+                - button "Edit" [ref=e85] [cursor=pointer]:
+                  - link "Edit" [ref=e86]:
+                    - /url: /admin/users/effinity-admin
+            - row "test@test2.com Disabled default 0 assigned Edit" [ref=e87]:
+              - cell [ref=e88]
+              - cell "test@test2.com" [ref=e89]
+              - cell [ref=e90]
+              - cell "Disabled" [ref=e92]:
+                - generic [ref=e93]: Disabled
+              - cell "default" [ref=e94]
+              - cell "0 assigned" [ref=e95]
+              - cell "Edit" [ref=e96]:
+                - button "Edit" [ref=e97] [cursor=pointer]:
+                  - link "Edit" [ref=e98]:
+                    - /url: /admin/users/69e2b11773000bcffc46799b

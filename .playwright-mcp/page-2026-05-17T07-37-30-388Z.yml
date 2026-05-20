@@ -1,0 +1,81 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "← Controller" [ref=e5] [cursor=pointer]:
+          - /url: /controller
+        - generic [ref=e7]: Theme Settings
+      - button "Save Changes" [ref=e9] [cursor=pointer]
+    - generic [ref=e10]:
+      - generic [ref=e12]:
+        - heading "Default Design" [level=2] [ref=e13]
+        - paragraph [ref=e14]: Active for all tournaments unless overridden below.
+        - button "default default Active" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]:
+            - paragraph [ref=e18]: default
+            - paragraph [ref=e19]: default
+          - generic [ref=e20]: Active
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - heading "Colors" [level=2] [ref=e23]
+          - paragraph [ref=e24]: Applied to all widgets. Each color token maps to a CSS custom property used in your design.
+        - generic [ref=e25]:
+          - heading "Primary" [level=3] [ref=e26]
+          - generic [ref=e27]:
+            - generic [ref=e28]:
+              - generic [ref=e29]: Default
+              - textbox "#000000 or rgb(...)" [ref=e32]: "#a54e26"
+            - generic [ref=e33]:
+              - generic [ref=e34]: Background
+              - textbox "#000000 or rgb(...)" [ref=e37]: "#7a3a1c"
+            - generic [ref=e38]:
+              - generic [ref=e39]: Border
+              - textbox "#000000 or rgb(...)" [ref=e42]: "#5c2c14"
+            - generic [ref=e43]:
+              - generic [ref=e44]: Dark
+              - textbox "#000000 or rgb(...)" [ref=e47]: "#c45e30"
+        - generic [ref=e48]:
+          - heading "Secondary" [level=3] [ref=e49]
+          - generic [ref=e50]:
+            - generic [ref=e51]:
+              - generic [ref=e52]: Default
+              - textbox "#000000 or rgb(...)" [ref=e55]: "#008e88"
+            - generic [ref=e56]:
+              - generic [ref=e57]: Background
+              - textbox "#000000 or rgb(...)" [ref=e60]: "#006e69"
+            - generic [ref=e61]:
+              - generic [ref=e62]: Border
+              - textbox "#000000 or rgb(...)" [ref=e65]: "#005550"
+            - generic [ref=e66]:
+              - generic [ref=e67]: Dark
+              - textbox "#000000 or rgb(...)" [ref=e70]: "#00a89f"
+        - generic [ref=e71]:
+          - heading "Status" [level=3] [ref=e72]
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - generic [ref=e75]: Alive
+              - textbox "#000000 or rgb(...)" [ref=e78]: rgba(255,255,255,1)
+            - generic [ref=e79]:
+              - generic [ref=e80]: Knocked
+              - textbox "#000000 or rgb(...)" [ref=e83]: rgba(244,63,94,1)
+            - generic [ref=e84]:
+              - generic [ref=e85]: Dead
+              - textbox "#000000 or rgb(...)" [ref=e88]: rgba(0,0,0,0.5)
+        - generic [ref=e89]:
+          - heading "Global" [level=2] [ref=e90]
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - generic [ref=e93]: Background
+              - textbox "#000000 or rgb(...)" [ref=e96]: "#0d0d0d"
+            - generic [ref=e97]:
+              - generic [ref=e98]: Text
+              - textbox "#000000 or rgb(...)" [ref=e101]: "#f5f5f5"
+            - generic [ref=e102]:
+              - generic [ref=e103]: Gradient Start
+              - textbox "#000000 or rgb(...)" [ref=e106]: "#a54e26"
+            - generic [ref=e107]:
+              - generic [ref=e108]: Gradient End
+              - textbox "#000000 or rgb(...)" [ref=e111]: "#c45e30"
+        - button "Reset colors to default defaults" [ref=e113] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e119] [cursor=pointer]:
+    - img [ref=e120]

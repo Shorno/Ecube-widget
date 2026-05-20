@@ -1,0 +1,174 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "← Controller" [ref=e5] [cursor=pointer]:
+          - /url: /controller
+        - generic [ref=e7]: Theme Settings
+      - generic [ref=e8]:
+        - button "Logout" [ref=e9] [cursor=pointer]
+        - button "Save Changes" [ref=e10] [cursor=pointer]
+    - generic [ref=e11]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - paragraph [ref=e15]: Default Design
+          - paragraph [ref=e16]: Active for all tournaments unless overridden below.
+          - button "default default Active" [ref=e18] [cursor=pointer]:
+            - generic [ref=e19]:
+              - paragraph [ref=e20]: default
+              - paragraph [ref=e21]: default
+            - generic [ref=e22]: Active
+        - generic [ref=e23]:
+          - paragraph [ref=e24]: Widget Font
+          - paragraph [ref=e25]: Applied to all widget text.
+          - generic [ref=e26]:
+            - button "Oswald TEAM ALPHA — 14 PTS ✓" [ref=e27] [cursor=pointer]:
+              - generic [ref=e28]:
+                - paragraph [ref=e29]: Oswald
+                - paragraph [ref=e30]: TEAM ALPHA — 14 PTS
+              - generic [ref=e31]: ✓
+            - button "Rajdhani TEAM ALPHA — 14 PTS" [ref=e32] [cursor=pointer]:
+              - generic [ref=e33]:
+                - paragraph [ref=e34]: Rajdhani
+                - paragraph [ref=e35]: TEAM ALPHA — 14 PTS
+            - button "Barlow Condensed TEAM ALPHA — 14 PTS" [ref=e36] [cursor=pointer]:
+              - generic [ref=e37]:
+                - paragraph [ref=e38]: Barlow Condensed
+                - paragraph [ref=e39]: TEAM ALPHA — 14 PTS
+            - button "Bebas Neue TEAM ALPHA — 14 PTS" [ref=e40] [cursor=pointer]:
+              - generic [ref=e41]:
+                - paragraph [ref=e42]: Bebas Neue
+                - paragraph [ref=e43]: TEAM ALPHA — 14 PTS
+            - button "Exo 2 TEAM ALPHA — 14 PTS" [ref=e44] [cursor=pointer]:
+              - generic [ref=e45]:
+                - paragraph [ref=e46]: Exo 2
+                - paragraph [ref=e47]: TEAM ALPHA — 14 PTS
+            - button "Russo One TEAM ALPHA — 14 PTS" [ref=e48] [cursor=pointer]:
+              - generic [ref=e49]:
+                - paragraph [ref=e50]: Russo One
+                - paragraph [ref=e51]: TEAM ALPHA — 14 PTS
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - paragraph [ref=e55]: Quick Themes
+          - paragraph [ref=e56]: Click to fill colors for the selected scope. Press Save to apply.
+          - generic [ref=e57]:
+            - button "Default Orange" [ref=e58] [cursor=pointer]:
+              - paragraph [ref=e63]: Default Orange
+            - button "Mythical Teal" [ref=e64] [cursor=pointer]:
+              - paragraph [ref=e69]: Mythical Teal
+            - button "Crimson Strike" [ref=e70] [cursor=pointer]:
+              - paragraph [ref=e75]: Crimson Strike
+            - button "Ocean Blue" [ref=e76] [cursor=pointer]:
+              - paragraph [ref=e81]: Ocean Blue
+            - button "Neon Purple" [ref=e82] [cursor=pointer]:
+              - paragraph [ref=e87]: Neon Purple
+            - button "Midnight Gold" [ref=e88] [cursor=pointer]:
+              - paragraph [ref=e93]: Midnight Gold
+            - button "Arctic White" [ref=e94] [cursor=pointer]:
+              - paragraph [ref=e99]: Arctic White
+        - generic [ref=e100]:
+          - heading "Primary" [level=3] [ref=e101]
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - generic [ref=e104]: Default
+              - generic [ref=e105]:
+                - generic [ref=e106]:
+                  - textbox: "#a54e26"
+                - textbox "#000 or rgba(…)" [ref=e108]: "#a54e26"
+            - generic [ref=e109]:
+              - generic [ref=e110]: Background
+              - generic [ref=e111]:
+                - generic [ref=e112]:
+                  - textbox: "#7a3a1c"
+                - textbox "#000 or rgba(…)" [ref=e114]: "#7a3a1c"
+            - generic [ref=e115]:
+              - generic [ref=e116]: Border
+              - generic [ref=e117]:
+                - generic [ref=e118]:
+                  - textbox: "#5c2c14"
+                - textbox "#000 or rgba(…)" [ref=e120]: "#5c2c14"
+            - generic [ref=e121]:
+              - generic [ref=e122]: Dark
+              - generic [ref=e123]:
+                - generic [ref=e124]:
+                  - textbox: "#c45e30"
+                - textbox "#000 or rgba(…)" [ref=e126]: "#c45e30"
+        - generic [ref=e127]:
+          - heading "Secondary" [level=3] [ref=e128]
+          - generic [ref=e129]:
+            - generic [ref=e130]:
+              - generic [ref=e131]: Default
+              - generic [ref=e132]:
+                - generic [ref=e133]:
+                  - textbox: "#008e88"
+                - textbox "#000 or rgba(…)" [ref=e135]: "#008e88"
+            - generic [ref=e136]:
+              - generic [ref=e137]: Background
+              - generic [ref=e138]:
+                - generic [ref=e139]:
+                  - textbox: "#006e69"
+                - textbox "#000 or rgba(…)" [ref=e141]: "#006e69"
+            - generic [ref=e142]:
+              - generic [ref=e143]: Border
+              - generic [ref=e144]:
+                - generic [ref=e145]:
+                  - textbox: "#005550"
+                - textbox "#000 or rgba(…)" [ref=e147]: "#005550"
+            - generic [ref=e148]:
+              - generic [ref=e149]: Dark
+              - generic [ref=e150]:
+                - generic [ref=e151]:
+                  - textbox: "#00a89f"
+                - textbox "#000 or rgba(…)" [ref=e153]: "#00a89f"
+        - generic [ref=e154]:
+          - heading "Status" [level=3] [ref=e155]
+          - generic [ref=e156]:
+            - generic [ref=e157]:
+              - generic [ref=e158]: Alive
+              - generic [ref=e159]:
+                - generic [ref=e160]:
+                  - textbox: "#000000"
+                - textbox "#000 or rgba(…)" [ref=e162]: rgba(255,255,255,1)
+            - generic [ref=e163]:
+              - generic [ref=e164]: Knocked
+              - generic [ref=e165]:
+                - generic [ref=e166]:
+                  - textbox: "#000000"
+                - textbox "#000 or rgba(…)" [ref=e168]: rgba(244,63,94,1)
+            - generic [ref=e169]:
+              - generic [ref=e170]: Dead
+              - generic [ref=e171]:
+                - generic [ref=e172]:
+                  - textbox: "#000000"
+                - textbox "#000 or rgba(…)" [ref=e174]: rgba(0,0,0,0.5)
+        - generic [ref=e175]:
+          - heading "Global" [level=3] [ref=e176]
+          - generic [ref=e177]:
+            - generic [ref=e178]:
+              - generic [ref=e179]: Background
+              - generic [ref=e180]:
+                - generic [ref=e181]:
+                  - textbox: "#0d0d0d"
+                - textbox "#000 or rgba(…)" [ref=e183]: "#0d0d0d"
+            - generic [ref=e184]:
+              - generic [ref=e185]: Text
+              - generic [ref=e186]:
+                - generic [ref=e187]:
+                  - textbox: "#f5f5f5"
+                - textbox "#000 or rgba(…)" [ref=e189]: "#f5f5f5"
+            - generic [ref=e190]:
+              - generic [ref=e191]: Gradient Start
+              - generic [ref=e192]:
+                - generic [ref=e193]:
+                  - textbox: "#a54e26"
+                - textbox "#000 or rgba(…)" [ref=e195]: "#a54e26"
+            - generic [ref=e196]:
+              - generic [ref=e197]: Gradient End
+              - generic [ref=e198]:
+                - generic [ref=e199]:
+                  - textbox: "#c45e30"
+                - textbox "#000 or rgba(…)" [ref=e201]: "#c45e30"
+        - button "Reset default colors to default defaults" [ref=e203] [cursor=pointer]
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e209] [cursor=pointer]:
+    - img [ref=e210]

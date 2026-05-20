@@ -1,0 +1,91 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: Effinity
+          - generic [ref=e7]: /
+          - generic [ref=e8]: Admin
+        - navigation [ref=e9]:
+          - link "Users" [ref=e10] [cursor=pointer]:
+            - /url: /admin
+        - button "Logout" [ref=e11] [cursor=pointer]
+    - main [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - button "← Users" [ref=e16] [cursor=pointer]:
+              - link "← Users" [ref=e17]:
+                - /url: /admin
+            - generic [ref=e18]:
+              - heading "Team Nexus" [level=1] [ref=e19]
+              - paragraph [ref=e20]: effinity-E1FM9QoS0THCywJK
+          - generic [ref=e21]:
+            - button "Delete" [ref=e22] [cursor=pointer]
+            - button "Save Changes" [ref=e23] [cursor=pointer]
+        - generic [ref=e24]:
+          - generic [ref=e26]:
+            - heading "Account" [level=2] [ref=e27]
+            - generic [ref=e28]:
+              - generic [ref=e29]:
+                - generic [ref=e30]: Name
+                - textbox [ref=e31]: Team Nexus
+              - generic [ref=e32]:
+                - generic [ref=e33]: Email
+                - textbox [ref=e34]: nexus@team.com
+              - generic [ref=e35]:
+                - generic [ref=e36]:
+                  - text: New Password
+                  - generic [ref=e37]: (Leave blank to keep current)
+                - textbox "••••••••" [ref=e38]
+              - generic [ref=e39]:
+                - generic [ref=e40]:
+                  - paragraph [ref=e41]: Account Status
+                  - paragraph [ref=e42]: Access blocked
+                - generic [ref=e43]:
+                  - generic [ref=e44]: Disabled
+                  - switch [ref=e45]
+                  - checkbox [ref=e46]
+          - generic [ref=e47]:
+            - generic [ref=e48]:
+              - heading "Design" [level=2] [ref=e49]
+              - generic [ref=e51]:
+                - button "Default default" [ref=e52] [cursor=pointer]:
+                  - generic [ref=e53]: Default
+                  - generic [ref=e54]: default
+                - button "Mythical mythical" [ref=e55] [cursor=pointer]:
+                  - generic [ref=e56]: Mythical
+                  - generic [ref=e57]: mythical
+            - generic [ref=e58]:
+              - heading "Allowed Tournament IDs" [level=2] [ref=e59]
+              - generic [ref=e60]:
+                - generic [ref=e61]:
+                  - textbox "Paste tournament ID…" [ref=e62]
+                  - button "Add" [ref=e63] [cursor=pointer]
+                - generic [ref=e64]:
+                  - generic [ref=e65]:
+                    - generic [ref=e66]: TRN-2026-001
+                    - button "Remove" [ref=e67] [cursor=pointer]: ×
+                  - generic [ref=e68]:
+                    - generic [ref=e69]: sdsdsdsd
+                    - button "Remove" [ref=e70] [cursor=pointer]: ×
+            - generic [ref=e71]:
+              - heading "Widget Access" [level=2] [ref=e72]
+              - generic [ref=e73]:
+                - generic [ref=e74]:
+                  - paragraph [ref=e75]: User ID
+                  - paragraph [ref=e76]: effinity-E1FM9QoS0THCywJK
+                - generic [ref=e77]:
+                  - paragraph [ref=e78]: Display URLs
+                  - generic [ref=e79]:
+                    - generic [ref=e80]:
+                      - paragraph [ref=e81]: TRN-2026-001
+                      - paragraph [ref=e82]: /effinity-E1FM9QoS0THCywJK/TRN-2026-001/display
+                    - button "Copy" [ref=e83] [cursor=pointer]
+                  - generic [ref=e84]:
+                    - generic [ref=e85]:
+                      - paragraph [ref=e86]: sdsdsdsd
+                      - paragraph [ref=e87]: /effinity-E1FM9QoS0THCywJK/sdsdsdsd/display
+                    - button "Copy" [ref=e88] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e94] [cursor=pointer]:
+    - img [ref=e95]

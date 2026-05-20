@@ -1,0 +1,98 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: Effinity
+          - generic [ref=e7]: /
+          - generic [ref=e8]: Admin
+        - navigation [ref=e9]:
+          - link [ref=e135] [cursor=pointer]:
+            - /url: /admin
+            - text: Users
+        - button [ref=e136] [cursor=pointer]: Logout
+    - main [ref=e12]:
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - button [ref=e137] [cursor=pointer]:
+            - link [ref=e138]:
+              - /url: /admin
+              - text: ← Users
+          - generic [ref=e76]:
+            - heading [level=1] [ref=e139]: Team Nexus
+            - paragraph [ref=e78]: effinity-E1FM9QoS0THCywJK
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - heading [level=2] [ref=e140]: Account
+            - generic [ref=e82]:
+              - generic [ref=e83]:
+                - generic [ref=e84]:
+                  - generic [ref=e85]: Name
+                  - textbox [ref=e86]: Team Nexus
+                - generic [ref=e87]:
+                  - generic [ref=e88]: Email
+                  - textbox [ref=e89]: nexus@team.com
+              - generic [ref=e90]:
+                - generic [ref=e91]:
+                  - text: New Password
+                  - generic [ref=e92]: (Leave blank to keep current)
+                - textbox [ref=e141]:
+                  - /placeholder: ••••••••
+              - generic [ref=e94]:
+                - generic [ref=e95]:
+                  - paragraph [ref=e96]: Account Status
+                  - paragraph [ref=e97]: User can access the controller and widgets
+                - generic [ref=e98]:
+                  - generic [ref=e99]: Active
+                  - switch [checked] [ref=e100]
+                  - checkbox [checked] [ref=e101]
+          - generic [ref=e102]:
+            - heading [level=2] [ref=e142]: Design
+            - generic [ref=e105]:
+              - button [ref=e143] [cursor=pointer]:
+                - generic [ref=e107]: Default
+                - generic [ref=e108]: default
+              - button [ref=e144] [cursor=pointer]:
+                - generic [ref=e110]: Mythical
+                - generic [ref=e111]: mythical
+          - generic [ref=e112]:
+            - heading [level=2] [ref=e145]: Allowed Tournament IDs
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - textbox [ref=e146]:
+                  - /placeholder: Paste tournament ID…
+                - button [ref=e147] [cursor=pointer]: Add
+              - generic [ref=e119]:
+                - generic [ref=e120]: TRN-2026-001
+                - button [ref=e148] [cursor=pointer]: ×
+          - generic [ref=e122]:
+            - heading [level=2] [ref=e149]: Widget Access
+            - generic [ref=e125]:
+              - generic [ref=e126]:
+                - paragraph [ref=e127]: User ID
+                - paragraph [ref=e128]: effinity-E1FM9QoS0THCywJK
+              - generic [ref=e129]:
+                - paragraph [ref=e130]: Example Display URL
+                - paragraph [ref=e131]: /effinity-E1FM9QoS0THCywJK/TRN-2026-001/display
+          - generic [ref=e132]:
+            - button [ref=e150] [cursor=pointer]: Save Changes
+            - button [ref=e151] [cursor=pointer]: Delete User
+  - generic [ref=e55] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e56]:
+      - img [ref=e57]
+    - generic [ref=e60]:
+      - button "Open issues overlay" [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]: "0"
+          - generic [ref=e64]: "1"
+        - generic [ref=e65]: Issue
+      - button "Collapse issues badge" [ref=e66]:
+        - img [ref=e67]
+  - alert [ref=e69]
+  - alertdialog "Delete Team Nexus?" [ref=e155]:
+    - generic [ref=e156]:
+      - heading "Delete Team Nexus?" [level=2] [ref=e157]
+      - paragraph [ref=e158]: This will permanently remove Team Nexus and all their configuration. This action cannot be undone.
+    - generic [ref=e159]:
+      - button "Cancel" [active] [ref=e160] [cursor=pointer]
+      - button "Delete" [ref=e161] [cursor=pointer]

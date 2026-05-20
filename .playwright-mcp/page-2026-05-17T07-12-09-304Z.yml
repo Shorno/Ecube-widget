@@ -1,0 +1,114 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: Effinity
+          - generic [ref=e7]: /
+          - generic [ref=e8]: Admin
+        - navigation [ref=e9]:
+          - link "Dashboard" [ref=e10] [cursor=pointer]:
+            - /url: /admin
+        - button "Logout" [ref=e11] [cursor=pointer]
+    - main [ref=e12]:
+      - generic [ref=e71]:
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - heading "Dashboard" [level=1] [ref=e74]
+            - paragraph [ref=e75]: 4 customers registered
+          - generic [ref=e76]:
+            - button "Register Designs" [ref=e77] [cursor=pointer]
+            - link "+ New User" [ref=e78] [cursor=pointer]:
+              - /url: /admin/users/new
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - paragraph [ref=e81]: Total Customers
+            - paragraph [ref=e82]: "4"
+          - generic [ref=e83]:
+            - paragraph [ref=e84]: Active
+            - paragraph [ref=e85]: "4"
+          - generic [ref=e86]:
+            - paragraph [ref=e87]: Expiring Soon
+            - paragraph [ref=e88]: "0"
+            - paragraph [ref=e89]: within 7 days
+          - generic [ref=e90]:
+            - paragraph [ref=e91]: Expired
+            - paragraph [ref=e92]: "0"
+        - table [ref=e95]:
+          - rowgroup [ref=e96]:
+            - row "Customer Status Subscription Design Tournaments" [ref=e97]:
+              - columnheader "Customer" [ref=e98]
+              - columnheader "Status" [ref=e99]
+              - columnheader "Subscription" [ref=e100]
+              - columnheader "Design" [ref=e101]
+              - columnheader "Tournaments" [ref=e102]
+              - columnheader [ref=e103]
+          - rowgroup [ref=e104]:
+            - row "test3 test3@gmail.com Active No subscription default 0 Manage" [ref=e105]:
+              - cell "test3 test3@gmail.com" [ref=e106]:
+                - generic [ref=e107]:
+                  - paragraph [ref=e108]: test3
+                  - paragraph [ref=e109]: test3@gmail.com
+              - cell "Active" [ref=e110]:
+                - generic [ref=e113]: Active
+              - cell "No subscription" [ref=e114]
+              - cell "default" [ref=e115]:
+                - generic [ref=e117]: default
+              - cell "0" [ref=e118]
+              - cell "Manage" [ref=e119]:
+                - link "Manage" [ref=e120] [cursor=pointer]:
+                  - /url: /admin/users/effinity-cSSh0OU_-SEiIVwb
+            - row "test2 test2@gmail.com Active May 30, 2026 13d left default 0 Manage" [ref=e121]:
+              - cell "test2 test2@gmail.com" [ref=e122]:
+                - generic [ref=e123]:
+                  - paragraph [ref=e124]: test2
+                  - paragraph [ref=e125]: test2@gmail.com
+              - cell "Active" [ref=e126]:
+                - generic [ref=e129]: Active
+              - cell "May 30, 2026 13d left" [ref=e130]:
+                - generic [ref=e131]:
+                  - paragraph [ref=e132]: May 30, 2026
+                  - paragraph [ref=e133]: 13d left
+              - cell "default" [ref=e134]:
+                - generic [ref=e136]: default
+              - cell "0" [ref=e137]
+              - cell "Manage" [ref=e138]:
+                - link "Manage" [ref=e139] [cursor=pointer]:
+                  - /url: /admin/users/effinity-X5bbcPKUZTPtOnli
+            - row "test test@gmail.com Active May 30, 2026 13d left default 0 Manage" [ref=e140]:
+              - cell "test test@gmail.com" [ref=e141]:
+                - generic [ref=e142]:
+                  - paragraph [ref=e143]: test
+                  - paragraph [ref=e144]: test@gmail.com
+              - cell "Active" [ref=e145]:
+                - generic [ref=e148]: Active
+              - cell "May 30, 2026 13d left" [ref=e149]:
+                - generic [ref=e150]:
+                  - paragraph [ref=e151]: May 30, 2026
+                  - paragraph [ref=e152]: 13d left
+              - cell "default" [ref=e153]:
+                - generic [ref=e155]: default
+              - cell "0" [ref=e156]
+              - cell "Manage" [ref=e157]:
+                - link "Manage" [ref=e158] [cursor=pointer]:
+                  - /url: /admin/users/effinity-4e3xTXBVztzS2860
+            - row "Team Nexus nexus@team.com Active Jun 30, 2026 44d left mythical 1 Manage" [ref=e159]:
+              - cell "Team Nexus nexus@team.com" [ref=e160]:
+                - generic [ref=e161]:
+                  - paragraph [ref=e162]: Team Nexus
+                  - paragraph [ref=e163]: nexus@team.com
+              - cell "Active" [ref=e164]:
+                - generic [ref=e167]: Active
+              - cell "Jun 30, 2026 44d left" [ref=e168]:
+                - generic [ref=e169]:
+                  - paragraph [ref=e170]: Jun 30, 2026
+                  - paragraph [ref=e171]: 44d left
+              - cell "mythical" [ref=e172]:
+                - generic [ref=e174]: mythical
+              - cell "1" [ref=e175]
+              - cell "Manage" [ref=e176]:
+                - link "Manage" [ref=e177] [cursor=pointer]:
+                  - /url: /admin/users/effinity-E1FM9QoS0THCywJK
+  - button "Open Next.js Dev Tools" [ref=e67] [cursor=pointer]:
+    - img [ref=e68]
+  - alert [ref=e178]

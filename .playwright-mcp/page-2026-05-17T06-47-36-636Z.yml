@@ -1,0 +1,220 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: Effinity
+          - generic [ref=e7]: /
+          - generic [ref=e8]: Admin
+        - navigation [ref=e9]:
+          - link "Dashboard" [ref=e10] [cursor=pointer]:
+            - /url: /admin
+        - button "Logout" [ref=e11] [cursor=pointer]
+    - main [ref=e12]:
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - button "← Dashboard" [ref=e61] [cursor=pointer]:
+              - link "← Dashboard" [ref=e62]:
+                - /url: /admin
+            - generic [ref=e63]:
+              - heading "Team Nexus" [level=1] [ref=e64]
+              - paragraph [ref=e65]: effinity-E1FM9QoS0THCywJK
+          - generic [ref=e66]:
+            - button "Delete" [ref=e67] [cursor=pointer]
+            - button "Save Changes" [ref=e68] [cursor=pointer]
+        - generic [ref=e69]:
+          - generic [ref=e70]:
+            - generic [ref=e71]:
+              - heading "Account" [level=2] [ref=e72]
+              - generic [ref=e73]:
+                - generic [ref=e74]:
+                  - generic [ref=e75]: Name
+                  - textbox [ref=e76]: Team Nexus
+                - generic [ref=e77]:
+                  - generic [ref=e78]: Email
+                  - textbox [ref=e79]: nexus@team.com
+                - generic [ref=e80]:
+                  - generic [ref=e81]:
+                    - text: New Password
+                    - generic [ref=e82]: (Leave blank to keep current)
+                  - textbox "••••••••" [ref=e83]
+                - generic [ref=e84]:
+                  - generic [ref=e85]:
+                    - paragraph [ref=e86]: Account Status
+                    - paragraph [ref=e87]: Can access controller & widgets
+                  - generic [ref=e88]:
+                    - generic [ref=e89]: Active
+                    - switch [checked] [ref=e90]
+                    - checkbox [checked] [ref=e91]
+            - generic [ref=e92]:
+              - heading "Subscription" [level=2] [ref=e93]
+              - generic [ref=e94]:
+                - generic [ref=e95]:
+                  - generic [ref=e96]: Expiry Date
+                  - button "June 30, 2026" [expanded] [ref=e98] [cursor=pointer]:
+                    - img [ref=e99]
+                    - generic [ref=e101]: June 30, 2026
+                  - dialog [ref=e105]:
+                    - generic [ref=e107]:
+                      - navigation "Navigation bar" [ref=e108]:
+                        - button "Go to the Previous Month" [active] [ref=e109] [cursor=pointer]:
+                          - img
+                        - button "Go to the Next Month" [ref=e110] [cursor=pointer]:
+                          - img
+                      - generic [ref=e111]:
+                        - status [ref=e113]: May 2026
+                        - grid "May 2026" [ref=e114]:
+                          - rowgroup [ref=e115]:
+                            - row [ref=e116]:
+                              - columnheader [ref=e117]: Su
+                              - columnheader [ref=e118]: Mo
+                              - columnheader [ref=e119]: Tu
+                              - columnheader [ref=e120]: We
+                              - columnheader [ref=e121]: Th
+                              - columnheader [ref=e122]: Fr
+                              - columnheader [ref=e123]: Sa
+                          - rowgroup [ref=e124]:
+                            - row "Sunday, April 26th, 2026 Monday, April 27th, 2026 Tuesday, April 28th, 2026 Wednesday, April 29th, 2026 Thursday, April 30th, 2026 Friday, May 1st, 2026 Saturday, May 2nd, 2026" [ref=e125]:
+                              - gridcell "Sunday, April 26th, 2026" [ref=e126]:
+                                - button "Sunday, April 26th, 2026" [ref=e127] [cursor=pointer]: "26"
+                              - gridcell "Monday, April 27th, 2026" [ref=e128]:
+                                - button "Monday, April 27th, 2026" [ref=e129] [cursor=pointer]: "27"
+                              - gridcell "Tuesday, April 28th, 2026" [ref=e130]:
+                                - button "Tuesday, April 28th, 2026" [ref=e131] [cursor=pointer]: "28"
+                              - gridcell "Wednesday, April 29th, 2026" [ref=e132]:
+                                - button "Wednesday, April 29th, 2026" [ref=e133] [cursor=pointer]: "29"
+                              - gridcell "Thursday, April 30th, 2026" [ref=e134]:
+                                - button "Thursday, April 30th, 2026" [ref=e135] [cursor=pointer]: "30"
+                              - gridcell "Friday, May 1st, 2026" [ref=e136]:
+                                - button "Friday, May 1st, 2026" [ref=e137] [cursor=pointer]: "1"
+                              - gridcell "Saturday, May 2nd, 2026" [ref=e138]:
+                                - button "Saturday, May 2nd, 2026" [ref=e139] [cursor=pointer]: "2"
+                            - row "Sunday, May 3rd, 2026 Monday, May 4th, 2026 Tuesday, May 5th, 2026 Wednesday, May 6th, 2026 Thursday, May 7th, 2026 Friday, May 8th, 2026 Saturday, May 9th, 2026" [ref=e140]:
+                              - gridcell "Sunday, May 3rd, 2026" [ref=e141]:
+                                - button "Sunday, May 3rd, 2026" [ref=e142] [cursor=pointer]: "3"
+                              - gridcell "Monday, May 4th, 2026" [ref=e143]:
+                                - button "Monday, May 4th, 2026" [ref=e144] [cursor=pointer]: "4"
+                              - gridcell "Tuesday, May 5th, 2026" [ref=e145]:
+                                - button "Tuesday, May 5th, 2026" [ref=e146] [cursor=pointer]: "5"
+                              - gridcell "Wednesday, May 6th, 2026" [ref=e147]:
+                                - button "Wednesday, May 6th, 2026" [ref=e148] [cursor=pointer]: "6"
+                              - gridcell "Thursday, May 7th, 2026" [ref=e149]:
+                                - button "Thursday, May 7th, 2026" [ref=e150] [cursor=pointer]: "7"
+                              - gridcell "Friday, May 8th, 2026" [ref=e151]:
+                                - button "Friday, May 8th, 2026" [ref=e152] [cursor=pointer]: "8"
+                              - gridcell "Saturday, May 9th, 2026" [ref=e153]:
+                                - button "Saturday, May 9th, 2026" [ref=e154] [cursor=pointer]: "9"
+                            - row "Sunday, May 10th, 2026 Monday, May 11th, 2026 Tuesday, May 12th, 2026 Wednesday, May 13th, 2026 Thursday, May 14th, 2026 Friday, May 15th, 2026 Saturday, May 16th, 2026" [ref=e155]:
+                              - gridcell "Sunday, May 10th, 2026" [ref=e156]:
+                                - button "Sunday, May 10th, 2026" [ref=e157] [cursor=pointer]: "10"
+                              - gridcell "Monday, May 11th, 2026" [ref=e158]:
+                                - button "Monday, May 11th, 2026" [ref=e159] [cursor=pointer]: "11"
+                              - gridcell "Tuesday, May 12th, 2026" [ref=e160]:
+                                - button "Tuesday, May 12th, 2026" [ref=e161] [cursor=pointer]: "12"
+                              - gridcell "Wednesday, May 13th, 2026" [ref=e162]:
+                                - button "Wednesday, May 13th, 2026" [ref=e163] [cursor=pointer]: "13"
+                              - gridcell "Thursday, May 14th, 2026" [ref=e164]:
+                                - button "Thursday, May 14th, 2026" [ref=e165] [cursor=pointer]: "14"
+                              - gridcell "Friday, May 15th, 2026" [ref=e166]:
+                                - button "Friday, May 15th, 2026" [ref=e167] [cursor=pointer]: "15"
+                              - gridcell "Saturday, May 16th, 2026" [ref=e168]:
+                                - button "Saturday, May 16th, 2026" [ref=e169] [cursor=pointer]: "16"
+                            - row "Today, Sunday, May 17th, 2026 Monday, May 18th, 2026 Tuesday, May 19th, 2026 Wednesday, May 20th, 2026 Thursday, May 21st, 2026 Friday, May 22nd, 2026 Saturday, May 23rd, 2026" [ref=e170]:
+                              - gridcell "Today, Sunday, May 17th, 2026" [ref=e171]:
+                                - button "Today, Sunday, May 17th, 2026" [ref=e172] [cursor=pointer]: "17"
+                              - gridcell "Monday, May 18th, 2026" [ref=e173]:
+                                - button "Monday, May 18th, 2026" [ref=e174] [cursor=pointer]: "18"
+                              - gridcell "Tuesday, May 19th, 2026" [ref=e175]:
+                                - button "Tuesday, May 19th, 2026" [ref=e176] [cursor=pointer]: "19"
+                              - gridcell "Wednesday, May 20th, 2026" [ref=e177]:
+                                - button "Wednesday, May 20th, 2026" [ref=e178] [cursor=pointer]: "20"
+                              - gridcell "Thursday, May 21st, 2026" [ref=e179]:
+                                - button "Thursday, May 21st, 2026" [ref=e180] [cursor=pointer]: "21"
+                              - gridcell "Friday, May 22nd, 2026" [ref=e181]:
+                                - button "Friday, May 22nd, 2026" [ref=e182] [cursor=pointer]: "22"
+                              - gridcell "Saturday, May 23rd, 2026" [ref=e183]:
+                                - button "Saturday, May 23rd, 2026" [ref=e184] [cursor=pointer]: "23"
+                            - row "Sunday, May 24th, 2026 Monday, May 25th, 2026 Tuesday, May 26th, 2026 Wednesday, May 27th, 2026 Thursday, May 28th, 2026 Friday, May 29th, 2026 Saturday, May 30th, 2026" [ref=e185]:
+                              - gridcell "Sunday, May 24th, 2026" [ref=e186]:
+                                - button "Sunday, May 24th, 2026" [ref=e187] [cursor=pointer]: "24"
+                              - gridcell "Monday, May 25th, 2026" [ref=e188]:
+                                - button "Monday, May 25th, 2026" [ref=e189] [cursor=pointer]: "25"
+                              - gridcell "Tuesday, May 26th, 2026" [ref=e190]:
+                                - button "Tuesday, May 26th, 2026" [ref=e191] [cursor=pointer]: "26"
+                              - gridcell "Wednesday, May 27th, 2026" [ref=e192]:
+                                - button "Wednesday, May 27th, 2026" [ref=e193] [cursor=pointer]: "27"
+                              - gridcell "Thursday, May 28th, 2026" [ref=e194]:
+                                - button "Thursday, May 28th, 2026" [ref=e195] [cursor=pointer]: "28"
+                              - gridcell "Friday, May 29th, 2026" [ref=e196]:
+                                - button "Friday, May 29th, 2026" [ref=e197] [cursor=pointer]: "29"
+                              - gridcell "Saturday, May 30th, 2026" [ref=e198]:
+                                - button "Saturday, May 30th, 2026" [ref=e199] [cursor=pointer]: "30"
+                            - row "Sunday, May 31st, 2026 Monday, June 1st, 2026 Tuesday, June 2nd, 2026 Wednesday, June 3rd, 2026 Thursday, June 4th, 2026 Friday, June 5th, 2026 Saturday, June 6th, 2026" [ref=e200]:
+                              - gridcell "Sunday, May 31st, 2026" [ref=e201]:
+                                - button "Sunday, May 31st, 2026" [ref=e202] [cursor=pointer]: "31"
+                              - gridcell "Monday, June 1st, 2026" [ref=e203]:
+                                - button "Monday, June 1st, 2026" [ref=e204] [cursor=pointer]: "1"
+                              - gridcell "Tuesday, June 2nd, 2026" [ref=e205]:
+                                - button "Tuesday, June 2nd, 2026" [ref=e206] [cursor=pointer]: "2"
+                              - gridcell "Wednesday, June 3rd, 2026" [ref=e207]:
+                                - button "Wednesday, June 3rd, 2026" [ref=e208] [cursor=pointer]: "3"
+                              - gridcell "Thursday, June 4th, 2026" [ref=e209]:
+                                - button "Thursday, June 4th, 2026" [ref=e210] [cursor=pointer]: "4"
+                              - gridcell "Friday, June 5th, 2026" [ref=e211]:
+                                - button "Friday, June 5th, 2026" [ref=e212] [cursor=pointer]: "5"
+                              - gridcell "Saturday, June 6th, 2026" [ref=e213]:
+                                - button "Saturday, June 6th, 2026" [ref=e214] [cursor=pointer]: "6"
+                - generic [ref=e217]: 44 days remaining
+                - button "Clear subscription" [ref=e219] [cursor=pointer]
+          - generic [ref=e220]:
+            - generic [ref=e221]:
+              - heading "Designs" [level=2] [ref=e222]
+              - generic [ref=e224]:
+                - paragraph [ref=e225]: Check to grant access. Star to set as active design.
+                - generic [ref=e226]:
+                  - checkbox [ref=e227] [cursor=pointer]
+                  - generic [ref=e228]:
+                    - paragraph [ref=e229]: Default
+                    - paragraph [ref=e230]: default
+                  - button "Set Active" [ref=e231] [cursor=pointer]
+                - generic [ref=e232]:
+                  - checkbox [checked] [ref=e233] [cursor=pointer]
+                  - generic [ref=e234]:
+                    - paragraph [ref=e235]: Mythical
+                    - paragraph [ref=e236]: mythical
+                  - generic [ref=e237]: Active
+            - generic [ref=e238]:
+              - heading "Allowed Tournament IDs" [level=2] [ref=e239]
+              - generic [ref=e240]:
+                - generic [ref=e241]:
+                  - textbox "Paste tournament ID…" [ref=e242]
+                  - button "Add" [ref=e243] [cursor=pointer]
+                - generic [ref=e245]:
+                  - generic [ref=e246]: TRN-2026-001
+                  - button "×" [ref=e247] [cursor=pointer]
+            - generic [ref=e248]:
+              - heading "Widget Access" [level=2] [ref=e249]
+              - generic [ref=e250]:
+                - generic [ref=e251]:
+                  - paragraph [ref=e252]: User ID
+                  - paragraph [ref=e253]: effinity-E1FM9QoS0THCywJK
+                - generic [ref=e254]:
+                  - paragraph [ref=e255]: Display URLs
+                  - generic [ref=e256]:
+                    - generic [ref=e257]:
+                      - paragraph [ref=e258]: TRN-2026-001
+                      - paragraph [ref=e259]: /effinity-E1FM9QoS0THCywJK/TRN-2026-001/display
+                    - button "Copy" [ref=e260] [cursor=pointer]
+  - generic [ref=e52] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e53]:
+      - img [ref=e54]
+    - generic [ref=e261]:
+      - button "Open issues overlay" [ref=e262]:
+        - generic [ref=e263]:
+          - generic [ref=e264]: "0"
+          - generic [ref=e265]: "1"
+        - generic [ref=e266]: Issue
+      - button "Collapse issues badge" [ref=e267]:
+        - img [ref=e268]
+  - alert [ref=e57]

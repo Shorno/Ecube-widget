@@ -1,0 +1,23 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - paragraph [ref=e5]: Effinity
+      - heading "Sign In" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Enter your credentials to access the panel
+    - generic [ref=e9]:
+      - paragraph [ref=e29]: Invalid credentials
+      - generic [ref=e10]:
+        - generic [ref=e11]: Email
+        - textbox "Email" [ref=e12]:
+          - /placeholder: you@example.com
+          - text: adm@efn.io
+      - generic [ref=e13]:
+        - generic [ref=e14]: Password
+        - textbox "Password" [ref=e15]:
+          - /placeholder: ••••••••
+          - text: Efn!2k26Xq
+      - button "Sign In" [ref=e16] [cursor=pointer]
+    - paragraph [ref=e17]: Contact your administrator if you need access.
+  - button "Open Next.js Dev Tools" [ref=e23] [cursor=pointer]:
+    - img [ref=e24]
+  - alert [ref=e27]

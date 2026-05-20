@@ -1,0 +1,100 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: Effinity
+          - generic [ref=e7]: /
+          - generic [ref=e8]: Admin
+        - navigation [ref=e9]:
+          - link "Dashboard" [ref=e10] [cursor=pointer]:
+            - /url: /admin
+        - button "Logout" [ref=e11] [cursor=pointer]
+    - main [ref=e12]:
+      - generic [ref=e179]:
+        - generic [ref=e180]:
+          - generic [ref=e181]:
+            - link "← Dashboard" [ref=e182] [cursor=pointer]:
+              - /url: /admin
+            - generic [ref=e183]:
+              - heading "Team Nexus" [level=1] [ref=e184]
+              - paragraph [ref=e185]: effinity-E1FM9QoS0THCywJK
+          - generic [ref=e186]:
+            - button "Delete" [ref=e187] [cursor=pointer]
+            - button "Save Changes" [ref=e188] [cursor=pointer]
+        - generic [ref=e189]:
+          - generic [ref=e190]:
+            - generic [ref=e191]:
+              - heading "Account" [level=2] [ref=e192]
+              - generic [ref=e193]:
+                - generic [ref=e194]:
+                  - generic [ref=e195]: Name
+                  - textbox [ref=e196]: Team Nexus
+                - generic [ref=e197]:
+                  - generic [ref=e198]: Email
+                  - textbox [ref=e199]: nexus@team.com
+                - generic [ref=e200]:
+                  - generic [ref=e201]:
+                    - text: New Password
+                    - generic [ref=e202]: (Leave blank to keep current)
+                  - textbox "••••••••" [ref=e203]
+                - generic [ref=e204]:
+                  - generic [ref=e205]:
+                    - paragraph [ref=e206]: Account Status
+                    - paragraph [ref=e207]: Can access controller & widgets
+                  - generic [ref=e208]:
+                    - generic [ref=e209]: Active
+                    - switch [checked] [ref=e210]
+                    - checkbox [checked] [ref=e211]
+            - generic [ref=e212]:
+              - heading "Subscription" [level=2] [ref=e213]
+              - generic [ref=e214]:
+                - generic [ref=e215]:
+                  - generic [ref=e216]: Expiry Date
+                  - button "June 30, 2026" [ref=e217] [cursor=pointer]:
+                    - img [ref=e218]
+                    - generic [ref=e220]: June 30, 2026
+                - generic [ref=e221]: 44 days remaining
+                - button "Clear subscription" [ref=e223] [cursor=pointer]
+          - generic [ref=e224]:
+            - generic [ref=e225]:
+              - heading "Designs" [level=2] [ref=e226]
+              - generic [ref=e228]:
+                - paragraph [ref=e229]: Check to grant access. Star to set as active design.
+                - generic [ref=e230]:
+                  - checkbox [ref=e231] [cursor=pointer]
+                  - generic [ref=e232]:
+                    - paragraph [ref=e233]: Default
+                    - paragraph [ref=e234]: default
+                  - button "Set Active" [ref=e235] [cursor=pointer]
+                - generic [ref=e236]:
+                  - checkbox [checked] [ref=e237] [cursor=pointer]
+                  - generic [ref=e238]:
+                    - paragraph [ref=e239]: Mythical
+                    - paragraph [ref=e240]: mythical
+                  - generic [ref=e241]: Active
+            - generic [ref=e242]:
+              - heading "Allowed Tournament IDs" [level=2] [ref=e243]
+              - generic [ref=e244]:
+                - generic [ref=e245]:
+                  - textbox "Paste tournament ID…" [ref=e246]
+                  - button "Add" [ref=e247] [cursor=pointer]
+                - generic [ref=e249]:
+                  - generic [ref=e250]: TRN-2026-001
+                  - button "×" [ref=e251] [cursor=pointer]
+            - generic [ref=e252]:
+              - heading "Widget Access" [level=2] [ref=e253]
+              - generic [ref=e254]:
+                - generic [ref=e255]:
+                  - paragraph [ref=e256]: User ID
+                  - paragraph [ref=e257]: effinity-E1FM9QoS0THCywJK
+                - generic [ref=e258]:
+                  - paragraph [ref=e259]: Display URLs
+                  - generic [ref=e260]:
+                    - generic [ref=e261]:
+                      - paragraph [ref=e262]: TRN-2026-001
+                      - paragraph [ref=e263]: /effinity-E1FM9QoS0THCywJK/TRN-2026-001/display
+                    - button "Copy" [ref=e264] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e67] [cursor=pointer]:
+    - img [ref=e68]
+  - alert [ref=e178]

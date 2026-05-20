@@ -1,0 +1,87 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: Effinity
+          - generic [ref=e7]: /
+          - generic [ref=e8]: Admin
+        - navigation [ref=e9]:
+          - link "Users" [ref=e10] [cursor=pointer]:
+            - /url: /admin
+        - button "Logout" [ref=e11] [cursor=pointer]
+    - main [ref=e12]:
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - button "← Users" [ref=e74] [cursor=pointer]:
+            - link "← Users" [ref=e75]:
+              - /url: /admin
+          - generic [ref=e76]:
+            - heading "Team Nexus" [level=1] [ref=e77]
+            - paragraph [ref=e78]: effinity-E1FM9QoS0THCywJK
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - heading "Account" [level=2] [ref=e81]
+            - generic [ref=e82]:
+              - generic [ref=e83]:
+                - generic [ref=e84]:
+                  - generic [ref=e85]: Name
+                  - textbox [ref=e86]: Team Nexus
+                - generic [ref=e87]:
+                  - generic [ref=e88]: Email
+                  - textbox [ref=e89]: nexus@team.com
+              - generic [ref=e90]:
+                - generic [ref=e91]:
+                  - text: New Password
+                  - generic [ref=e92]: (Leave blank to keep current)
+                - textbox "••••••••" [ref=e93]
+              - generic [ref=e94]:
+                - generic [ref=e95]:
+                  - paragraph [ref=e96]: Account Status
+                  - paragraph [ref=e97]: User can access the controller and widgets
+                - generic [ref=e98]:
+                  - generic [ref=e99]: Active
+                  - switch [checked] [ref=e100]
+                  - checkbox [checked] [ref=e101]
+          - generic [ref=e102]:
+            - heading "Design" [level=2] [ref=e103]
+            - generic [ref=e105]:
+              - button "Default default" [ref=e106] [cursor=pointer]:
+                - generic [ref=e107]: Default
+                - generic [ref=e108]: default
+              - button "Mythical mythical" [ref=e109] [cursor=pointer]:
+                - generic [ref=e110]: Mythical
+                - generic [ref=e111]: mythical
+          - generic [ref=e112]:
+            - heading "Allowed Tournament IDs" [level=2] [ref=e113]
+            - generic [ref=e114]:
+              - generic [ref=e115]:
+                - textbox "Paste tournament ID…" [ref=e116]
+                - button "Add" [ref=e117] [cursor=pointer]
+              - generic [ref=e119]:
+                - generic [ref=e120]: TRN-2026-001
+                - button "Remove" [ref=e121] [cursor=pointer]: ×
+          - generic [ref=e122]:
+            - heading "Widget Access" [level=2] [ref=e123]
+            - generic [ref=e125]:
+              - generic [ref=e126]:
+                - paragraph [ref=e127]: User ID
+                - paragraph [ref=e128]: effinity-E1FM9QoS0THCywJK
+              - generic [ref=e129]:
+                - paragraph [ref=e130]: Example Display URL
+                - paragraph [ref=e131]: /effinity-E1FM9QoS0THCywJK/TRN-2026-001/display
+          - generic [ref=e132]:
+            - button "Save Changes" [ref=e133] [cursor=pointer]
+            - button "Delete User" [ref=e134] [cursor=pointer]
+  - generic [ref=e55] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e56]:
+      - img [ref=e57]
+    - generic [ref=e60]:
+      - button "Open issues overlay" [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]: "0"
+          - generic [ref=e64]: "1"
+        - generic [ref=e65]: Issue
+      - button "Collapse issues badge" [ref=e66]:
+        - img [ref=e67]
+  - alert [ref=e69]
