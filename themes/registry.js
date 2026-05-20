@@ -53,14 +53,40 @@ const resolveBundleKey = cache(async (variant) => {
   }
 });
 
+// Transparent placeholder for unimplemented slots in non-default designs.
+function UnimplementedView() {
+  return null;
+}
+
+// All known widget slots — must stay in sync with WidgetSlot in each index.ts.
+const ALL_SLOTS = [
+  "AfterMatchScore",
+  "AfterMatchScoreGroup",
+  "MatchSummary",
+  "MVP",
+  "MVPGroup",
+  "HeadToHead",
+  "TopPlayers",
+  "TopPlayersGroup",
+  "WWC",
+  "WWCTwo",
+  "WWCStats",
+];
+
 // Returns the component set for a given variant string.
-// Usage in a Server Component page:
-//   const { AfterMatchScore: View } = await getDesignRegistry(variant);
-//   return <View tournamentID={tournamentID} />;
+// Unimplemented slots in non-default designs render transparent (UnimplementedView).
+// Uses a plain object — not a Proxy — to avoid thenable footgun when awaited.
 export async function getDesignRegistry(variant) {
   const bundleKey = await resolveBundleKey(variant);
   const loader = BUNDLE_MAP[bundleKey] ?? BUNDLE_MAP.default;
-  return await loader();
+  const bundle = await loader();
+  if (bundleKey === "default") return bundle;
+
+  const merged = {};
+  for (const slot of ALL_SLOTS) {
+    merged[slot] = bundle[slot] ?? UnimplementedView;
+  }
+  return merged;
 }
 
 // Fetches a user's design bundle.

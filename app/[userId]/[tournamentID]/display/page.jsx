@@ -21,9 +21,10 @@ export default function DisplayPage() {
   const esRef = useRef(null);
 
   // Warm the browser cache: load all widget iframes hidden, then discard after 25s.
-  // Subsequent widget switches skip JS bundle and image fetch entirely.
+  // Disable with NEXT_PUBLIC_DISABLE_WIDGET_PRELOAD=true in .env.local for dev.
   useEffect(() => {
     if (!userId || !tournamentID) return;
+    if (process.env.NEXT_PUBLIC_DISABLE_WIDGET_PRELOAD === "true") return;
     setPreloadUrls(buildPreloadUrls(userId, tournamentID));
     const timer = setTimeout(() => setPreloadUrls([]), 25_000);
     return () => clearTimeout(timer);

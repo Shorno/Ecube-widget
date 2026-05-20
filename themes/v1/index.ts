@@ -1,13 +1,11 @@
 // v1 design bundle — slot names must match what getUserDesignRegistry() destructures.
-// TypeScript ensures every exported component matches the WidgetSlot contract.
+// Unimplemented slots are automatically filled from the default bundle by registry.js.
 
 import type { FC } from "react";
 
 export type WidgetProps = { tournamentID: string };
 export type WidgetComponent = FC<WidgetProps>;
 
-// All slot names the registry knows about. Adding a slot here makes TypeScript
-// complain if you forget to export a matching component below.
 export type WidgetSlot =
   | "AfterMatchScore"
   | "AfterMatchScoreGroup"
@@ -21,19 +19,19 @@ export type WidgetSlot =
   | "WWCTwo"
   | "WWCStats";
 
-// ── Built slots ───────────────────────────────────────────────────────────────
-export { default as AfterMatchScore } from "./AfterMatchScoreView";
-export { default as MatchSummary } from "./MatchSummaryView";
+// ── Built ─────────────────────────────────────────────────────────────────────
+// export { default as AfterMatchScore } from "./AfterMatchScoreView";
+// export { default as MatchSummary } from "./MatchSummaryView";
+export { default as WWC } from "./WWCDView";
+export { default as WWCTwo } from "./WWCDView";
 
-// ── TODO: uncomment as you build each view ────────────────────────────────────
+// ── TODO: add v1 views here as you build them — default fills the rest ────────
 // export { default as AfterMatchScoreGroup } from "./AfterMatchScoreGroupView";
 // export { default as MVP }                  from "./MVPView";
 // export { default as MVPGroup }             from "./MVPGroupView";
 // export { default as HeadToHead }           from "./HeadToHeadView";
 // export { default as TopPlayers }           from "./TopPlayersView";
 // export { default as TopPlayersGroup }      from "./TopPlayersGroupView";
-export { default as WWC } from "./WWCDView";
-export { default as WWCTwo } from "./WWCDView";
 // export { default as WWCStats }             from "./WWCStatsView";
 
 // ── Token manifest ────────────────────────────────────────────────────────────

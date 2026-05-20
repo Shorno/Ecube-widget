@@ -38,7 +38,7 @@ export default function WidgetsPage() {
   const tid = tournamentID ?? "";
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 font-sans text-white">
       <header className="flex items-center gap-4 border-b border-gray-700 bg-gray-800 px-5 py-3">
         <Link
           href="/controller"
