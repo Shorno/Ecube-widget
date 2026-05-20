@@ -12,9 +12,16 @@ export default function WidgetStage({ dataReady, children, onReady }) {
   const ref = useRef(null);
   const ready = useWidgetReady(ref, dataReady);
 
+  // Keep a ref to onReady so the effect below never needs it as a dependency.
+  // This is safe because onReady should only fire once (when ready flips true).
+  const onReadyRef = useRef(onReady);
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  });
+
   // Fire onReady exactly once when ready flips true
   useEffect(() => {
-    if (ready) onReady?.();
+    if (ready) onReadyRef.current?.();
   }, [ready]);
 
   return (

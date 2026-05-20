@@ -48,6 +48,18 @@ export const WIDGET_FONTS = [
     css: "var(--font-russo-one)",
     sample: "TEAM ALPHA — 14 PTS",
   },
+  {
+    key: "agency-fb",
+    label: "Agency FB",
+    css: '"Agency FB", sans-serif',
+    sample: "TEAM ALPHA — 14 PTS",
+  },
+  {
+    key: "american-captain",
+    label: "American Captain",
+    css: "var(--font-american-captain)",
+    sample: "TEAM ALPHA — 14 PTS",
+  },
 ];
 
 // ── Token map ─────────────────────────────────────────────────────────────────

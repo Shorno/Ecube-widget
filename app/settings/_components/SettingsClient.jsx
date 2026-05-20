@@ -432,7 +432,7 @@ export default function SettingsClient({
                           {f.label}
                         </p>
                         <p
-                          className="truncate text-sm font-semibold text-white"
+                          className="truncate text-sm text-white"
                           style={{ fontFamily: f.css }}
                         >
                           {f.sample}
@@ -481,7 +481,7 @@ export default function SettingsClient({
                           {f.label}
                         </p>
                         <p
-                          className="truncate text-sm font-semibold text-white"
+                          className="truncate text-sm text-white"
                           style={{ fontFamily: f.css }}
                         >
                           {f.sample}

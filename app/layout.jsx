@@ -7,6 +7,7 @@ import {
   Exo_2,
   Russo_One,
 } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import StoreProvider from "@/components/common/StoreProvider";
 import { Toaster } from "@/components/ui/sonner";
@@ -46,6 +47,11 @@ const russoOne = Russo_One({
   variable: "--font-russo-one",
   weight: ["400"],
 });
+const americanCaptain = localFont({
+  src: "./fonts/american-captain.otf",
+  variable: "--font-american-captain",
+  weight: "400",
+});
 
 export const metadata = {
   title: "PUBG WIDGET",
@@ -61,6 +67,7 @@ export default function RootLayout({ children }) {
     bebasNeue.variable,
     exo2.variable,
     russoOne.variable,
+    americanCaptain.variable,
   ].join(" ");
 
   return (

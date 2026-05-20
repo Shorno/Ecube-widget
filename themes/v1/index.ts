@@ -32,7 +32,7 @@ export { default as MatchSummary } from "./MatchSummaryView";
 // export { default as HeadToHead }           from "./HeadToHeadView";
 // export { default as TopPlayers }           from "./TopPlayersView";
 // export { default as TopPlayersGroup }      from "./TopPlayersGroupView";
-export { default as WWC } from "./WWCView";
+export { default as WWC } from "./WWCDView";
 // export { default as WWCTwo }               from "./WWCTwoView";
 // export { default as WWCStats }             from "./WWCStatsView";
 
