@@ -32,6 +32,8 @@
   --widget-status-knocked: transparent;
   --widget-status-dead: transparent;
   --widget-v1-gold: transparent;
+  --widget-font-primary: inherit;
+  --widget-font-secondary: inherit;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -99,6 +101,8 @@
   --color-widget-status-knocked: var(--widget-status-knocked);
   --color-widget-status-dead: var(--widget-status-dead);
   --color-widget-v1-gold: var(--widget-v1-gold);
+  --font-primary: var(--widget-font-primary);
+  --font-secondary: var(--widget-font-secondary);
   --font-sans: var(--font-sans);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);

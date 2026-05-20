@@ -404,7 +404,7 @@ export default function SettingsClient({
               )}
             </PanelSection>
 
-            <PanelSection title="Font">
+            <PanelSection title="Primary Font">
               <div className="space-y-2">
                 {widgetFonts.map((f) => {
                   const isActive = scopedFont === f.key;
@@ -438,7 +438,7 @@ export default function SettingsClient({
                           {f.sample}
                         </p>
                       </div>
-                      {isOverride && (
+                      {(isOverride || (!scope && isActive)) && (
                         <span className="ml-3 shrink-0 text-[10px] font-semibold text-blue-400">
                           ✓
                         </span>
@@ -448,8 +448,47 @@ export default function SettingsClient({
                           Inherited
                         </span>
                       )}
-                      {!scope && isActive && (
-                        <span className="ml-3 shrink-0 text-[10px] font-semibold text-blue-400">
+                    </button>
+                  );
+                })}
+              </div>
+            </PanelSection>
+
+            <PanelSection title="Secondary Font">
+              <div className="space-y-2">
+                {widgetFonts.map((f) => {
+                  const isActive = scopedFontSecondary === f.key;
+                  const isOverride =
+                    scope && tournamentSecondaryFonts[scope] === f.key;
+                  return (
+                    <button
+                      key={f.key}
+                      onClick={() => handleSecondaryFontChange(f.key)}
+                      className={[
+                        "flex w-full items-center justify-between rounded border px-4 py-2.5 text-left transition-all",
+                        isActive
+                          ? "border-orange-500 bg-orange-950/30"
+                          : "border-gray-700 hover:border-gray-600",
+                      ].join(" ")}
+                    >
+                      <div className="min-w-0">
+                        <p
+                          className={[
+                            "text-xs",
+                            isActive ? "text-orange-400" : "text-gray-500",
+                          ].join(" ")}
+                        >
+                          {f.label}
+                        </p>
+                        <p
+                          className="truncate text-sm font-semibold text-white"
+                          style={{ fontFamily: f.css }}
+                        >
+                          {f.sample}
+                        </p>
+                      </div>
+                      {(isOverride || (!scope && isActive)) && (
+                        <span className="ml-3 shrink-0 text-[10px] font-semibold text-orange-400">
                           ✓
                         </span>
                       )}

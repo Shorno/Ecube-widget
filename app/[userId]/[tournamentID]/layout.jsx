@@ -32,6 +32,7 @@ export default async function TournamentLayout({ children, params }) {
   const style = {
     ...buildThemeStyle(effectiveColors, variant),
     fontFamily: fontEntry.css,
+    "--widget-font-primary": fontEntry.css,
     "--widget-font-secondary": fontSecondaryEntry.css,
   };
 
