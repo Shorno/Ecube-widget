@@ -16,7 +16,7 @@ export default function WWCStatsView({ tournamentID }) {
   return (
     <WidgetStage dataReady={!!data}>
       <Layout top>
-        <Title title={"WWCD Stats"} data={data?.game[0]} />
+        <Title title={"WWCD Stats"} data={data?.game?.[0]} />
         <div className="mx-auto mt-16 flex h-127 w-max gap-6 px-16">
           <div className="space-y-8 uppercase">
             <div className="bg-primary-shade-two mx-auto w-max">

@@ -5,6 +5,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import DesignRegistry from "@/lib/db/models/DesignRegistry";
+import User from "@/lib/db/models/User";
 import { requireAdmin } from "@/lib/auth/session";
 import { invalidateDesignCache } from "@/themes/registry";
 
@@ -50,11 +51,51 @@ export async function GET() {
     );
   }
 
-  // Delete orphans — entries in DB that no longer exist in BUNDLE_MAP
-  const { deletedCount } = await DesignRegistry.deleteMany({
-    _id: { $nin: KNOWN_IDS },
-  });
+  // Delete orphans from registry
+  await DesignRegistry.deleteMany({ _id: { $nin: KNOWN_IDS } });
+
+  // Always clean users against KNOWN_IDS — covers orphans already gone from registry
+  // 1. Find any design IDs in users that are not in KNOWN_IDS
+  const allUserDesignIds = await User.distinct("allowedDesignIds");
+  const staleIds = allUserDesignIds.filter((id) => !KNOWN_IDS.includes(id));
+
+  if (staleIds.length > 0) {
+    await Promise.all([
+      // Remove stale designs from allowedDesignIds
+      User.updateMany(
+        { allowedDesignIds: { $in: staleIds } },
+        { $pull: { allowedDesignIds: { $in: staleIds } } },
+      ),
+      // Reset global designVariant if it points to a stale design
+      User.updateMany(
+        { "themeConfig.designVariant": { $in: staleIds } },
+        { $set: { "themeConfig.designVariant": "default" } },
+      ),
+      // Remove per-tournament overrides pointing to stale designs
+      User.updateMany(
+        {},
+        [
+          {
+            $set: {
+              tournamentDesigns: {
+                $arrayToObject: {
+                  $filter: {
+                    input: { $objectToArray: "$tournamentDesigns" },
+                    cond: { $not: { $in: ["$$this.v", staleIds] } },
+                  },
+                },
+              },
+            },
+          },
+        ],
+        { updatePipeline: true },
+      ),
+    ]);
+  }
 
   invalidateDesignCache();
-  return NextResponse.json({ seeded: KNOWN_IDS, deleted: deletedCount });
+  return NextResponse.json({
+    seeded: KNOWN_IDS,
+    usersFixed: staleIds.length > 0 ? staleIds : [],
+  });
 }

@@ -110,6 +110,18 @@ export default function DesignPickerClient({
             {hasTournaments && (
               <>
                 <span className="h-4 w-px bg-gray-700" />
+                {/* Global fallback tab — always visible when tournaments exist */}
+                <button
+                  onClick={() => setScope(null)}
+                  className={[
+                    "rounded border px-3 py-1 text-sm font-medium transition-all",
+                    scope === null
+                      ? "border-gray-400 bg-gray-700 text-white"
+                      : "border-gray-700 text-gray-500 hover:border-gray-500 hover:text-gray-300",
+                  ].join(" ")}
+                >
+                  Global
+                </button>
                 {allowedTournamentIds.map((tid) => (
                   <button
                     key={tid}

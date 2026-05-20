@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import DesignRegistry from "@/lib/db/models/DesignRegistry";
+import User from "@/lib/db/models/User";
 import { requireAdmin } from "@/lib/auth/session";
 import { bool, validate } from "@/lib/validation";
 import { invalidateDesignCache } from "@/themes/registry";
@@ -12,6 +13,40 @@ export async function DELETE(request, { params }) {
   const deleted = await DesignRegistry.findByIdAndDelete(designId).lean();
   if (!deleted)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  // Cascade: remove deleted design from all users
+  await Promise.all([
+    // Remove from allowedDesignIds
+    User.updateMany(
+      { allowedDesignIds: designId },
+      { $pull: { allowedDesignIds: designId } },
+    ),
+    // Reset global designVariant back to "default" if it pointed to deleted design
+    User.updateMany(
+      { "themeConfig.designVariant": designId },
+      { $set: { "themeConfig.designVariant": "default" } },
+    ),
+    // Remove any per-tournament design override that pointed to deleted design
+    User.updateMany(
+      {},
+      [
+        {
+          $set: {
+            tournamentDesigns: {
+              $arrayToObject: {
+                $filter: {
+                  input: { $objectToArray: "$tournamentDesigns" },
+                  cond: { $ne: ["$$this.v", designId] },
+                },
+              },
+            },
+          },
+        },
+      ],
+      { updatePipeline: true },
+    ),
+  ]);
+
   invalidateDesignCache();
   return NextResponse.json({ ok: true });
 }

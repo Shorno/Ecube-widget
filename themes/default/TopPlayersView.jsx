@@ -15,7 +15,7 @@ export default function TopPlayersView({ tournamentID }) {
   return (
     <WidgetStage dataReady={!!data}>
       <Layout top>
-        <Title title={"Top Players"} data={data?.game[0]} />
+        <Title title={"Top Players"} data={data?.game?.[0]} />
         <div className="mx-auto mt-16 flex h-127 w-max gap-6 px-16">
           <div className="grid grid-cols-5 gap-4">
             {team?.map((player, idx) => (

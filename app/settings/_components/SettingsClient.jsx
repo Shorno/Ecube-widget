@@ -116,6 +116,9 @@ export default function SettingsClient({
   // ── Derived scoped values ─────────────────────────────────────────────────
   // When a tournament is selected its overrides take priority; global colors
   // act as the fallback so every token always has a value.
+  const effectiveVariant = scope
+    ? (tournamentDesigns[scope] ?? activeVariant)
+    : activeVariant;
   const scopedColors = scope
     ? merge(tournamentColors[scope] ?? {}, colors)
     : colors;
@@ -391,7 +394,7 @@ export default function SettingsClient({
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-400">Active design</span>
                     <span className="font-semibold text-blue-300">
-                      {activeVariant}
+                      {effectiveVariant}
                     </span>
                   </div>
                   <Link
@@ -645,7 +648,7 @@ export default function SettingsClient({
                 has tokens beyond the standard set (e.g. v1Gold for v1) */}
             {designExtras.length > 0 && (
               <ColorGroup
-                title={`${activeVariant} Extras`}
+                title={`${effectiveVariant} Extras`}
                 value={scopedColors}
                 onChange={setColor}
                 fields={designExtras.map((t) => t.key)}
@@ -659,7 +662,7 @@ export default function SettingsClient({
                 onClick={resetColors}
                 className="text-sm text-gray-500 transition-colors hover:text-gray-400"
               >
-                Reset {scopeName ?? "default"} colors to {activeVariant}{" "}
+                Reset {scopeName ?? "default"} colors to {effectiveVariant}{" "}
                 defaults
               </button>
             </div>
