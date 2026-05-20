@@ -9,14 +9,14 @@ import User from "@/lib/db/models/User";
 // do not work reliably with Turbopack/Webpack.
 //
 // To add a new design:
-//   1. Create components/designs/<key>/index.js with all component exports
+//   1. Create themes/<key>/index.js with all component exports
 //   2. Add one entry here
 //   3. Insert a document into the DESIGN_REGISTRY MongoDB collection
 //   4. Deploy — that's it. No other file needs changing.
 const BUNDLE_MAP = {
-  default: () => import("@/components/designs/default"),
-  v1: () => import("@/components/designs/v1"),
-  // mythical: () => import("@/components/designs/mythical"),
+  default: () => import("@/themes/default"),
+  v1: () => import("@/themes/v1"),
+  // mythical: () => import("@/themes/mythical"),
 };
 
 // ── In-process TTL cache for design registry lookups ─────────────────────────

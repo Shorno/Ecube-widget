@@ -98,25 +98,25 @@ export const VARIANT_DEFAULTS = {
     statusKnocked: "rgba(244,63,94,1)",
     statusDead: "rgba(0,0,0,0.5)",
   },
-  // v1 design defaults — extends default palette with the gold accent
+  // v1 design defaults — ECube blue palette
   v1: {
-    primary: h("#a54e26"),
-    primaryDark: h("#7a3a1c"),
-    primaryAccent: h("#c45e30"),
-    secondary: h("#008e88"),
-    secondaryDark: h("#006e69"),
-    secondaryAccent: h("#00a89f"),
-    text1: h("#f5f5f5"),
-    text2: h("#1a1a1a"),
-    text3: h("#f5f5f5"),
-    bg: h("#0d0d0d"),
-    gradientFrom: h("#a54e26"),
-    gradientTo: h("#c45e30"),
+    primary: h("#2e87e6"), // ECube brand blue
+    primaryDark: h("#1a6dc9"), // mid-dark blue
+    primaryAccent: h("#5ba3ed"), // lighter blue highlight
+    secondary: h("#0d4a8a"), // deep navy
+    secondaryDark: h("#083566"), // deeper navy
+    secondaryAccent: h("#3d7fd4"), // mid blue
+    text1: h("#ffffff"), // pure white
+    text2: h("#c8dff8"), // pale blue-white
+    text3: h("#90c4f7"), // blue-300 muted
+    bg: h("#07192d"), // blue-950 near-black navy
+    gradientFrom: h("#2e87e6"), // brand blue
+    gradientTo: h("#0d4a8a"), // navy
     gradientAngle: "135deg",
     statusAlive: "rgba(255,255,255,1)",
     statusKnocked: "rgba(244,63,94,1)",
     statusDead: "rgba(0,0,0,0.5)",
-    v1Gold: h("#fbbf24"),
+    v1Gold: h("#fbbf24"), // amber gold accent
   },
   mythical: {
     primary: h("#007570"),
@@ -267,6 +267,30 @@ export const PREDEFINED_THEMES = [
       statusAlive: "rgba(15,23,42,1)",
       statusKnocked: "rgba(220,38,38,1)",
       statusDead: "rgba(148,163,184,0.6)",
+    },
+  },
+  {
+    key: "ecube-blue",
+    label: "ECube Blue",
+    swatches: [h("#2e87e6"), h("#0d4a8a"), h("#07192d")],
+    colors: {
+      primary: h("#2e87e6"),
+      primaryDark: h("#1a6dc9"),
+      primaryAccent: h("#5ba3ed"),
+      secondary: h("#0d4a8a"),
+      secondaryDark: h("#083566"),
+      secondaryAccent: h("#3d7fd4"),
+      text1: h("#ffffff"),
+      text2: h("#c8dff8"),
+      text3: h("#90c4f7"),
+      bg: h("#07192d"),
+      gradientFrom: h("#2e87e6"),
+      gradientTo: h("#0d4a8a"),
+      gradientAngle: "135deg",
+      statusAlive: "rgba(255,255,255,1)",
+      statusKnocked: "rgba(244,63,94,1)",
+      statusDead: "rgba(0,0,0,0.5)",
+      v1Gold: h("#fbbf24"),
     },
   },
 ];

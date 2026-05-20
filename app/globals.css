@@ -11,28 +11,27 @@
   --custom-yellow: #ffdd75;
   --custom-green: #00473c;
 
-  /* Widget theme tokens — overridden per-user in [userId]/[tournamentID]/layout.jsx.
-     --widget-* prefix avoids collision with Tailwind's own --color-* namespace.
-     Tailwind usage: bg-widget-primary, text-widget-text-1, etc.
-     Gradient is inline-style only: var(--widget-gradient-from/to/angle). */
-  --widget-primary: #a54e26;
-  --widget-primary-dark: #7a3a1c;
-  --widget-primary-accent: #c45e30;
-  --widget-secondary: #008e88;
-  --widget-secondary-dark: #006e69;
-  --widget-secondary-accent: #00a89f;
-  --widget-text-1: #f5f5f5;
-  --widget-text-2: #1a1a1a;
-  --widget-text-3: #f5f5f5;
-  --widget-bg: #0d0d0d;
-  --widget-gradient-from: #a54e26;
-  --widget-gradient-to: #c45e30;
+  /* Widget theme tokens — values are always injected server-side by
+     [userId]/[tournamentID]/layout.jsx via buildThemeStyle(colors, variant).
+     Each design gets its own defaults from VARIANT_DEFAULTS[variant] in catalog.js.
+     No hardcoded fallbacks here — the layout is the only source of truth. */
+  --widget-primary: transparent;
+  --widget-primary-dark: transparent;
+  --widget-primary-accent: transparent;
+  --widget-secondary: transparent;
+  --widget-secondary-dark: transparent;
+  --widget-secondary-accent: transparent;
+  --widget-text-1: transparent;
+  --widget-text-2: transparent;
+  --widget-text-3: transparent;
+  --widget-bg: transparent;
+  --widget-gradient-from: transparent;
+  --widget-gradient-to: transparent;
   --widget-gradient-angle: 135deg;
-  --widget-status-alive: rgba(255, 255, 255, 1);
-  --widget-status-knocked: rgba(244, 63, 94, 1);
-  --widget-status-dead: rgba(0, 0, 0, 0.5);
-  /* v1-specific extras — fallback values, overridden per-user when saved */
-  --widget-v1-gold: #fbbf24;
+  --widget-status-alive: transparent;
+  --widget-status-knocked: transparent;
+  --widget-status-dead: transparent;
+  --widget-v1-gold: transparent;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);

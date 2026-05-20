@@ -9,6 +9,7 @@ export default async function DesignPickerPage() {
 
   await connectDB();
   const user = await User.findById(session.userId, {
+    name: 1,
     themeConfig: 1,
     allowedDesignIds: 1,
     allowedTournamentIds: 1,
@@ -20,6 +21,7 @@ export default async function DesignPickerPage() {
   return (
     <DesignPickerClient
       userId={session.userId}
+      userName={user?.name ?? ""}
       activeVariant={user.themeConfig?.designVariant ?? "default"}
       allowedDesignIds={user.allowedDesignIds ?? ["default"]}
       allowedTournamentIds={user.allowedTournamentIds ?? []}

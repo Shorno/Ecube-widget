@@ -6,7 +6,8 @@ import {
   VARIANT_DEFAULTS,
   WIDGET_FONTS,
   PREDEFINED_THEMES,
-} from "@/lib/design/catalog";
+} from "@/themes/catalog";
+import { getDesignExtras } from "@/themes/extras";
 import SettingsClient from "./_components/SettingsClient";
 
 export default async function SettingsPage() {
@@ -22,11 +23,13 @@ export default async function SettingsPage() {
     tournamentNames: 1,
     tournamentColors: 1,
     tournamentFonts: 1,
+    tournamentSecondaryFonts: 1,
   }).lean();
   if (!user) redirect("/api/auth/logout");
 
   const variant = user?.themeConfig?.designVariant ?? "default";
   const defaults = VARIANT_DEFAULTS[variant] ?? VARIANT_DEFAULTS.default;
+  const designExtras = getDesignExtras(variant);
 
   return (
     <SettingsClient
@@ -34,6 +37,7 @@ export default async function SettingsPage() {
       userName={user?.name ?? ""}
       variant={variant}
       font={user?.themeConfig?.font ?? "oswald"}
+      fontSecondary={user?.themeConfig?.fontSecondary ?? "rajdhani"}
       savedColors={user?.themeConfig?.colors ?? {}}
       defaults={defaults}
       allowedDesignIds={user?.allowedDesignIds ?? ["default"]}
@@ -42,8 +46,10 @@ export default async function SettingsPage() {
       tournamentNames={user?.tournamentNames ?? {}}
       tournamentColors={user?.tournamentColors ?? {}}
       tournamentFonts={user?.tournamentFonts ?? {}}
+      tournamentSecondaryFonts={user?.tournamentSecondaryFonts ?? {}}
       widgetFonts={WIDGET_FONTS}
       predefinedThemes={PREDEFINED_THEMES}
+      designExtras={designExtras}
     />
   );
 }

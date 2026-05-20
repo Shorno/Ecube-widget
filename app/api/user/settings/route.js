@@ -3,8 +3,9 @@ import { getSession } from "@/lib/auth/session";
 import { connectDB } from "@/lib/db/mongoose";
 import User from "@/lib/db/models/User";
 import { str, strObj, oneOf, validate } from "@/lib/validation";
-import { WIDGET_FONTS } from "@/lib/design/catalog";
+import { WIDGET_FONTS } from "@/themes/catalog";
 import { trackRequest } from "@/lib/metrics/track";
+import { invalidateUserCache } from "@/lib/db/queries";
 
 const FONT_KEYS = WIDGET_FONTS.map((f) => f.key);
 
@@ -55,6 +56,8 @@ export async function PUT(request) {
   if (body.designVariant !== undefined)
     checks.designVariant = oneOf(body.designVariant, allowedDesigns);
   if (body.font !== undefined) checks.font = oneOf(body.font, FONT_KEYS);
+  if (body.fontSecondary !== undefined)
+    checks.fontSecondary = oneOf(body.fontSecondary, FONT_KEYS);
   if (body.tournamentDesigns !== undefined)
     checks.tournamentDesigns = strObj(body.tournamentDesigns, {
       maxKeys: 200,
@@ -85,17 +88,22 @@ export async function PUT(request) {
   if (body.designVariant !== undefined)
     $set["themeConfig.designVariant"] = body.designVariant;
   if (body.font !== undefined) $set["themeConfig.font"] = body.font;
+  if (body.fontSecondary !== undefined)
+    $set["themeConfig.fontSecondary"] = body.fontSecondary;
   if (body.tournamentDesigns !== undefined)
     $set.tournamentDesigns = body.tournamentDesigns;
   if (body.tournamentColors !== undefined)
     $set.tournamentColors = body.tournamentColors;
   if (body.tournamentFonts !== undefined)
     $set.tournamentFonts = body.tournamentFonts;
+  if (body.tournamentSecondaryFonts !== undefined)
+    $set.tournamentSecondaryFonts = body.tournamentSecondaryFonts;
 
   if (Object.keys($set).length === 0) {
     return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
   }
 
   await User.findByIdAndUpdate(session.userId, { $set });
+  invalidateUserCache(session.userId);
   return NextResponse.json({ ok: true });
 }

@@ -1,4 +1,4 @@
-import { BASE_TOKENS, type TokenEntry } from "@/lib/design/tokens";
+import { BASE_TOKENS, type TokenEntry } from "@/themes/tokens";
 
 // v1 design token manifest.
 // BASE_TOKENS covers all standard colors (primary, secondary, text, gradient, status).

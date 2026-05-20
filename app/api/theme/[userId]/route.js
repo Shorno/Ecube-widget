@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import User from "@/lib/db/models/User";
-import { buildThemeJson } from "@/lib/design/catalog";
+import { buildThemeJson } from "@/themes/catalog";
 
 export async function GET(request, { params }) {
   const { userId } = await params;

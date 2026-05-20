@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import EcubeBrand from "@/components/common/EcubeBrand";
 
 export default function DesignPickerClient({
+  userName = "",
   activeVariant: initialVariant,
   allowedDesignIds,
   allowedTournamentIds = [],
@@ -74,23 +76,66 @@ export default function DesignPickerClient({
   const scopeName = scope ? tournamentNames[scope] || scope : null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-950 font-sans text-white">
+    <div className="flex min-h-screen flex-col bg-gray-900 font-sans text-white">
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-gray-800 bg-gray-950">
-        <div className="flex items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-3">
-            <EcubeBrand />
+      <header className="sticky top-0 z-20 bg-gray-800">
+        {/* Row 1 — logo + title | username (center) | brand */}
+        <div className="flex items-center border-b border-gray-700 px-6 py-3">
+          <div className="flex flex-1 items-center gap-3">
+            <Image src="/EcubeOG.svg" width={26} height={26} alt="ECube" />
             <span className="h-4 w-px bg-gray-700" />
-            <Link
-              href="/settings"
-              className="rounded px-2 py-1 text-sm text-gray-500 transition-colors hover:bg-gray-800 hover:text-gray-200"
-            >
-              ← Settings
-            </Link>
-            <span className="h-4 w-px bg-gray-800" />
             <span className="text-sm font-semibold text-white">
               Select Design
             </span>
+          </div>
+          <div className="flex flex-1 justify-center">
+            {userName && (
+              <span className="text-sm text-gray-400">{userName}</span>
+            )}
+          </div>
+          <div className="flex flex-1 justify-end">
+            <EcubeBrand />
+          </div>
+        </div>
+
+        {/* Row 2 — back + tabs | save */}
+        <div className="flex items-center justify-between border-b border-gray-700 px-6 py-2.5">
+          <div className="flex items-center gap-2">
+            <Link
+              href="/settings"
+              className="mr-2 text-sm text-gray-500 transition-colors hover:text-gray-200"
+            >
+              ← Settings
+            </Link>
+            {hasTournaments && (
+              <>
+                <span className="h-4 w-px bg-gray-700" />
+                {allowedTournamentIds.map((tid) => (
+                  <button
+                    key={tid}
+                    onClick={() => setScope(tid)}
+                    className={[
+                      "flex items-center gap-2 rounded border px-3 py-1 text-sm font-medium transition-all",
+                      scope === tid
+                        ? "border-blue-500 bg-blue-950/50 text-blue-300"
+                        : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-300",
+                    ].join(" ")}
+                  >
+                    <span className="flex flex-col items-start leading-tight">
+                      <span>{tournamentNames[tid] || tid}</span>
+                      {tournamentNames[tid] && (
+                        <span className="font-mono text-[10px] text-gray-500">
+                          {tid}
+                        </span>
+                      )}
+                    </span>
+                    {tournamentDesigns[tid] && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+                    )}
+                  </button>
+                ))}
+              </>
+            )}
           </div>
           <Button
             onClick={save}
@@ -100,37 +145,6 @@ export default function DesignPickerClient({
             {saving ? "Saving…" : "Save Changes"}
           </Button>
         </div>
-
-        {/* Per-tournament scope tabs — no "All Tournaments" */}
-        {hasTournaments && (
-          <div className="flex items-center justify-center gap-2 border-t border-gray-800/60 px-6 py-2.5">
-            {allowedTournamentIds.map((tid) => (
-              <button
-                key={tid}
-                onClick={() => setScope(tid)}
-                className={[
-                  "flex items-center gap-2 rounded border px-4 py-1.5 text-sm font-medium transition-all",
-                  scope === tid
-                    ? "border-blue-500 bg-blue-950/50 text-blue-300"
-                    : "border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-300",
-                ].join(" ")}
-              >
-                <span className="flex flex-col items-start leading-tight">
-                  <span>{tournamentNames[tid] || tid}</span>
-                  {tournamentNames[tid] && (
-                    <span className="font-mono text-[10px] text-gray-500">
-                      {tid}
-                    </span>
-                  )}
-                </span>
-                {/* dot indicator when this tournament has an override */}
-                {tournamentDesigns[tid] && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
-                )}
-              </button>
-            ))}
-          </div>
-        )}
       </header>
 
       {/* Tournament context bar */}
@@ -190,7 +204,7 @@ export default function DesignPickerClient({
                       ? "border-blue-500 bg-blue-950/40 ring-1 ring-blue-500/30"
                       : isInherited
                         ? "border-gray-500 bg-gray-800/60"
-                        : "border-gray-700 hover:border-gray-500 hover:bg-gray-900/60",
+                        : "border-gray-700 hover:border-gray-500 hover:bg-gray-800/60",
                   ].join(" ")}
                 >
                   <div className="mb-3 flex h-20 w-full items-center justify-center rounded border border-gray-700 bg-gray-800/60">

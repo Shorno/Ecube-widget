@@ -103,20 +103,23 @@ export default function ControllerClient({
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header */}
+      {/* Header — single row */}
       <header className="bg-gray-800">
-        {/* Row 1 — logo + tournament info | brand pill */}
-        <div className="flex items-center justify-between border-b border-gray-700 px-5 py-3">
-          <div className="flex items-center gap-3">
+        {/* Single row — logo + tournament | username (center) | brand */}
+        <div className="flex items-center border-b border-gray-700 px-5 py-3">
+          <div className="flex flex-1 items-center gap-3">
             <Image src="/EcubeOG.svg" width={26} height={26} alt="ECube" />
             <span className="h-4 w-px bg-gray-600" />
             {hasMultipleTournaments && (
-              <Link
-                href="/controller"
-                className="text-xs text-gray-500 transition-colors hover:text-gray-300"
-              >
-                ← Tournaments
-              </Link>
+              <>
+                <Link
+                  href="/controller"
+                  className="text-xs text-gray-500 transition-colors hover:text-gray-300"
+                >
+                  ← Tournaments
+                </Link>
+                <span className="text-gray-600">·</span>
+              </>
             )}
             <div>
               {tournamentName && (
@@ -129,63 +132,13 @@ export default function ControllerClient({
               </span>
             </div>
           </div>
-          <EcubeBrand />
-        </div>
-
-        {/* Row 2 — live status center | username + controls */}
-        <div className="flex items-center justify-between border-b border-gray-700 px-5 py-2.5">
-          {/* Live status */}
-          <div className="flex-1">
-            {activeLabel && activeUrl ? (
-              <span className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-green-400 uppercase">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
-                LIVE — {activeLabel}
-              </span>
-            ) : (
-              <span className="text-xs tracking-widest text-gray-600 uppercase">
-                No widget active
-              </span>
-            )}
-          </div>
-
-          {/* Controls */}
-          <div className="flex shrink-0 items-center gap-3">
-            {sendStatus === "sending" && (
-              <span className="text-xs font-bold text-yellow-400">
-                Sending…
-              </span>
-            )}
-            {sendStatus === "sent" && (
-              <span className="text-xs font-bold text-green-400">Sent ✓</span>
-            )}
-            {sendStatus === "error" && (
-              <span className="text-xs font-bold text-red-400">Error ✗</span>
-            )}
+          <div className="flex flex-1 justify-center">
             {userName && (
               <span className="text-sm text-gray-400">{userName}</span>
             )}
-            <Select
-              value={scoreGroupView || "default"}
-              onValueChange={(v) => {
-                const val = v === "default" ? "" : v;
-                setScoreGroupView(val);
-                localStorage.setItem("scoreGroupView", val);
-              }}
-            >
-              <SelectTrigger className="h-8 w-40 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="default">Score Group: Default</SelectItem>
-                <SelectItem value="full">Score Group: Full</SelectItem>
-              </SelectContent>
-            </Select>
-            <Link
-              href="/settings"
-              className="inline-flex items-center gap-1.5 rounded border border-blue-600 bg-blue-700/30 px-3 py-1.5 text-xs font-bold tracking-wider text-blue-300 uppercase transition-colors hover:bg-blue-700/60 hover:text-white"
-            >
-              ⚙ Settings
-            </Link>
+          </div>
+          <div className="flex flex-1 justify-end">
+            <EcubeBrand />
           </div>
         </div>
       </header>
@@ -220,9 +173,10 @@ export default function ControllerClient({
         </div>
       )}
 
-      {/* Display URL bar */}
-      <div className="flex items-center justify-between gap-4 border-b border-gray-800 bg-gray-950 px-5 py-2">
-        <div className="flex min-w-0 items-center gap-3">
+      {/* Sources bar: LEFT sources | CENTER live | RIGHT controls */}
+      <div className="flex items-center border-b border-gray-800 bg-gray-950 px-5 py-2">
+        {/* LEFT — Sources + display URL */}
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <span className="shrink-0 text-xs font-bold tracking-widest text-gray-500 uppercase">
             Sources
           </span>
@@ -231,7 +185,49 @@ export default function ControllerClient({
             {displayUrl}
           </span>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
+
+        {/* CENTER — live status + send feedback */}
+        <div className="flex flex-1 items-center justify-center gap-3">
+          {activeLabel && activeUrl ? (
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-green-400 uppercase">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
+              LIVE — {activeLabel}
+            </span>
+          ) : (
+            <span className="text-xs tracking-widest text-gray-600 uppercase">
+              No widget active
+            </span>
+          )}
+          {sendStatus === "sending" && (
+            <span className="text-xs font-bold text-yellow-400">Sending…</span>
+          )}
+          {sendStatus === "sent" && (
+            <span className="text-xs font-bold text-green-400">Sent ✓</span>
+          )}
+          {sendStatus === "error" && (
+            <span className="text-xs font-bold text-red-400">Error ✗</span>
+          )}
+        </div>
+
+        {/* RIGHT — score group + settings + copy + open + individual links */}
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <Select
+            value={scoreGroupView || "default"}
+            onValueChange={(v) => {
+              const val = v === "default" ? "" : v;
+              setScoreGroupView(val);
+              localStorage.setItem("scoreGroupView", val);
+            }}
+          >
+            <SelectTrigger className="h-7 w-40 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="default">Score Group: Default</SelectItem>
+              <SelectItem value="full">Score Group: Full</SelectItem>
+            </SelectContent>
+          </Select>
+
           <button
             onClick={copyDisplayUrl}
             className={[
@@ -256,6 +252,12 @@ export default function ControllerClient({
             className="border border-gray-600 px-3 py-1 text-xs font-bold tracking-wider text-gray-400 uppercase hover:border-blue-500 hover:text-blue-400"
           >
             Individual Links
+          </Link>
+          <Link
+            href="/settings"
+            className="inline-flex items-center gap-1 border border-blue-600 bg-blue-700/30 px-3 py-1 text-xs font-bold tracking-wider text-blue-300 uppercase transition-colors hover:bg-blue-700/60 hover:text-white"
+          >
+            ⚙ Settings
           </Link>
         </div>
       </div>

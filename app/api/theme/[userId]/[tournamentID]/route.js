@@ -4,7 +4,7 @@ import {
   buildThemeStyle,
   WIDGET_FONTS,
   VARIANT_DEFAULTS,
-} from "@/lib/design/catalog";
+} from "@/themes/catalog";
 
 // Public — no auth. Widgets fetch their own effective theme (colors, font, variant).
 export async function GET(_, { params }) {

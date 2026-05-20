@@ -269,31 +269,65 @@ style={{
 
 `--widget-gradient-angle` is stored **with the `deg` unit** (e.g. `"135deg"`) so it can be used directly in `var()` — no transformation needed in component code.
 
+### Color values are always rgba
+
+All stored color values use `rgba(r, g, b, a)` format — never hex. The color picker in Settings converts any hex pick to rgba automatically. Store values as:
+
+```
+rgba(165, 78, 38, 1)      ← opaque color
+rgba(0, 0, 0, 0.5)        ← semi-transparent (useful for status indicators)
+```
+
+### Where default colors come from
+
+**There are no hardcoded fallback colors in `globals.css`.** The `--widget-*` vars are declared as `transparent` in globals.css and always overridden by the layout server component before the first paint:
+
+```
+VARIANT_DEFAULTS[variant] in catalog.js
+  → buildThemeStyle(userColors, variant)
+    → [tournamentID]/layout.jsx inline style prop
+      → CSS vars active for all child components
+```
+
+Each design variant gets its own default palette. `default` gets `VARIANT_DEFAULTS.default`, `v1` gets `VARIANT_DEFAULTS.v1`, etc. To change a design's defaults, edit its entry in `lib/design/catalog.js → VARIANT_DEFAULTS`.
+
 ### Adding a v1-specific color token
 
-For colors that only exist in v1 (e.g., a gold trim):
+For colors that only exist in v1 (e.g., a gold accent):
 
-1. **`components/designs/v1/tokens.js`** — add to `COLOR_TOKENS`:
+1. **`components/designs/v1/tokens.ts`** — add to `COLOR_TOKENS` (after the `...BASE_TOKENS` spread):
+
+```ts
+{ key: "v1Gold", label: "Gold Accent", css: "--widget-v1-gold", group: "v1 Extras" }
+```
+
+2. **`lib/design/catalog.js`** — add to `TOKEN_MAP`:
 
 ```js
-{ key: "v1-gold", label: "Gold Accent", css: "--widget-v1-gold", group: "v1 Extras" }
+{ key: "v1Gold", css: "--widget-v1-gold" }
 ```
 
-2. **`app/globals.css`** — add fallback under `:root`:
+3. **`lib/design/catalog.js`** — add to `VARIANT_DEFAULTS.v1`:
 
-```css
---widget-v1-gold: #fbbf24;
+```js
+v1Gold: "rgba(251, 191, 36, 1)",
 ```
 
-3. **`app/globals.css`** — add Tailwind alias under `@theme inline`:
+4. **`lib/design/extras.ts`** — it auto-computes from `tokens.ts`, no change needed.
+
+5. **`app/globals.css`** — add `transparent` placeholder in `:root` and Tailwind alias in `@theme inline`:
 
 ```css
+/* :root */
+--widget-v1-gold: transparent;
+
+/* @theme inline */
 --color-widget-v1-gold: var(--widget-v1-gold);
 ```
 
-4. Use in your component: `bg-widget-v1-gold` / `text-widget-v1-gold`
+6. Use in your component: `bg-widget-v1-gold` / `text-widget-v1-gold`
 
-The settings UI reads `tokens.js` and shows these inputs only when v1 is the active design. Users can change them. If you need a color that cannot be changed (locked sponsor/brand color), hardcode it as a CSS literal in the component and do not add it to `tokens.js`.
+The settings UI reads `tokens.ts` → `extras.ts` and shows these inputs in a **"v1 Extras"** section automatically when v1 is the active design. Users can change them. To lock a color permanently, hardcode it as a CSS literal and skip steps 1 and 4.
 
 ---
 

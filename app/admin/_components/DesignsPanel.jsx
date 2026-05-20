@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 
 export default function DesignsPanel({ initialDesigns }) {
   const [designs, setDesigns] = useState(initialDesigns);
+  const [confirmDelete, setConfirmDelete] = useState(null); // designId pending delete
 
   async function toggle(id, field, value) {
     const res = await fetch(`/api/admin/designs/${id}`, {
@@ -22,6 +23,18 @@ export default function DesignsPanel({ initialDesigns }) {
       const data = await res.json().catch(() => ({}));
       toast.error(data.error ?? "Update failed");
     }
+  }
+
+  async function deleteDesign(id) {
+    const res = await fetch(`/api/admin/designs/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setDesigns((prev) => prev.filter((d) => d._id !== id));
+      toast.success("Design deleted");
+    } else {
+      const data = await res.json().catch(() => ({}));
+      toast.error(data.error ?? "Delete failed");
+    }
+    setConfirmDelete(null);
   }
 
   return (
@@ -94,6 +107,31 @@ export default function DesignsPanel({ initialDesigns }) {
                 onCheckedChange={(v) => toggle(d._id, "active", v)}
               />
             </label>
+
+            {confirmDelete === d._id ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-red-400">Sure?</span>
+                <button
+                  onClick={() => deleteDesign(d._id)}
+                  className="rounded border border-red-700 bg-red-950 px-2 py-1 text-xs font-bold text-red-400 hover:bg-red-900"
+                >
+                  Yes, delete
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(null)}
+                  className="rounded border border-gray-700 px-2 py-1 text-xs text-gray-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setConfirmDelete(d._id)}
+                className="rounded border border-gray-800 px-2 py-1 text-xs text-gray-600 transition-colors hover:border-red-800 hover:text-red-400"
+              >
+                Delete
+              </button>
+            )}
           </div>
         ))}
         {designs.length === 0 && (

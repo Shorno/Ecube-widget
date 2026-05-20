@@ -17,24 +17,22 @@ export default async function ControllerPage() {
   if (tids.length === 1) redirect(`/controller/${tids[0]}`);
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-950 font-sans text-white">
-      {/* Header — same 2-row structure as other operator pages */}
-      <header className="bg-gray-950">
-        {/* Row 1 — logo + title | brand pill */}
-        <div className="flex items-center justify-between border-b border-gray-800 px-6 py-3">
-          <div className="flex items-center gap-3">
+    <div className="flex min-h-screen flex-col bg-gray-900 font-sans text-white">
+      <header className="bg-gray-800">
+        <div className="flex items-center border-b border-gray-700 px-6 py-3">
+          <div className="flex flex-1 items-center gap-3">
             <Image src="/EcubeOG.svg" width={26} height={26} alt="ECube" />
             <span className="h-4 w-px bg-gray-700" />
             <span className="text-sm font-semibold text-white">Controller</span>
           </div>
-          <EcubeBrand />
-        </div>
-
-        {/* Row 2 — username right */}
-        <div className="flex items-center justify-end border-b border-gray-800 px-6 py-2.5">
-          {user.name && (
-            <span className="text-sm text-gray-400">{user.name}</span>
-          )}
+          <div className="flex flex-1 justify-center">
+            {user.name && (
+              <span className="text-sm text-gray-400">{user.name}</span>
+            )}
+          </div>
+          <div className="flex flex-1 justify-end">
+            <EcubeBrand />
+          </div>
         </div>
       </header>
 

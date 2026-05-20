@@ -3,7 +3,18 @@ import { connectDB } from "@/lib/db/mongoose";
 import DesignRegistry from "@/lib/db/models/DesignRegistry";
 import { requireAdmin } from "@/lib/auth/session";
 import { bool, validate } from "@/lib/validation";
-import { invalidateDesignCache } from "@/lib/design/registry";
+import { invalidateDesignCache } from "@/themes/registry";
+
+export async function DELETE(request, { params }) {
+  await requireAdmin();
+  const { designId } = await params;
+  await connectDB();
+  const deleted = await DesignRegistry.findByIdAndDelete(designId).lean();
+  if (!deleted)
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  invalidateDesignCache();
+  return NextResponse.json({ ok: true });
+}
 
 export async function PATCH(request, { params }) {
   await requireAdmin();

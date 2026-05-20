@@ -2,12 +2,34 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
+import {
+  AFTER_MATCH_WIDGETS,
+  IN_GAME_WIDGETS,
+  getWidgetPath,
+} from "@/lib/widget-catalog";
+
+function buildPreloadUrls(userId, tournamentID) {
+  return [...AFTER_MATCH_WIDGETS, ...IN_GAME_WIDGETS]
+    .map((w) => getWidgetPath(w, userId, tournamentID))
+    .filter((url) => url && !url.startsWith("http")); // local paths only
+}
 
 export default function DisplayPage() {
-  const { tournamentID } = useParams();
+  const { userId, tournamentID } = useParams();
   const [widgetUrl, setWidgetUrl] = useState(null);
+  const [preloadUrls, setPreloadUrls] = useState([]);
   const esRef = useRef(null);
 
+  // Warm the browser cache: load all widget iframes hidden, then discard after 25s.
+  // Subsequent widget switches skip JS bundle and image fetch entirely.
+  useEffect(() => {
+    if (!userId || !tournamentID) return;
+    setPreloadUrls(buildPreloadUrls(userId, tournamentID));
+    const timer = setTimeout(() => setPreloadUrls([]), 25_000);
+    return () => clearTimeout(timer);
+  }, [userId, tournamentID]);
+
+  // SSE connection with auto-reconnect
   useEffect(() => {
     if (!tournamentID) return;
 
@@ -30,15 +52,30 @@ export default function DisplayPage() {
     return () => esRef.current?.close();
   }, [tournamentID]);
 
-  if (!widgetUrl) return <div className="h-screen w-screen bg-transparent" />;
-
   return (
-    <iframe
-      key={widgetUrl}
-      src={widgetUrl}
-      className="h-screen w-screen border-0"
-      style={{ background: "transparent" }}
-      title="widget-display"
-    />
+    <>
+      {widgetUrl ? (
+        <iframe
+          key={widgetUrl}
+          src={widgetUrl}
+          className="h-screen w-screen border-0"
+          style={{ background: "transparent" }}
+          title="widget-display"
+        />
+      ) : (
+        <div className="h-screen w-screen bg-transparent" />
+      )}
+
+      {/* Cache-warming iframes — hidden, self-destruct after 25s */}
+      {preloadUrls.map((url) => (
+        <iframe
+          key={url}
+          src={url}
+          style={{ display: "none" }}
+          aria-hidden="true"
+          title="preload"
+        />
+      ))}
+    </>
   );
 }

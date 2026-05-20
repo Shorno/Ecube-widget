@@ -1,4 +1,4 @@
-import { getUserDesignRegistry } from "@/lib/design/registry";
+import { getUserDesignRegistry } from "@/themes/registry";
 
 export default async function AfterMatchScore({ params }) {
   const { userId, tournamentID } = await params;

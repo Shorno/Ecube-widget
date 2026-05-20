@@ -1,14 +1,16 @@
-// Hit GET /api/admin/seed-designs after each deploy that adds new design bundles.
-// Upserts any BUNDLE_MAP key not yet in DESIGN_REGISTRY with safe defaults.
-// Existing documents are NOT overwritten — labels/flags set in the DB are preserved.
+// POST /api/admin/seed-designs — full sync of DesignRegistry with BUNDLE_MAP.
+// Upserts known designs (preserving existing flags) and deletes orphans
+// (DB entries whose _id is no longer in BUNDLE_MAP).
 
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/mongoose";
 import DesignRegistry from "@/lib/db/models/DesignRegistry";
 import { requireAdmin } from "@/lib/auth/session";
-import { invalidateDesignCache } from "@/lib/design/registry";
+import { invalidateDesignCache } from "@/themes/registry";
 
-// Keep in sync with BUNDLE_MAP in lib/design/registry.js
+// Keep _id and bundle in sync with BUNDLE_MAP in themes/registry.js.
+// isDefault: true  → auto-granted to every new user
+// isExclusive: true → manually granted only (paid/special designs)
 const KNOWN_DESIGNS = [
   {
     _id: "default",
@@ -18,23 +20,21 @@ const KNOWN_DESIGNS = [
     isExclusive: false,
   },
   {
-    _id: "mythical",
-    bundle: "mythical",
-    label: "Mythical",
-    isDefault: false,
+    _id: "v1",
+    bundle: "v1",
+    label: "V1",
+    isDefault: true,
     isExclusive: false,
   },
-  { _id: "v1", bundle: "v1", label: "V1", isDefault: true, isExclusive: false },
-  // Add new designs here as you create their folders.
-  // isDefault: true  → auto-granted to every new user
-  // isExclusive: true → manually granted only (paid/special designs)
 ];
+
+const KNOWN_IDS = KNOWN_DESIGNS.map((d) => d._id);
 
 export async function GET() {
   await requireAdmin();
   await connectDB();
 
-  const results = [];
+  // Upsert known designs — $setOnInsert preserves existing label/flag changes
   for (const design of KNOWN_DESIGNS) {
     await DesignRegistry.findByIdAndUpdate(
       design._id,
@@ -44,14 +44,17 @@ export async function GET() {
           active: true,
           description: "",
           assignedTo: [],
-          isDefault: design.isDefault ?? false,
         },
       },
       { upsert: true },
     );
-    results.push(design._id);
   }
 
+  // Delete orphans — entries in DB that no longer exist in BUNDLE_MAP
+  const { deletedCount } = await DesignRegistry.deleteMany({
+    _id: { $nin: KNOWN_IDS },
+  });
+
   invalidateDesignCache();
-  return NextResponse.json({ seeded: results });
+  return NextResponse.json({ seeded: KNOWN_IDS, deleted: deletedCount });
 }

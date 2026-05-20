@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getUser } from "@/lib/db/queries";
-import { buildThemeStyle, WIDGET_FONTS } from "@/lib/design/catalog";
+import { buildThemeStyle, WIDGET_FONTS } from "@/themes/catalog";
 
 export default async function TournamentLayout({ children, params }) {
   const { userId, tournamentID } = await params;
@@ -18,6 +18,13 @@ export default async function TournamentLayout({ children, params }) {
   const fontEntry =
     WIDGET_FONTS.find((f) => f.key === fontKey) ?? WIDGET_FONTS[0];
 
+  const fontSecondaryKey =
+    user.tournamentSecondaryFonts?.[tournamentID] ??
+    user.themeConfig?.fontSecondary ??
+    "rajdhani";
+  const fontSecondaryEntry =
+    WIDGET_FONTS.find((f) => f.key === fontSecondaryKey) ?? WIDGET_FONTS[1];
+
   // Per-tournament color override → fallback to user's global colors
   const effectiveColors =
     user.tournamentColors?.[tournamentID] ?? user.themeConfig?.colors ?? {};
@@ -25,6 +32,7 @@ export default async function TournamentLayout({ children, params }) {
   const style = {
     ...buildThemeStyle(effectiveColors, variant),
     fontFamily: fontEntry.css,
+    "--widget-font-secondary": fontSecondaryEntry.css,
   };
 
   return <div style={style}>{children}</div>;

@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { VARIANT_DEFAULTS } from "@/lib/design/catalog";
+import { VARIANT_DEFAULTS } from "@/themes/catalog";
 import { RgbaColorPicker } from "react-colorful";
 
 function merge(saved, defaults) {
@@ -58,6 +58,7 @@ export default function SettingsClient({
   userName = "",
   variant: initialVariant,
   font: initialFont,
+  fontSecondary: initialFontSecondary = "rajdhani",
   savedColors,
   defaults: initialDefaults,
   allowedDesignIds,
@@ -65,10 +66,11 @@ export default function SettingsClient({
   tournamentNames = {},
   tournamentColors: initialTournamentColors = {},
   tournamentFonts: initialTournamentFonts = {},
+  tournamentSecondaryFonts: initialTournamentSecondaryFonts = {},
   widgetFonts,
   predefinedThemes = [],
-  // unused but kept for server component compat
-  tournamentDesigns: _td,
+  designExtras = [],
+  tournamentDesigns = {},
 }) {
   const router = useRouter();
   const hasTournaments = allowedTournamentIds.length > 0;
@@ -76,6 +78,8 @@ export default function SettingsClient({
   // Global fallback settings
   const [activeVariant, setActiveVariant] = useState(initialVariant);
   const [activeFont, setActiveFont] = useState(initialFont);
+  const [activeFontSecondary, setActiveFontSecondary] =
+    useState(initialFontSecondary);
   const [colors, setColors] = useState(() =>
     merge(savedColors, initialDefaults),
   );
@@ -86,6 +90,9 @@ export default function SettingsClient({
   );
   const [tournamentFonts, setTournamentFonts] = useState(
     initialTournamentFonts,
+  );
+  const [tournamentSecondaryFonts, setTournamentSecondaryFonts] = useState(
+    initialTournamentSecondaryFonts,
   );
 
   // Auto-select the first tournament; null = global (only when no tournaments)
@@ -115,6 +122,9 @@ export default function SettingsClient({
   const scopedFont = scope
     ? (tournamentFonts[scope] ?? activeFont)
     : activeFont;
+  const scopedFontSecondary = scope
+    ? (tournamentSecondaryFonts[scope] ?? activeFontSecondary)
+    : activeFontSecondary;
 
   // ── Color helpers ─────────────────────────────────────────────────────────
   function setColor(path, value) {
@@ -139,9 +149,12 @@ export default function SettingsClient({
   }
 
   function resetColors() {
+    const variant = scope
+      ? (tournamentDesigns[scope] ?? activeVariant)
+      : activeVariant;
     const fresh = merge(
       {},
-      VARIANT_DEFAULTS[activeVariant] ?? VARIANT_DEFAULTS.default,
+      VARIANT_DEFAULTS[variant] ?? VARIANT_DEFAULTS.default,
     );
     if (scope) {
       setTournamentColors((prev) => ({ ...prev, [scope]: fresh }));
@@ -166,6 +179,14 @@ export default function SettingsClient({
     }
   }
 
+  function handleSecondaryFontChange(key) {
+    if (scope) {
+      setTournamentSecondaryFonts((prev) => ({ ...prev, [scope]: key }));
+    } else {
+      setActiveFontSecondary(key);
+    }
+  }
+
   function clearTournamentOverrides(tid) {
     setTournamentColors((prev) => {
       const n = { ...prev };
@@ -173,6 +194,11 @@ export default function SettingsClient({
       return n;
     });
     setTournamentFonts((prev) => {
+      const n = { ...prev };
+      delete n[tid];
+      return n;
+    });
+    setTournamentSecondaryFonts((prev) => {
       const n = { ...prev };
       delete n[tid];
       return n;
@@ -222,9 +248,11 @@ export default function SettingsClient({
         body: JSON.stringify({
           designVariant: activeVariant,
           font: activeFont,
+          fontSecondary: activeFontSecondary,
           colors,
           tournamentColors,
           tournamentFonts,
+          tournamentSecondaryFonts,
           // tournamentDesigns intentionally excluded — owned by /settings/design
         }),
       });
@@ -244,23 +272,30 @@ export default function SettingsClient({
   const scopeName = scope ? tournamentNames[scope] || scope : null;
 
   return (
-    <div className="flex h-screen flex-col bg-gray-950 font-sans text-white">
+    <div className="flex h-screen flex-col bg-gray-900 font-sans text-white">
       {/* Header */}
-      <header className="sticky top-0 z-20 shrink-0 bg-gray-950">
-        {/* Row 1 — logo + page title | brand pill */}
-        <div className="flex items-center justify-between border-b border-gray-800 px-6 py-3">
-          <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-20 shrink-0 bg-gray-800">
+        {/* Row 1 — logo + title | username (center) | brand */}
+        <div className="flex items-center border-b border-gray-700 px-6 py-3">
+          <div className="flex flex-1 items-center gap-3">
             <Image src="/EcubeOG.svg" width={26} height={26} alt="ECube" />
             <span className="h-4 w-px bg-gray-700" />
             <span className="text-sm font-semibold text-white">
               Theme Settings
             </span>
           </div>
-          <EcubeBrand />
+          <div className="flex flex-1 justify-center">
+            {userName && (
+              <span className="text-sm text-gray-400">{userName}</span>
+            )}
+          </div>
+          <div className="flex flex-1 justify-end">
+            <EcubeBrand />
+          </div>
         </div>
 
-        {/* Row 2 — back link + tabs | username + logout + save */}
-        <div className="flex items-center justify-between border-b border-gray-800 px-6 py-2.5">
+        {/* Row 2 — back link + tabs | logout + save */}
+        <div className="flex items-center justify-between border-b border-gray-700 px-6 py-2.5">
           <div className="flex items-center gap-2">
             <Link
               href={scope ? `/controller/${scope}` : "/controller"}
@@ -301,10 +336,7 @@ export default function SettingsClient({
             )}
           </div>
 
-          <div className="flex items-center gap-4">
-            {userName && (
-              <span className="text-sm text-gray-400">{userName}</span>
-            )}
+          <div className="flex items-center gap-3">
             <button
               onClick={() => setLogoutOpen(true)}
               className="text-sm text-gray-600 transition-colors hover:text-red-400"
@@ -355,7 +387,7 @@ export default function SettingsClient({
                   No designs assigned. Contact your admin.
                 </p>
               ) : (
-                <div className="rounded border border-gray-800 bg-gray-900/60 px-4 py-3">
+                <div className="rounded border border-gray-800 bg-gray-800/60 px-4 py-3">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-400">Active design</span>
                     <span className="font-semibold text-blue-300">
@@ -497,6 +529,24 @@ export default function SettingsClient({
               </div>
             </div>
 
+            {/* Active tournament indicator — shown inside the color editor so
+                the user always knows which tournament's colors they're changing */}
+            {scope && (
+              <div className="flex items-center gap-3 rounded-lg border border-blue-500/40 bg-blue-950/30 px-4 py-2.5">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-blue-400" />
+                <p className="text-sm text-blue-200">
+                  Editing colors for{" "}
+                  <span className="font-semibold text-white">{scopeName}</span>
+                  <span className="ml-2 font-mono text-xs text-blue-400/70">
+                    {scope}
+                  </span>
+                </p>
+                <span className="ml-auto text-xs text-blue-400/60">
+                  tournament only
+                </span>
+              </div>
+            )}
+
             {/* Color groups */}
             <div className="grid grid-cols-2 gap-3">
               <ColorGroup
@@ -552,6 +602,19 @@ export default function SettingsClient({
               />
             </div>
 
+            {/* Design-specific extras — only shown when the active design
+                has tokens beyond the standard set (e.g. v1Gold for v1) */}
+            {designExtras.length > 0 && (
+              <ColorGroup
+                title={`${activeVariant} Extras`}
+                value={scopedColors}
+                onChange={setColor}
+                fields={designExtras.map((t) => t.key)}
+                labels={designExtras.map((t) => t.label)}
+                cols={designExtras.length === 1 ? 1 : 2}
+              />
+            )}
+
             <div className="flex justify-end pb-2">
               <button
                 onClick={resetColors}
@@ -591,7 +654,7 @@ export default function SettingsClient({
 
 function ThemeCard({ theme, onApply, onDelete }) {
   return (
-    <div className="group relative flex flex-col gap-2 rounded border border-gray-700 bg-gray-900/60 p-3 transition-all hover:border-gray-500 hover:bg-gray-800/60">
+    <div className="group relative flex flex-col gap-2 rounded border border-gray-700 bg-gray-800/60 p-3 transition-all hover:border-gray-500 hover:bg-gray-800/60">
       <button onClick={onApply} className="flex flex-col gap-2 text-left">
         <div className="flex gap-1">
           {theme.swatches.map((c, i) => (
@@ -643,7 +706,7 @@ function ColorGroup({
   textFields = [],
 }) {
   return (
-    <div className="space-y-3 rounded border border-gray-800 bg-gray-900/60 p-3">
+    <div className="space-y-3 rounded border border-gray-800 bg-gray-800/60 p-3">
       <h3 className="text-sm font-semibold tracking-wider text-gray-400 uppercase">
         {title}
       </h3>
