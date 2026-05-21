@@ -95,7 +95,7 @@ export default function WWCStatsView({ tournamentID }: Props) {
             </div>
 
             {/* center — team logo + total elims */}
-            <div className="anim-center flex flex-col items-center h-full gap-10 justify-between opacity-0">
+            <div className="anim-center flex h-full flex-col items-center justify-between gap-10 opacity-0">
               {team?.team_logoUrl && (
                 <Image
                   src={team.team_logoUrl}
@@ -105,7 +105,7 @@ export default function WWCStatsView({ tournamentID }: Props) {
                   className="object-contain"
                 />
               )}
-              <div className="text-center">
+              <div className="text-center text-widget-text-3">
                 <p className="font-primary text-[140px] leading-none">
                   {team?.total_kills ?? 0}
                 </p>
