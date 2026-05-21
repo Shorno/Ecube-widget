@@ -6,7 +6,7 @@ const Layout = ({ className, children, top }) => {
       className={cn(
         "relative h-screen w-screen overflow-hidden px-6",
         className,
-        top && "pt-16",
+        top && "pt-14",
       )}
     >
       {children}

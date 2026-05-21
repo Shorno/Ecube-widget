@@ -13,6 +13,7 @@ import { useGetWwcdTeamStatsQuery } from "@/lib/services/widget-api";
  * Note: data.data is a single object (not an array).
  * Field names from API: team_logoUrl, total_damages, totalPoints, player_imageUrl
  */
+/** @returns {import("@/types/widgets").UseWWCResult} */
 export function useWWC(tournamentID) {
   const { data, isLoading } = useGetWwcdTeamStatsQuery({ tournamentID });
   const team = data?.data ?? null;

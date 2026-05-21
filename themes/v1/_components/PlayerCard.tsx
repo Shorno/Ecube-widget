@@ -1,12 +1,21 @@
 import Image from "next/image";
 import type { TopPlayer } from "@/types/widgets";
 
+type StatEntry = { label: string; value: string | number | undefined };
+
 type Props = {
   player: TopPlayer;
   rank: number;
+  hideTeamLogo?: boolean;
+  stats?: StatEntry[];
 };
 
-export default function PlayerCard({ player, rank }: Props) {
+export default function PlayerCard({
+  player,
+  rank,
+  hideTeamLogo,
+  stats,
+}: Props) {
   return (
     <div className="anim-card from-widget-primary to-widget-primary-accent flex min-w-83.75 shrink-0 flex-col bg-linear-to-b opacity-0">
       {/* image area */}
@@ -21,7 +30,7 @@ export default function PlayerCard({ player, rank }: Props) {
         />
 
         {/* team logo — top right */}
-        {player.team_logoUrl && (
+        {!hideTeamLogo && player.team_logoUrl && (
           <div className="absolute inset-0 -z-1 grid place-content-center">
             <Image
               className="mx-auto"
@@ -45,18 +54,21 @@ export default function PlayerCard({ player, rank }: Props) {
 
       {/* stats */}
       <div className="my-2 flex flex-col gap-2">
-        <StatRow label="Eliminations" value={player.kills} />
-        <StatRow label="Damage" value={player.damages} />
-        <StatRow label="Assists" value={player.assists} />
-        <StatRow
-          label="Surv. Time"
-          value={player.survival_time_display?.text}
-        />
+        {(
+          stats ?? [
+            { label: "Eliminations", value: player.kills },
+            { label: "Damage", value: player.damages },
+            { label: "Assists", value: player.assists },
+            { label: "Surv. Time", value: player.survival_time_display?.text },
+          ]
+        ).map((s) => (
+          <StatRow key={s.label} label={s.label} value={s.value} />
+        ))}
       </div>
       {/* rank badge — top left */}
-        <div className="from-widget-primary-dark font-secondary to-widget-primary-accent absolute -top-20 translate-1/2 -left-18 grid h-20 w-20 place-content-center bg-linear-to-b [clip-path:polygon(18%_11%,98%_28%,63%_94%,18%_71%)]">
-          <span className="text-2xl font-bold text-white">#{rank}</span>
-        </div>
+      <div className="from-widget-primary-dark font-secondary to-widget-primary-accent absolute -top-20 -left-18 grid h-20 w-20 translate-1/2 place-content-center bg-linear-to-b [clip-path:polygon(18%_11%,98%_28%,63%_94%,18%_71%)]">
+        <span className="text-2xl font-bold text-white">#{rank}</span>
+      </div>
     </div>
   );
 }

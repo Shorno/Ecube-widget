@@ -25,9 +25,9 @@ export default function Title({
   const matchName = data?.match_name || data?.game_name;
 
   return (
-    <div className={cn("flex items-end gap-8 uppercase shrink-0", className)}>
+    <div className={cn("flex shrink-0 items-end gap-8 uppercase", className)}>
       {/* left — main title, first word plain, rest in primary color */}
-      <h1 className="font-primary text-widget-text-1 text-[140px] leading-none tracking-tighter">
+      <h1 className="font-primary text-widget-text-3 text-[140px] leading-none tracking-tighter">
         {titleMain} {titleHighlight}
       </h1>
 
@@ -35,18 +35,18 @@ export default function Title({
       {(data || subtitle) && (
         <div className="mb-2 flex flex-col justify-center">
           {data && stage && (
-            <span className="text-widget-text-1 text-[44px] leading-none">
+            <span className="text-widget-text-3 text-[44px] leading-none">
               {stage}
             </span>
           )}
           {data && !stageOnly && (day || matchName) && (
-            <span className="text-widget-text-2 text-[44px] leading-none">
+            <span className="text-widget-text-3 text-[44px] leading-none">
               {matchName && <span className="mr-14">{matchName}</span>}
               {day && <span>{day}</span>}
             </span>
           )}
           {subtitle && (
-            <span className="text-widget-text-1 text-[44px] leading-none">
+            <span className="text-widget-text-3 text-[44px] leading-none">
               {subtitle}
             </span>
           )}

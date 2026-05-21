@@ -49,7 +49,7 @@ export default function TopPlayersView({ tournamentID }: Props) {
             <Title title="Top Players" data={info} />
           </div>
 
-          <div className="mt-8 flex gap-8 items-center px-4">
+          <div className="mt-12 flex items-center gap-8 px-4">
             {players.map((player, idx: number) => (
               <PlayerCard
                 key={player.player_id ?? idx}

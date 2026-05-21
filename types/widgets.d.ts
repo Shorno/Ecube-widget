@@ -83,22 +83,38 @@ export interface H2HTeam {
 }
 
 export interface WWCTeam {
+  team_id?: string;
   team_name: string;
-  team_image?: string;
-  clan_tag?: string;
+  team_clanTag?: string;
+  team_logoUrl?: string;
   total_kills?: number;
-  total_damage?: number;
-  total_points?: number;
+  total_damages?: number;
+  total_assists?: number;
+  total_knocks?: number;
+  totalPoints?: number;
+  positionPoints?: number;
+  killPoints?: number;
+  placement?: number;
   players: WWCPlayer[];
 }
 
 export interface WWCPlayer {
   player_id?: string;
-  player_name?: string;
+  player_name: string;
+  player_ign?: string;
   player_imageUrl?: string;
+  team_id?: string;
+  team_name?: string;
+  team_clanTag?: string;
+  team_logoUrl?: string;
   kills?: number;
+  damages?: number;
+  assists?: number;
   knocks?: number;
-  damage_taken?: number;
+  headshots?: number;
+  grenadeKills?: number;
+  damageTaken?: number;
+  survival_time_display?: { minute: number; second: number; text: string };
 }
 
 export interface MatchStats {
@@ -147,7 +163,6 @@ export interface UseTopPlayersResult {
 export interface UseWWCResult {
   team: WWCTeam | null;
   players: WWCPlayer[];
-  gameInfo: MatchInfo | null;
   info: MatchInfo | null;
   ready: boolean;
 }
