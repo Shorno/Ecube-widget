@@ -43,6 +43,22 @@ export interface Player {
   kd_ratio?: number;
 }
 
+export interface TopPlayer {
+  player_id: string;
+  player_name: string;
+  player_ign?: string;
+  player_imageUrl?: string;
+  team_id?: string;
+  team_name?: string;
+  team_clanTag?: string;
+  team_logoUrl?: string;
+  kills?: number;
+  damages?: number;
+  assists?: number;
+  knocks?: number;
+  survival_time_display?: { minute: number; second: number; text: string };
+}
+
 export interface MVPPlayer {
   player_imageUrl: string;
   name: string;
@@ -123,7 +139,7 @@ export interface UseHeadToHeadResult {
 }
 
 export interface UseTopPlayersResult {
-  players: Player[];
+  players: TopPlayer[];
   info: MatchInfo | null;
   ready: boolean;
 }

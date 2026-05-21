@@ -48,7 +48,7 @@ export default function WWCDView({ tournamentID }: Props) {
           {/* bottom ribbon */}
           <div className="anim-ribbon bg-widget-bg relative mx-auto flex w-326 items-center justify-between text-[60px] opacity-0">
             {/* one ribbon start */}
-            <div className="relative z-50 text-widget-text-2 font-secondary pl-11">
+            <div className="text-widget-text-2 font-secondary relative z-50 pl-11">
               {team?.team_name}
             </div>
             <div className="relative z-50 flex items-center gap-2 p-2">
@@ -60,7 +60,7 @@ export default function WWCDView({ tournamentID }: Props) {
               </div>
             </div>
             {/* team logo */}
-            <div className="  from-widget-primary to-widget-primary-accent border-widget-secondary-accent absolute bottom-22 -left-16 z-20 grid h-49.75 w-61.75 place-content-center border bg-linear-to-b">
+            <div className="from-widget-primary to-widget-primary-accent border-widget-secondary-accent absolute bottom-22 -left-16 z-20 grid h-49.75 w-61.75 place-content-center border bg-linear-to-b">
               <Image
                 src={team?.team_logoUrl || ""}
                 alt="Team Logo"
