@@ -77,8 +77,8 @@ export interface WWCTeam {
 }
 
 export interface WWCPlayer {
-  id?: string;
-  name: string;
+  player_id?: string;
+  player_name?: string;
   player_imageUrl?: string;
   kills?: number;
   knocks?: number;

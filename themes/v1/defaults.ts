@@ -6,7 +6,7 @@ export const defaults = {
   // bg/text-widget-primary-dark
   primaryDark: h("#00332B"),
   // bg/text-widget-primary-accent
-  primaryAccent: h("#00FFD5"),
+  primaryAccent: h("#00AD91"),
   // bg/text-widget-secondary
   secondary: h("#FFDD75"),
   // bg/text-widget-secondary-dark
