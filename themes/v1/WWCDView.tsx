@@ -9,7 +9,7 @@ import { useWWC } from "@/hooks/widget-data";
 type Props = { tournamentID: string };
 
 export default function WWCDView({ tournamentID }: Props) {
-  const { ready } = useWWC(tournamentID);
+  const { team, players, info, ready } = useWWC(tournamentID);
   const [stageReady, setStageReady] = useState(false);
 
   useGSAP(() => {
@@ -25,11 +25,11 @@ export default function WWCDView({ tournamentID }: Props) {
 
   return (
     <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
-      <div className="relative h-screen w-screen bg-red-900">
+      <div className="relative h-screen w-screen overflow- ">
         <div className="absolute bottom-16 w-full p-16 pb-0">
           {/* bottom ribbon */}
           <div className="bg-widget-bg relative mx-auto flex w-326 items-center justify-between text-[60px]">
-            <div className="text-widget-text-2 font-secondary pl-11">TEAM</div>
+            <div className="text-widget-text-2 font-secondary pl-11">{team?.team_name}</div>
             <div className="flex items-center gap-2 p-2">
               <div className="bg-widget-primary text-widget-text-3 grid h-20.75 w-64.5 place-content-center">
                 Day99

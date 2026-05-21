@@ -2,21 +2,21 @@
 import { useGetWwcdTeamStatsQuery } from "@/lib/services/widget-api";
 
 /**
- * WWCD (Winner Winner Chicken Dinner) — shared by WWC, WWCTwo, WWCStats.
- * All three widgets use the same endpoint, just display differently.
+ * WWCD — shared by WWC, WWCTwo, WWCStats.
  *
  * Returns:
- *   team      — winning team object { team_name, team_image, clan_tag, total_kills, total_damage, total_points }
- *   players   — array of players in the winning team
- *   gameInfo  — game/match metadata (data.game[0])
- *   info      — tournament metadata (data.info)
+ *   team    — { team_name, team_logoUrl, total_kills, total_damages, totalPoints }
+ *   players — [{ name, player_imageUrl, ... }]
+ *   info    — tournament metadata
  *   ready
+ *
+ * Note: data.data is a single object (not an array).
+ * Field names from API: team_logoUrl, total_damages, totalPoints, player_imageUrl
  */
 export function useWWC(tournamentID) {
   const { data, isLoading } = useGetWwcdTeamStatsQuery({ tournamentID });
-  const team = data?.data?.[0] ?? null;
-  const players = team?.players ?? [];
-  const gameInfo = data?.game?.[0] ?? null;
+  const team = data?.data ?? null;
+  const players = data?.data?.players ?? [];
   const info = data?.info ?? null;
-  return { team, players, gameInfo, info, ready: !isLoading && !!data };
+  return { team, players, info, ready: !isLoading && !!data };
 }
