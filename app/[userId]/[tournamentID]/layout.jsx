@@ -25,9 +25,12 @@ export default async function TournamentLayout({ children, params }) {
   const fontSecondaryEntry =
     WIDGET_FONTS.find((f) => f.key === fontSecondaryKey) ?? WIDGET_FONTS[1];
 
-  // Per-tournament color override → fallback to user's global colors
+  // Per-tournament per-design colors → legacy tournamentColors → global colors
   const effectiveColors =
-    user.tournamentColors?.[tournamentID] ?? user.themeConfig?.colors ?? {};
+    user.tournamentDesignColors?.[tournamentID]?.[variant] ??
+    user.tournamentColors?.[tournamentID] ??
+    user.themeConfig?.colors ??
+    {};
 
   const style = {
     ...buildThemeStyle(effectiveColors, variant),

@@ -1,11 +1,6 @@
-// Convert a 6-digit hex color to rgba(r, g, b, 1) at module load time.
-// Keeps source readable as hex while storing/injecting as rgba consistently.
-function h(hex) {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, 1)`;
-}
+import { h } from "./utils";
+import { defaults as defaultDefaults } from "./default/defaults";
+import { defaults as v1Defaults } from "./v1/defaults";
 
 // ── Fonts ─────────────────────────────────────────────────────────────────────
 // key  → must match the CSS variable suffix loaded in app/layout.jsx
@@ -85,51 +80,15 @@ export const TOKEN_MAP = [
   { key: "statusKnocked", css: "--widget-status-knocked" },
   { key: "statusDead", css: "--widget-status-dead" },
   // v1-specific extras — injected for any user whose saved colors include them
-  { key: "v1Gold", css: "--widget-v1-gold" },
+  { key: "v1Forest", css: "--widget-v1-forest" },
 ];
 
 // ── Variant defaults ──────────────────────────────────────────────────────────
 // Used when a user has no saved colors (or saves an empty object).
 // Also applied when the user resets colors in settings.
 export const VARIANT_DEFAULTS = {
-  default: {
-    primary: h("#a54e26"),
-    primaryDark: h("#7a3a1c"),
-    primaryAccent: h("#c45e30"),
-    secondary: h("#008e88"),
-    secondaryDark: h("#006e69"),
-    secondaryAccent: h("#00a89f"),
-    text1: h("#f5f5f5"),
-    text2: h("#1a1a1a"),
-    text3: h("#f5f5f5"),
-    bg: h("#0d0d0d"),
-    gradientFrom: h("#a54e26"),
-    gradientTo: h("#c45e30"),
-    gradientAngle: "135deg",
-    statusAlive: "rgba(255,255,255,1)",
-    statusKnocked: "rgba(244,63,94,1)",
-    statusDead: "rgba(0,0,0,0.5)",
-  },
-  // v1 design defaults — ECube blue palette
-  v1: {
-    primary: h("#2e87e6"), // ECube brand blue
-    primaryDark: h("#1a6dc9"), // mid-dark blue
-    primaryAccent: h("#5ba3ed"), // lighter blue highlight
-    secondary: h("#0d4a8a"), // deep navy
-    secondaryDark: h("#083566"), // deeper navy
-    secondaryAccent: h("#3d7fd4"), // mid blue
-    text1: h("#ffffff"), // pure white
-    text2: h("#c8dff8"), // pale blue-white
-    text3: h("#90c4f7"), // blue-300 muted
-    bg: h("#07192d"), // blue-950 near-black navy
-    gradientFrom: h("#2e87e6"), // brand blue
-    gradientTo: h("#0d4a8a"), // navy
-    gradientAngle: "135deg",
-    statusAlive: "rgba(255,255,255,1)",
-    statusKnocked: "rgba(244,63,94,1)",
-    statusDead: "rgba(0,0,0,0.5)",
-    v1Gold: h("#fbbf24"), // amber gold accent
-  },
+  default: defaultDefaults,
+  v1: v1Defaults,
   mythical: {
     primary: h("#007570"),
     primaryDark: h("#005550"),
@@ -302,7 +261,7 @@ export const PREDEFINED_THEMES = [
       statusAlive: "rgba(255,255,255,1)",
       statusKnocked: "rgba(244,63,94,1)",
       statusDead: "rgba(0,0,0,0.5)",
-      v1Gold: h("#fbbf24"),
+      v1Forest: h("#00332B"),
     },
   },
 ];

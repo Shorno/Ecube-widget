@@ -4,11 +4,12 @@ import { useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import WidgetStage from "@/components/common/WidgetStage";
+import { useWWC } from "@/hooks/widget-data";
 
 type Props = { tournamentID: string };
 
-export default function WWCDView(props: Props) {
-  void props;
+export default function WWCDView({ tournamentID }: Props) {
+  const { ready } = useWWC(tournamentID);
   const [stageReady, setStageReady] = useState(false);
 
   useGSAP(() => {
@@ -20,11 +21,26 @@ export default function WWCDView(props: Props) {
       .to(".anim-stats", { opacity: 1, y: 0 }, "-=0.3");
   }, [stageReady]);
 
+  if (!ready) return null;
+
   return (
-    <WidgetStage dataReady={true} onReady={() => setStageReady(true)}>
-      <div className="relative h-screen w-screen bg-blue-950">
-        <div className="anim-header absolute bottom-16 text-4xl font-bold text-white">
-          Farabi
+    <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
+      <div className="relative h-screen w-screen bg-red-900">
+        <div className="absolute bottom-16 w-full p-16 pb-0">
+          {/* bottom ribbon */}
+          <div className="bg-widget-bg relative mx-auto flex w-326 items-center justify-between text-[60px]">
+            <div className="text-widget-text-2 font-secondary pl-11">TEAM</div>
+            <div className="flex items-center gap-2 p-2">
+              <div className="bg-widget-primary text-widget-text-3 grid h-20.75 w-64.5 place-content-center">
+                Day99
+              </div>
+              <div className="bg-widget-primary text-widget-text-3 grid h-20.75 w-64.5 place-content-center">
+                Match 99
+              </div>
+            </div>
+            {/* team logo */}
+            <div className="from-widget-primary to-widget-primary-accent border-widget-secondary-accent absolute bottom-22 -left-16 grid h-49.75 w-61.75 place-content-center border bg-linear-to-b"></div>
+          </div>
         </div>
       </div>
     </WidgetStage>

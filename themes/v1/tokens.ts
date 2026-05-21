@@ -10,9 +10,9 @@ export const COLOR_TOKENS: TokenEntry[] = [
   // Design-specific tokens. User can change these in Settings › Colors › v1 Extras.
   // To add more: add entry here + CSS var in globals.css + Tailwind alias in globals.css.
   {
-    key: "v1Gold",
-    label: "Gold Accent",
-    css: "--widget-v1-gold",
+    key: "v1Forest",
+    label: "Forest",
+    css: "--widget-v1-forest",
     group: "v1 Extras",
   },
 ];
@@ -20,5 +20,5 @@ export const COLOR_TOKENS: TokenEntry[] = [
 // Default CSS var values for v1-specific tokens.
 // Standard token defaults live in lib/design/catalog.ts → VARIANT_DEFAULTS.
 export const TOKEN_DEFAULTS: Record<string, string> = {
-  "--widget-v1-gold": "#fbbf24",
+  // "--widget-v1-gold": "#fbbf24",
 };

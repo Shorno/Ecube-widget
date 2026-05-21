@@ -64,12 +64,12 @@ export default function SettingsClient({
   allowedDesignIds,
   allowedTournamentIds = [],
   tournamentNames = {},
-  tournamentColors: initialTournamentColors = {},
   tournamentFonts: initialTournamentFonts = {},
   tournamentSecondaryFonts: initialTournamentSecondaryFonts = {},
+  tournamentDesignColors: initialTournamentDesignColors = {},
   widgetFonts,
   predefinedThemes = [],
-  designExtras = [],
+  designExtrasMap = {},
   tournamentDesigns = {},
 }) {
   const router = useRouter();
@@ -84,9 +84,9 @@ export default function SettingsClient({
     merge(savedColors, initialDefaults),
   );
 
-  // Per-tournament overrides
-  const [tournamentColors, setTournamentColors] = useState(
-    initialTournamentColors,
+  // Per-tournament per-design color overrides: { [tid]: { [design]: colorObj } }
+  const [tournamentDesignColors, setTournamentDesignColors] = useState(
+    initialTournamentDesignColors,
   );
   const [tournamentFonts, setTournamentFonts] = useState(
     initialTournamentFonts,
@@ -114,13 +114,17 @@ export default function SettingsClient({
   }, []);
 
   // ── Derived scoped values ─────────────────────────────────────────────────
-  // When a tournament is selected its overrides take priority; global colors
-  // act as the fallback so every token always has a value.
   const effectiveVariant = scope
     ? (tournamentDesigns[scope] ?? activeVariant)
     : activeVariant;
+
+  // Tournament colors are per-design: saved colors for this tournament+design,
+  // falling back to that design's defaults (not global colors).
   const scopedColors = scope
-    ? merge(tournamentColors[scope] ?? {}, colors)
+    ? merge(
+        tournamentDesignColors[scope]?.[effectiveVariant] ?? {},
+        VARIANT_DEFAULTS[effectiveVariant] ?? VARIANT_DEFAULTS.default,
+      )
     : colors;
   const scopedFont = scope
     ? (tournamentFonts[scope] ?? activeFont)
@@ -142,9 +146,12 @@ export default function SettingsClient({
       return next;
     }
     if (scope) {
-      setTournamentColors((prev) => ({
+      setTournamentDesignColors((prev) => ({
         ...prev,
-        [scope]: applyDeep(prev[scope] ?? { ...colors }),
+        [scope]: {
+          ...(prev[scope] ?? {}),
+          [effectiveVariant]: applyDeep(prev[scope]?.[effectiveVariant] ?? {}),
+        },
       }));
     } else {
       setColors((prev) => applyDeep(prev));
@@ -152,23 +159,25 @@ export default function SettingsClient({
   }
 
   function resetColors() {
-    const variant = scope
-      ? (tournamentDesigns[scope] ?? activeVariant)
-      : activeVariant;
-    const fresh = merge(
-      {},
-      VARIANT_DEFAULTS[variant] ?? VARIANT_DEFAULTS.default,
-    );
     if (scope) {
-      setTournamentColors((prev) => ({ ...prev, [scope]: fresh }));
+      // Clear saved colors for this tournament+design — shows design defaults
+      setTournamentDesignColors((prev) => ({
+        ...prev,
+        [scope]: { ...(prev[scope] ?? {}), [effectiveVariant]: {} },
+      }));
     } else {
-      setColors(fresh);
+      setColors(
+        merge({}, VARIANT_DEFAULTS[activeVariant] ?? VARIANT_DEFAULTS.default),
+      );
     }
   }
 
   function applyTheme(themeColors) {
     if (scope) {
-      setTournamentColors((prev) => ({ ...prev, [scope]: themeColors }));
+      setTournamentDesignColors((prev) => ({
+        ...prev,
+        [scope]: { ...(prev[scope] ?? {}), [effectiveVariant]: themeColors },
+      }));
     } else {
       setColors(themeColors);
     }
@@ -191,7 +200,7 @@ export default function SettingsClient({
   }
 
   function clearTournamentOverrides(tid) {
-    setTournamentColors((prev) => {
+    setTournamentDesignColors((prev) => {
       const n = { ...prev };
       delete n[tid];
       return n;
@@ -253,7 +262,7 @@ export default function SettingsClient({
           font: activeFont,
           fontSecondary: activeFontSecondary,
           colors,
-          tournamentColors,
+          tournamentDesignColors,
           tournamentFonts,
           tournamentSecondaryFonts,
           // tournamentDesigns intentionally excluded — owned by /settings/design
@@ -367,7 +376,8 @@ export default function SettingsClient({
             Changes apply only to this tournament.
           </p>
           <div className="flex w-30 justify-end">
-            {(tournamentColors[scope] || tournamentFonts[scope]) && (
+            {(Object.keys(tournamentDesignColors[scope] ?? {}).length > 0 ||
+              tournamentFonts[scope]) && (
               <button
                 onClick={() => clearTournamentOverrides(scope)}
                 className="text-xs text-gray-500 transition-colors hover:text-red-400"
@@ -644,16 +654,22 @@ export default function SettingsClient({
               />
             </div>
 
-            {/* Design-specific extras — only shown when the active design
-                has tokens beyond the standard set (e.g. v1Gold for v1) */}
-            {designExtras.length > 0 && (
+            {/* Design-specific extras — resolved from the effective variant
+                so tournament-scoped designs show their own extra tokens */}
+            {(designExtrasMap[effectiveVariant] ?? []).length > 0 && (
               <ColorGroup
                 title={`${effectiveVariant} Extras`}
                 value={scopedColors}
                 onChange={setColor}
-                fields={designExtras.map((t) => t.key)}
-                labels={designExtras.map((t) => t.label)}
-                cols={designExtras.length === 1 ? 1 : 2}
+                fields={(designExtrasMap[effectiveVariant] ?? []).map(
+                  (t) => t.key,
+                )}
+                labels={(designExtrasMap[effectiveVariant] ?? []).map(
+                  (t) => t.label,
+                )}
+                cols={
+                  (designExtrasMap[effectiveVariant] ?? []).length === 1 ? 1 : 2
+                }
               />
             )}
 
@@ -805,10 +821,44 @@ function rgbaObjToString({ r, g, b, a }) {
   return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${alpha})`;
 }
 
+function rgbaToHex({ r, g, b }) {
+  const hex = (n) => Math.round(n).toString(16).padStart(2, "0");
+  return `#${hex(r)}${hex(g)}${hex(b)}`;
+}
+
+function hexToRgbaString(hex, existingAlpha = 1) {
+  const clean = hex.replace("#", "");
+  if (clean.length !== 6) return null;
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return null;
+  return `rgba(${r}, ${g}, ${b}, ${existingAlpha})`;
+}
+
+const RGBA_PATTERN = /^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(\s*,\s*[\d.]+)?\s*\)$/;
+
+function validateRgbaInput(val) {
+  if (!val) return null;
+  if (/^#/i.test(val.trim())) return "Use HEX mode to enter hex values";
+  if (!RGBA_PATTERN.test(val.trim()))
+    return "Invalid — expected rgba(r, g, b, a)";
+  return null;
+}
+
 function ColorInput({ label, value, onChange }) {
   const [open, setOpen] = useState(false);
+  const [format, setFormat] = useState("rgba");
+  const [hexDraft, setHexDraft] = useState("");
+  const [rgbaError, setRgbaError] = useState(null);
   const wrapRef = useRef(null);
   const rgba = parseRgba(value);
+
+  // Sync hex draft when switching to hex mode or when value changes externally
+  useEffect(() => {
+    if (format === "hex") setHexDraft(rgbaToHex(rgba));
+    if (format === "rgba") setRgbaError(null);
+  }, [format, value]);
 
   // Close popover on outside click
   useEffect(() => {
@@ -821,34 +871,80 @@ function ColorInput({ label, value, onChange }) {
     return () => document.removeEventListener("mousedown", handle);
   }, [open]);
 
+  function handleHexChange(raw) {
+    const val = raw.startsWith("#") ? raw : `#${raw}`;
+    setHexDraft(val);
+    const converted = hexToRgbaString(val, rgba.a);
+    if (converted) onChange(converted);
+  }
+
+  function handleRgbaChange(raw) {
+    const error = validateRgbaInput(raw);
+    setRgbaError(error);
+    // Only propagate valid values — never save invalid or hex strings in rgba mode
+    if (!error) onChange(raw);
+  }
+
   return (
     <div className="space-y-1">
       <Label className="text-xs font-medium text-gray-400">{label}</Label>
-      <div className="flex items-center gap-1.5">
-        {/* Swatch — opens the RGBA picker popover */}
-        <div ref={wrapRef} className="relative shrink-0">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-1.5">
+          {/* Swatch — opens the RGBA picker popover */}
+          <div ref={wrapRef} className="relative shrink-0">
+            <button
+              type="button"
+              className="h-6 w-6 rounded border border-gray-600 transition-colors hover:border-gray-400"
+              style={{ backgroundColor: value || "transparent" }}
+              onClick={() => setOpen((p) => !p)}
+            />
+            {open && (
+              <div className="absolute top-8 left-0 z-50 rounded border border-gray-700 bg-gray-900 p-2 shadow-xl">
+                <RgbaColorPicker
+                  color={rgba}
+                  onChange={(c) => {
+                    setRgbaError(null);
+                    onChange(rgbaObjToString(c));
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Format toggle */}
           <button
             type="button"
-            className="h-6 w-6 rounded border border-gray-600 transition-colors hover:border-gray-400"
-            style={{ backgroundColor: value || "transparent" }}
-            onClick={() => setOpen((p) => !p)}
-          />
-          {open && (
-            <div className="absolute top-8 left-0 z-50 rounded border border-gray-700 bg-gray-900 p-2 shadow-xl">
-              <RgbaColorPicker
-                color={rgba}
-                onChange={(c) => onChange(rgbaObjToString(c))}
-              />
-            </div>
+            onClick={() => setFormat((f) => (f === "rgba" ? "hex" : "rgba"))}
+            className="shrink-0 rounded border border-gray-700 px-1.5 py-0.5 font-mono text-[9px] text-gray-500 transition-colors hover:border-gray-500 hover:text-gray-300"
+          >
+            {format.toUpperCase()}
+          </button>
+
+          {/* Input — hex or rgba */}
+          {format === "hex" ? (
+            <Input
+              value={hexDraft}
+              onChange={(e) => handleHexChange(e.target.value)}
+              placeholder="#000000"
+              className="h-6 w-24 min-w-0 border-gray-700 bg-gray-800 font-mono text-[10px] text-white placeholder:text-gray-700"
+            />
+          ) : (
+            <Input
+              value={value}
+              onChange={(e) => handleRgbaChange(e.target.value)}
+              placeholder="rgba(0, 0, 0, 1)"
+              className={[
+                "h-6 w-36 min-w-0 font-mono text-[10px] text-white placeholder:text-gray-700",
+                rgbaError
+                  ? "border-red-600 bg-red-950/40"
+                  : "border-gray-700 bg-gray-800",
+              ].join(" ")}
+            />
           )}
         </div>
-        {/* Editable rgba string */}
-        <Input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="rgba(0, 0, 0, 1)"
-          className="h-6 w-36 min-w-0 border-gray-700 bg-gray-800 font-mono text-[10px] text-white placeholder:text-gray-700"
-        />
+        {rgbaError && (
+          <p className="font-mono text-[9px] text-red-400">{rgbaError}</p>
+        )}
       </div>
     </div>
   );

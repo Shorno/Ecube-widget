@@ -24,12 +24,25 @@ export default async function SettingsPage() {
     tournamentColors: 1,
     tournamentFonts: 1,
     tournamentSecondaryFonts: 1,
+    tournamentDesignColors: 1,
   }).lean();
   if (!user) redirect("/api/auth/logout");
 
   const variant = user?.themeConfig?.designVariant ?? "default";
   const defaults = VARIANT_DEFAULTS[variant] ?? VARIANT_DEFAULTS.default;
-  const designExtras = getDesignExtras(variant);
+
+  // Compute extras for every design the user has access to so the client
+  // can show the right extras regardless of which tournament is scoped.
+  const allowedDesignIds = user?.allowedDesignIds ?? ["default"];
+  const designExtrasMap = Object.fromEntries(
+    allowedDesignIds.map((id) => [id, getDesignExtras(id)]),
+  );
+
+  // Only use saved colors if they were saved for the current design.
+  // If design changed, show new design's defaults instead.
+  const colorDesignVariant = user?.themeConfig?.colorDesignVariant ?? "";
+  const savedColors =
+    colorDesignVariant === variant ? (user?.themeConfig?.colors ?? {}) : {};
 
   return (
     <SettingsClient
@@ -38,18 +51,19 @@ export default async function SettingsPage() {
       variant={variant}
       font={user?.themeConfig?.font ?? "oswald"}
       fontSecondary={user?.themeConfig?.fontSecondary ?? "rajdhani"}
-      savedColors={user?.themeConfig?.colors ?? {}}
+      savedColors={savedColors}
       defaults={defaults}
-      allowedDesignIds={user?.allowedDesignIds ?? ["default"]}
+      allowedDesignIds={allowedDesignIds}
       allowedTournamentIds={user?.allowedTournamentIds ?? []}
       tournamentDesigns={user?.tournamentDesigns ?? {}}
       tournamentNames={user?.tournamentNames ?? {}}
       tournamentColors={user?.tournamentColors ?? {}}
       tournamentFonts={user?.tournamentFonts ?? {}}
       tournamentSecondaryFonts={user?.tournamentSecondaryFonts ?? {}}
+      tournamentDesignColors={user?.tournamentDesignColors ?? {}}
       widgetFonts={WIDGET_FONTS}
       predefinedThemes={PREDEFINED_THEMES}
-      designExtras={designExtras}
+      designExtrasMap={designExtrasMap}
     />
   );
 }

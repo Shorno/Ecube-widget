@@ -1,176 +1,126 @@
-# Design Registry System
+# Design System
 
 ## Overview
 
-The design registry allows each user to be assigned a completely different widget layout with zero code changes. Adding a new design requires code once (create the components + one registry entry). Assigning it to any number of users is a database update only.
-
----
-
-## How a widget renders
-
-```mermaid
-sequenceDiagram
-    participant OBS as OBS / vMix
-    participant Page as Widget Page (Server)
-    participant UD as USER_DATA (MongoDB)
-    participant DR as DESIGN_REGISTRY (MongoDB)
-    participant R as registry.js
-    participant C as components/designs/<variant>/
-
-    OBS->>Page: GET /[userId]/[tournamentID]/after-match/score
-    Page->>UD: findById(userId) → designVariant: "mythical"
-    Page->>DR: findById("mythical") → bundle: "mythical"
-    Page->>R: getDesignRegistry("mythical")
-    R->>C: dynamic import("@/components/designs/mythical")
-    C-->>R: { AfterMatchScore, MVP, ... }
-    R-->>Page: component set
-    Page->>OBS: renders MythicalAfterMatchScoreView
-```
+Each user is assigned a design variant. The variant controls which React components render their widgets. Colors are stored per-user in MongoDB and injected as CSS variables server-side. Adding a new design requires code once; assigning it to users is a database update only.
 
 ---
 
 ## Folder structure
 
 ```
-pubg-widget/
-├── components/
-│   └── designs/
-│       ├── default/              ← one folder per design
-│       │   ├── index.js          ← barrel: exports all components by slot name
-│       │   ├── AfterMatchScoreView.jsx
-│       │   ├── AfterMatchScoreGroupView.jsx
-│       │   ├── MatchSummaryView.jsx
-│       │   ├── MVPView.jsx
-│       │   ├── MVPGroupView.jsx
-│       │   ├── HeadToHeadView.jsx
-│       │   ├── TopPlayersView.jsx
-│       │   ├── TopPlayersGroupView.jsx
-│       │   ├── WWCView.jsx
-│       │   ├── WWCTwoView.jsx
-│       │   └── WWCStatsView.jsx
-│       └── mythical/             ← copy default/ and modify styles/layout
-│           ├── index.js
-│           └── ...same file names
+themes/
+├── utils.js              ← h() hex→rgba helper (shared)
+├── catalog.js            ← TOKEN_MAP, VARIANT_DEFAULTS, PREDEFINED_THEMES,
+│                            WIDGET_FONTS, buildThemeStyle/Css/Json
+├── extras.ts             ← per-design extra token definitions (for settings UI)
+├── registry.js           ← BUNDLE_MAP + getDesignRegistry() + getUserDesignRegistry()
 │
-├── lib/
-│   └── design/
-│       ├── registry.js           ← BUNDLE_MAP + getDesignRegistry()
-│       ├── get-user-design.js    ← cached DB call: userId → designVariant
-│       └── catalog.js            ← CSS variable tokens per variant
+├── default/
+│   ├── defaults.js       ← default design color defaults
+│   └── index.js          ← barrel: exports all slots (AfterMatchScore, MVP, …)
+│   └── ...View.jsx       ← one file per widget slot
 │
-└── lib/db/
-    └── models/
-        └── DesignRegistry.js     ← Mongoose model for DESIGN_REGISTRY collection
+└── v1/
+    ├── defaults.ts       ← v1 color defaults (ECube blue palette)
+    ├── tokens.ts         ← BASE_TOKENS + v1-specific extras (v1Gold)
+    ├── index.ts          ← barrel: exports built slots, unbuilt slots get
+    │                        UnimplementedView via registry.js merger
+    └── ...View.tsx       ← one file per built widget slot
+```
+
+**Key rule:** `VARIANT_DEFAULTS` in `catalog.js` is assembled by importing each theme's `defaults.js/ts`. When you add a new design, create `themes/<key>/defaults.js` and add one import line to `catalog.js`.
+
+---
+
+## How a widget renders
+
+```
+OBS requests /{userId}/{tournamentID}/after-match/score
+  → [tournamentID]/layout.jsx
+      getUser(userId) → themeConfig.colors, font, designVariant
+      buildThemeStyle(colors, variant) → CSS vars injected as inline style
+  → after-match/score/page.jsx (Server Component)
+      getUserDesignRegistry(userId, tournamentID)
+        → looks up user's design variant (tournament override → global → "default")
+        → loads correct bundle from BUNDLE_MAP
+        → fills unimplemented slots with UnimplementedView (returns null)
+      renders <AfterMatchScore tournamentID={...} />
+  → Widget (Client Component) — hooks, RTK Query, GSAP, WidgetStage
 ```
 
 ---
 
-## The two database collections
+## Color system
 
-### `USER_DATA` — one document per user
+Colors are stored as **flat rgba objects** in MongoDB:
 
 ```json
 {
-  "_id": "69e2b11773000bcffc46799b",
-  "email": "user@example.com",
   "themeConfig": {
-    "designVariant": "mythical",
+    "designVariant": "v1",
     "colors": {
-      "color1": "#007570",
-      "color2": "#00B194",
-      "color3": "#00473C",
-      "color4": "#ffdd75",
-      "color5": "#00473c"
+      "primary": "rgba(46, 135, 230, 1)",
+      "bg": "rgba(7, 25, 45, 1)",
+      "gradientAngle": "135deg"
     }
+  },
+  "tournamentColors": {
+    "TRN-001": { "primary": "rgba(220, 38, 38, 1)" }
   }
 }
 ```
 
-### `DESIGN_REGISTRY` — one document per design
+`buildThemeStyle(colors, variant)` merges saved colors with `VARIANT_DEFAULTS[variant]` (missing keys fall back to defaults) and returns a React style object with CSS vars.
 
-```json
-{ "_id": "default",  "bundle": "default",  "label": "Default Theme",  "active": true }
-{ "_id": "mythical", "bundle": "mythical", "label": "Mythical Theme",  "active": true }
-```
-
-`_id` = the string stored in `USER_DATA.themeConfig.designVariant`  
-`bundle` = the key in `BUNDLE_MAP` inside `registry.js`
-
----
-
-## How `registry.js` works
-
-```mermaid
-flowchart TD
-    A["getDesignRegistry(variant)"]
-    B["resolveBundleKey(variant)\nlooks up DESIGN_REGISTRY in MongoDB"]
-    C{bundle key found?}
-    D["BUNDLE_MAP[bundleKey]\ne.g. () => import('@/components/designs/mythical')"]
-    E["fallback: BUNDLE_MAP['default']"]
-    F["dynamic import()\nonly loads THIS bundle"]
-    G["returns { AfterMatchScore, MVP, ... }"]
-
-    A --> B
-    B --> C
-    C -- yes --> D
-    C -- no --> E
-    D --> F
-    E --> F
-    F --> G
-```
-
-**Key point:** `BUNDLE_MAP` contains explicit `import()` calls — the bundler tree-shakes each one into a separate chunk. Only the requested chunk loads at runtime.
-
----
-
-## CSS variable theming (color config)
-
-Colors are stored as generic slots in MongoDB and mapped to CSS variables at the layout level:
-
-| DB slot | CSS variable          | Tailwind utility       |
-| ------- | --------------------- | ---------------------- |
-| color1  | `--primary`           | `bg-primary`           |
-| color2  | `--primary-shade-one` | `bg-primary-shade-one` |
-| color3  | `--primary-shade-two` | `bg-primary-shade-two` |
-| color4  | `--custom-yellow`     | `bg-custom-yellow`     |
-| color5  | `--custom-green`      | `bg-custom-green`      |
-
-`[userId]/layout.jsx` is a **Server Component** — it fetches the config and injects a `<style>` tag before sending HTML to the browser. **No JavaScript needed at runtime = zero flicker in OBS/vMix.**
+| DB key         | CSS var                   | Tailwind class                              |
+| -------------- | ------------------------- | ------------------------------------------- |
+| `primary`      | `--widget-primary`        | `bg-widget-primary` / `text-widget-primary` |
+| `bg`           | `--widget-bg`             | `bg-widget-bg`                              |
+| `text1`        | `--widget-text-1`         | `text-widget-text-1`                        |
+| `gradientFrom` | `--widget-gradient-from`  | `from-widget-gradient-from`                 |
+| `statusAlive`  | `--widget-status-alive`   | `bg-widget-status-alive`                    |
+| `v1Gold`       | `--widget-v1-gold`        | `text-widget-v1-gold`                       |
+| _(font)_       | `--widget-font-primary`   | `font-primary`                              |
+| _(font)_       | `--widget-font-secondary` | `font-secondary`                            |
 
 ---
 
 ## Adding a new design (step by step)
 
-```mermaid
-flowchart LR
-    S1["1. Create\ncomponents/designs/pro-league/\nwith index.js + all view files"]
-    S2["2. Add one line to\nlib/design/registry.js\nBUNDLE_MAP:\n'pro-league': () => import(...)"]
-    S3["3. Deploy"]
-    S4["4. Insert into DESIGN_REGISTRY\n{ _id: 'pro-league', bundle: 'pro-league' }"]
-    S5["5. Update user in USER_DATA\ndesignVariant: 'pro-league'"]
-    S6["User now sees\npro-league design\nwith zero further changes"]
-
-    S1 --> S2 --> S3 --> S4 --> S5 --> S6
-
-    style S1 fill:#1e3a5f,color:#fff
-    style S2 fill:#1e3a5f,color:#fff
-    style S3 fill:#7c3aed,color:#fff
-    style S4 fill:#065f46,color:#fff
-    style S5 fill:#065f46,color:#fff
-    style S6 fill:#065f46,color:#fff
 ```
+1. Create themes/<key>/
+   ├── defaults.ts       ← color defaults for this design
+   ├── tokens.ts         ← if design has extra tokens beyond BASE_TOKENS
+   └── index.ts          ← export all slots (unbuilt ones are filled by registry)
 
-Steps 1–3 are code + one deployment.  
-Steps 4–5 are database updates only — no deploy, no code change.  
-Any number of users can be assigned the same design at any time.
+2. Add defaults to catalog.js
+   import { defaults as myDefaults } from "./my-design/defaults";
+   export const VARIANT_DEFAULTS = { ..., "my-design": myDefaults };
+
+3. Add to BUNDLE_MAP in registry.js
+   "my-design": () => import("@/themes/my-design"),
+
+4. If design has extra tokens, add to extras.ts
+   import { COLOR_TOKENS as MY_TOKENS } from "@/themes/my-design/tokens";
+   DESIGN_EXTRAS["my-design"] = MY_TOKENS.filter(t => !baseKeys.has(t.key));
+
+5. Add to KNOWN_DESIGNS in app/api/admin/seed-designs/route.js
+
+6. Deploy
+
+7. Hit GET /api/admin/seed-designs (auto-registers + cleans orphans)
+
+8. Assign users via admin panel
+```
 
 ---
 
-## Slot names (contract between pages and designs)
+## Slot names
 
-Every design **must** export these exact names from its `index.js`. The slot name is what the widget page imports.
+Every design index exports these slot names. Unimplemented slots render `null` (transparent in OBS).
 
-| Slot name              | Route                           |
+| Slot                   | Route                           |
 | ---------------------- | ------------------------------- |
 | `AfterMatchScore`      | `after-match/score`             |
 | `AfterMatchScoreGroup` | `after-match/score-group`       |
@@ -184,37 +134,17 @@ Every design **must** export these exact names from its `index.js`. The slot nam
 | `WWCTwo`               | `after-match/wwc-two`           |
 | `WWCStats`             | `after-match/wwc-stats`         |
 
-Each view component receives a single prop: `tournamentID: string`.
+Each view receives one prop: `tournamentID: string`.
 
 ---
 
-## What each widget page looks like
+## Unimplemented slots
 
-Every after-match page is now ~7 lines:
-
-```jsx
-// app/[userId]/[tournamentID]/after-match/score/page.jsx
-import { getUserDesign } from "@/lib/design/get-user-design";
-import { getDesignRegistry } from "@/lib/design/registry";
-
-export default async function AfterMatchScore({ params }) {
-  const { userId, tournamentID } = await params;
-  const variant = await getUserDesign(userId);
-  const { AfterMatchScore: View } = await getDesignRegistry(variant);
-  return <View tournamentID={tournamentID} />;
-}
-```
-
-The page is a **Server Component**. The view component is a **Client Component** (handles hooks, RTK Query, GSAP). No client/server boundary issues — Next.js handles this automatically.
+Non-default designs don't need to implement every slot. `registry.js` fills missing slots with `UnimplementedView` (returns `null`). OBS sees a transparent frame — no error, no crash. The controller can still send the command; the display just shows nothing.
 
 ---
 
-## Seeding the DESIGN_REGISTRY collection
+## Admin panel
 
-Hit this endpoint **once** after deployment, then delete the file:
-
-```
-GET /api/admin/seed-designs
-```
-
-File: `app/api/admin/seed-designs/route.js` — **delete after use**.
+- **Register Designs** — syncs `DesignRegistry` with `BUNDLE_MAP`. Upserts known designs, deletes orphans, cascades orphan removal to user records.
+- **Delete** — removes from registry and cascades: pulls from `allowedDesignIds`, resets `designVariant` if affected, strips `tournamentDesigns` overrides.
