@@ -33,7 +33,7 @@ export default function Title({
 
       {/* right — match meta stacked */}
       {(data || subtitle) && (
-        <div className="mb-2 flex flex-col justify-center">
+        <div className="mb-4 flex flex-col justify-center">
           {data && stage && (
             <span className="text-widget-text-3 text-[44px] leading-none">
               {stage}
