@@ -21,6 +21,7 @@ export default function TopPlayersGroupCard({
       className={cn(
         "from-widget-primary font-secondary to-widget-primary-accent border-widget-secondary flex w-full shrink-0 overflow-hidden border-r-4 bg-linear-to-b",
         className,
+        sm && "max-h-81.75",
       )}
     >
       <div className="relative flex w-full flex-col">
@@ -28,7 +29,7 @@ export default function TopPlayersGroupCard({
           <Image
             src={player?.player_imageUrl || ""}
             alt={player?.player_ign ?? ""}
-            width={sm ? 100 : 300}
+            width={sm ? 130 : 350}
             height={sm ? 250 : 500}
             className={cn("object-contain", sm && "h-auto w-auto")}
           />
