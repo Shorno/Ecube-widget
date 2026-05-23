@@ -10,7 +10,7 @@ import { useGetMvpMatchQuery } from "@/lib/services/widget-api";
  */
 export function useMVP(tournamentID) {
   const { data, isLoading } = useGetMvpMatchQuery({ tournamentID });
-  const mvp = data?.data ?? [];
-  const player = mvp[0] ?? null;
-  return { mvp, player, ready: !isLoading && !!data };
+  const mvp = data?.data ?? {};
+  const info = data?.info;
+  return { mvp, info, ready: !isLoading && !!data };
 }

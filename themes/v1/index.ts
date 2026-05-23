@@ -27,7 +27,7 @@ export { default as WWCTwo } from "./WWCDView";
 
 // ── TODO: add v1 views here as you build them — default fills the rest ────────
 // export { default as AfterMatchScoreGroup } from "./AfterMatchScoreGroupView";
-// export { default as MVP }                  from "./MVPView";
+export { default as MVP } from "./MVPView";
 // export { default as MVPGroup }             from "./MVPGroupView";
 // export { default as HeadToHead }           from "./HeadToHeadView";
 export { default as TopPlayers } from "./TopPlayersView";
