@@ -105,7 +105,7 @@ export default function WWCStatsView({ tournamentID }: Props) {
                   className="object-contain"
                 />
               )}
-              <div className="text-center text-widget-text-3">
+              <div className="text-widget-text-3 text-center">
                 <p className="font-primary text-[140px] leading-none">
                   {team?.total_kills ?? 0}
                 </p>

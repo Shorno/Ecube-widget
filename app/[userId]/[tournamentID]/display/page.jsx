@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import {
   AFTER_MATCH_WIDGETS,
@@ -16,9 +16,19 @@ function buildPreloadUrls(userId, tournamentID) {
 
 export default function DisplayPage() {
   const { userId, tournamentID } = useParams();
-  const [widgetUrl, setWidgetUrl] = useState(null);
+  const [activeUrl, setActiveUrl] = useState(null);
+  const [pendingUrl, setPendingUrl] = useState(null);
   const [preloadUrls, setPreloadUrls] = useState([]);
   const esRef = useRef(null);
+  const pendingUrlRef = useRef(null);
+  const fallbackTimerRef = useRef(null);
+
+  const promote = useCallback((url) => {
+    pendingUrlRef.current = null;
+    clearTimeout(fallbackTimerRef.current);
+    setActiveUrl(url);
+    setPendingUrl(null);
+  }, []);
 
   // Warm the browser cache: load all widget iframes hidden, then discard after 25s.
   // Disable with NEXT_PUBLIC_DISABLE_WIDGET_PRELOAD=true in .env.local for dev.
@@ -30,6 +40,22 @@ export default function DisplayPage() {
     return () => clearTimeout(timer);
   }, [userId, tournamentID]);
 
+  // Promote pending iframe when it signals readiness via postMessage (WidgetStage)
+  const handleMessage = useCallback(
+    (event) => {
+      if (event.data?.type !== "widget-ready") return;
+      const url = pendingUrlRef.current;
+      if (!url) return;
+      promote(url);
+    },
+    [promote],
+  );
+
+  useEffect(() => {
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [handleMessage]);
+
   // SSE connection with auto-reconnect
   useEffect(() => {
     if (!tournamentID) return;
@@ -40,7 +66,11 @@ export default function DisplayPage() {
 
       es.addEventListener("widget-change", (e) => {
         const { url } = JSON.parse(e.data);
-        setWidgetUrl(url);
+        pendingUrlRef.current = url;
+        setPendingUrl(url);
+        // Fallback: promote after 4s for widgets that don't use WidgetStage (e.g. live-ranking)
+        clearTimeout(fallbackTimerRef.current);
+        fallbackTimerRef.current = setTimeout(() => promote(url), 4000);
       });
 
       es.onerror = () => {
@@ -50,21 +80,48 @@ export default function DisplayPage() {
     }
 
     connect();
-    return () => esRef.current?.close();
-  }, [tournamentID]);
+    return () => {
+      esRef.current?.close();
+      clearTimeout(fallbackTimerRef.current);
+    };
+  }, [tournamentID, promote]);
+
+  const sharedStyle = {
+    position: "absolute",
+    inset: 0,
+    width: "100%",
+    height: "100%",
+    border: 0,
+    background: "transparent",
+  };
 
   return (
-    <>
-      {widgetUrl ? (
+    <div
+      style={{
+        position: "relative",
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+      }}
+    >
+      {/* Active (visible) widget */}
+      {activeUrl && (
         <iframe
-          key={widgetUrl}
-          src={widgetUrl}
-          className="h-screen w-screen border-0"
-          style={{ background: "transparent" }}
+          key={activeUrl}
+          src={activeUrl}
+          style={sharedStyle}
           title="widget-display"
         />
-      ) : (
-        <div className="h-screen w-screen bg-transparent" />
+      )}
+
+      {/* Pending widget — rendered but invisible; promoted on widget-ready message */}
+      {pendingUrl && pendingUrl !== activeUrl && (
+        <iframe
+          key={pendingUrl}
+          src={pendingUrl}
+          style={{ ...sharedStyle, opacity: 0, pointerEvents: "none" }}
+          title="widget-pending"
+        />
       )}
 
       {/* Cache-warming iframes — hidden, self-destruct after 25s */}
@@ -77,6 +134,6 @@ export default function DisplayPage() {
           title="preload"
         />
       ))}
-    </>
+    </div>
   );
 }

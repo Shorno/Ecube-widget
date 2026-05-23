@@ -2,7 +2,7 @@
 
 import Layout from "@/components/common/Layout";
 import Title from "./_components/Title";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTopPlayersGroup } from "@/hooks/widget-data/useTopPlayersGroup";
 import WidgetStage from "@/components/common/WidgetStage";
 import { useGSAP } from "@gsap/react";
@@ -21,21 +21,29 @@ export default function TopPlayersGroupView({ tournamentID }: Props) {
       if (!stageReady) return;
 
       gsap.set(".anim-title", { opacity: 0, y: -40 });
+      gsap.set(".anim-card", { opacity: 0, y: 80 });
 
       gsap
         .timeline({ defaults: { ease: "power3.out" } })
-        .to(".anim-title", { opacity: 1, y: 0, duration: 1.0 });
+        .to(".anim-title", { opacity: 1, y: 0, duration: 1.0 })
+        .to(
+          ".anim-card",
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            stagger: { each: 0.08, from: "start" },
+          },
+          "<0.3",
+        );
     },
     { scope: containerRef, dependencies: [stageReady] },
   );
 
-  useEffect(() => {
-    console.log(players);
-  }, [players]);
-
   if (!ready) return null;
 
   const rankOne = players[0];
+  const rest = players.slice(1, 5);
 
   return (
     <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
@@ -44,11 +52,31 @@ export default function TopPlayersGroupView({ tournamentID }: Props) {
           <div className="anim-title flex justify-center opacity-0">
             <Title title="ROAD TO MVP" data={info} />
           </div>
-          <div className="mx-auto mt-16 grid grid-cols-2 gap-8 px-16">
-            <div className="shrink-0">
-              <TopPlayersGroupCard className="shrink-0 w-214" rank={1} player={rankOne} />
+          <div className="mx-auto mt-16 grid grid-cols-2 gap-8 px-16 ">
+            {/* rank #1 — large card */}
+            <div className="anim-card shrink-0 opacity-0">
+              <TopPlayersGroupCard
+                className="shrink-0"
+                rank={1}
+                player={rankOne}
+              />
             </div>
-            <div className="grid grid-cols-2 gap-6"></div>
+
+            {/* ranks 2–5 — small cards in 2×2 grid */}
+            <div className="grid grid-cols-2 gap-x-4.5 gap-y-7">
+              {rest.map((player, idx) => (
+                <div
+                  key={player.player_id ?? idx}
+                  className="anim-card opacity-0"
+                >
+                  <TopPlayersGroupCard
+                    size="small"
+                    rank={idx + 2}
+                    player={player}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </Layout>

@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { VARIANT_DEFAULTS } from "@/themes/catalog";
+import { VARIANT_DEFAULTS, VARIANT_FONT_DEFAULTS } from "@/themes/catalog";
 import { RgbaColorPicker } from "react-colorful";
 
 function merge(saved, defaults) {
@@ -73,9 +73,9 @@ export default function SettingsClient({
   tournamentDesigns = {},
 }) {
   const router = useRouter();
-  const hasTournaments = allowedTournamentIds.length > 0;
 
-  // Global fallback settings
+  // ── State ────────────────────────────────────────────────────────────────────
+  const [tournaments, setTournaments] = useState(allowedTournamentIds);
   const [activeVariant, setActiveVariant] = useState(initialVariant);
   const [activeFont, setActiveFont] = useState(initialFont);
   const [activeFontSecondary, setActiveFontSecondary] =
@@ -83,8 +83,6 @@ export default function SettingsClient({
   const [colors, setColors] = useState(() =>
     merge(savedColors, initialDefaults),
   );
-
-  // Per-tournament per-design color overrides: { [tid]: { [design]: colorObj } }
   const [tournamentDesignColors, setTournamentDesignColors] = useState(
     initialTournamentDesignColors,
   );
@@ -94,12 +92,17 @@ export default function SettingsClient({
   const [tournamentSecondaryFonts, setTournamentSecondaryFonts] = useState(
     initialTournamentSecondaryFonts,
   );
-
-  // Auto-select the first tournament; null = global (only when no tournaments)
   const [scope, setScope] = useState(() => allowedTournamentIds[0] ?? null);
 
+  const hasTournaments = tournaments.length > 0;
+
+  const [localTournamentNames, setLocalTournamentNames] =
+    useState(tournamentNames);
   const [saving, setSaving] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [newTournamentId, setNewTournamentId] = useState("");
+  const [newTournamentName, setNewTournamentName] = useState("");
+  const [tournamentAdding, setTournamentAdding] = useState(false);
 
   const CUSTOM_KEY = `effinity-custom-themes-${userId}`;
   const [customThemes, setCustomThemes] = useState([]);
@@ -120,17 +123,18 @@ export default function SettingsClient({
 
   // Tournament colors are per-design: saved colors for this tournament+design,
   // falling back to that design's defaults (not global colors).
-  const scopedColors = scope
-    ? merge(
-        tournamentDesignColors[scope]?.[effectiveVariant] ?? {},
-        VARIANT_DEFAULTS[effectiveVariant] ?? VARIANT_DEFAULTS.default,
-      )
-    : colors;
+  // Colors are always tournament-scoped. No scope → show design defaults as preview.
+  const scopedColors = merge(
+    scope ? (tournamentDesignColors[scope]?.[effectiveVariant] ?? {}) : {},
+    VARIANT_DEFAULTS[effectiveVariant] ?? VARIANT_DEFAULTS.default,
+  );
+  const variantFontDefaults =
+    VARIANT_FONT_DEFAULTS[effectiveVariant] ?? VARIANT_FONT_DEFAULTS.default;
   const scopedFont = scope
-    ? (tournamentFonts[scope] ?? activeFont)
+    ? (tournamentFonts[scope] ?? variantFontDefaults.primary)
     : activeFont;
   const scopedFontSecondary = scope
-    ? (tournamentSecondaryFonts[scope] ?? activeFontSecondary)
+    ? (tournamentSecondaryFonts[scope] ?? variantFontDefaults.secondary)
     : activeFontSecondary;
 
   // ── Color helpers ─────────────────────────────────────────────────────────
@@ -145,42 +149,37 @@ export default function SettingsClient({
       cur[path[path.length - 1]] = value;
       return next;
     }
-    if (scope) {
-      setTournamentDesignColors((prev) => ({
-        ...prev,
-        [scope]: {
-          ...(prev[scope] ?? {}),
-          [effectiveVariant]: applyDeep(prev[scope]?.[effectiveVariant] ?? {}),
-        },
-      }));
-    } else {
-      setColors((prev) => applyDeep(prev));
-    }
+    if (!scope) return;
+    setTournamentDesignColors((prev) => ({
+      ...prev,
+      [scope]: {
+        ...(prev[scope] ?? {}),
+        [effectiveVariant]: applyDeep(prev[scope]?.[effectiveVariant] ?? {}),
+      },
+    }));
   }
 
   function resetColors() {
-    if (scope) {
-      // Clear saved colors for this tournament+design — shows design defaults
-      setTournamentDesignColors((prev) => ({
-        ...prev,
-        [scope]: { ...(prev[scope] ?? {}), [effectiveVariant]: {} },
-      }));
-    } else {
-      setColors(
-        merge({}, VARIANT_DEFAULTS[activeVariant] ?? VARIANT_DEFAULTS.default),
-      );
-    }
+    if (!scope) return;
+    setTournamentDesignColors((prev) => ({
+      ...prev,
+      [scope]: { ...(prev[scope] ?? {}), [effectiveVariant]: {} },
+    }));
+    const fontDefaults =
+      VARIANT_FONT_DEFAULTS[effectiveVariant] ?? VARIANT_FONT_DEFAULTS.default;
+    setTournamentFonts((prev) => ({ ...prev, [scope]: fontDefaults.primary }));
+    setTournamentSecondaryFonts((prev) => ({
+      ...prev,
+      [scope]: fontDefaults.secondary,
+    }));
   }
 
   function applyTheme(themeColors) {
-    if (scope) {
-      setTournamentDesignColors((prev) => ({
-        ...prev,
-        [scope]: { ...(prev[scope] ?? {}), [effectiveVariant]: themeColors },
-      }));
-    } else {
-      setColors(themeColors);
-    }
+    if (!scope) return;
+    setTournamentDesignColors((prev) => ({
+      ...prev,
+      [scope]: { ...(prev[scope] ?? {}), [effectiveVariant]: themeColors },
+    }));
   }
 
   function handleFontChange(key) {
@@ -250,6 +249,63 @@ export default function SettingsClient({
     router.push("/login");
   }
 
+  async function addTournament() {
+    const tid = newTournamentId.trim();
+    const tname = newTournamentName.trim();
+    if (!tid || !tname) return;
+    setTournamentAdding(true);
+    try {
+      const res = await fetch("/api/user/tournaments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tournamentId: tid, tournamentName: tname }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setTournaments((prev) => [...prev, tid]);
+        setLocalTournamentNames((prev) => ({ ...prev, [tid]: tname }));
+        setScope(tid);
+        setNewTournamentId("");
+        setNewTournamentName("");
+        toast.success(`"${tname}" added.`);
+      } else {
+        toast.error(data.error ?? "Failed to add tournament");
+      }
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setTournamentAdding(false);
+    }
+  }
+
+  async function removeTournament(tid) {
+    try {
+      const res = await fetch("/api/user/tournaments", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tournamentId: tid }),
+      });
+      if (res.ok) {
+        setTournaments((prev) => prev.filter((t) => t !== tid));
+        setLocalTournamentNames((prev) => {
+          const n = { ...prev };
+          delete n[tid];
+          return n;
+        });
+        if (scope === tid) {
+          const remaining = tournaments.filter((t) => t !== tid);
+          setScope(remaining[0] ?? null);
+        }
+        toast.success("Tournament removed.");
+      } else {
+        const data = await res.json();
+        toast.error(data.error ?? "Failed to remove");
+      }
+    } catch {
+      toast.error("Network error");
+    }
+  }
+
   async function save() {
     setSaving(true);
     const id = toast.loading("Saving…");
@@ -261,7 +317,7 @@ export default function SettingsClient({
           designVariant: activeVariant,
           font: activeFont,
           fontSecondary: activeFontSecondary,
-          colors,
+          // colors intentionally omitted — all color changes are tournament-scoped
           tournamentDesignColors,
           tournamentFonts,
           tournamentSecondaryFonts,
@@ -281,7 +337,7 @@ export default function SettingsClient({
     }
   }
 
-  const scopeName = scope ? tournamentNames[scope] || scope : null;
+  const scopeName = scope ? localTournamentNames[scope] || scope : null;
 
   return (
     <div className="flex h-screen flex-col bg-gray-900 font-sans text-white">
@@ -318,7 +374,7 @@ export default function SettingsClient({
             {hasTournaments && (
               <>
                 <span className="h-4 w-px bg-gray-800" />
-                {allowedTournamentIds.map((tid) => (
+                {tournaments.map((tid) => (
                   <button
                     key={tid}
                     onClick={() => setScope(tid)}
@@ -330,9 +386,9 @@ export default function SettingsClient({
                     ].join(" ")}
                   >
                     <span className="leading-tight">
-                      {tournamentNames[tid] || tid}
+                      {localTournamentNames[tid] || tid}
                     </span>
-                    {tournamentNames[tid] && (
+                    {localTournamentNames[tid] && (
                       <span
                         className={[
                           "font-mono text-[10px] leading-tight",
@@ -377,7 +433,8 @@ export default function SettingsClient({
           </p>
           <div className="flex w-30 justify-end">
             {(Object.keys(tournamentDesignColors[scope] ?? {}).length > 0 ||
-              tournamentFonts[scope]) && (
+              tournamentFonts[scope] ||
+              tournamentSecondaryFonts[scope]) && (
               <button
                 onClick={() => clearTournamentOverrides(scope)}
                 className="text-xs text-gray-500 transition-colors hover:text-red-400"
@@ -417,13 +474,89 @@ export default function SettingsClient({
               )}
             </PanelSection>
 
+            <PanelSection title="Tournaments">
+              <div className="space-y-2">
+                {tournaments.length === 0 && (
+                  <p className="text-xs text-gray-600">
+                    No tournaments added yet.
+                  </p>
+                )}
+                {tournaments.map((tid) => (
+                  <div
+                    key={tid}
+                    className={[
+                      "flex cursor-pointer items-center justify-between rounded border px-3 py-2 text-sm transition-all",
+                      scope === tid
+                        ? "border-blue-500 bg-blue-950/40 text-blue-300"
+                        : "border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-300",
+                    ].join(" ")}
+                    onClick={() => setScope(tid)}
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-medium text-gray-300">
+                        {localTournamentNames[tid] || tid}
+                      </p>
+                      <p className="truncate font-mono text-[10px] text-gray-600">
+                        {tid}
+                      </p>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeTournament(tid);
+                      }}
+                      className="ml-2 shrink-0 text-gray-600 transition-colors hover:text-red-400"
+                      title="Remove"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                <div className="space-y-1.5 pt-1">
+                  <Input
+                    value={newTournamentName}
+                    onChange={(e) => setNewTournamentName(e.target.value)}
+                    placeholder="Tournament name (required)"
+                    className="h-8 w-full border-gray-700 bg-gray-800 text-xs text-white placeholder:text-gray-600"
+                  />
+                  <div className="flex gap-2">
+                    <Input
+                      value={newTournamentId}
+                      onChange={(e) => setNewTournamentId(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addTournament();
+                        }
+                      }}
+                      placeholder="Tournament ID"
+                      className="h-8 flex-1 border-gray-700 bg-gray-800 font-mono text-xs text-white placeholder:text-gray-600"
+                    />
+                    <Button
+                      onClick={addTournament}
+                      disabled={
+                        !newTournamentId.trim() ||
+                        !newTournamentName.trim() ||
+                        tournamentAdding
+                      }
+                      className="h-8 shrink-0 bg-gray-700 px-3 text-xs font-medium text-white hover:bg-gray-600 disabled:opacity-40"
+                    >
+                      {tournamentAdding ? "…" : "Add"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </PanelSection>
+
             <PanelSection title="Primary Font">
               <div className="space-y-2">
                 {widgetFonts.map((f) => {
                   const isActive = scopedFont === f.key;
                   const isOverride = scope && tournamentFonts[scope] === f.key;
                   const isInherited =
-                    scope && !tournamentFonts[scope] && activeFont === f.key;
+                    scope &&
+                    !tournamentFonts[scope] &&
+                    variantFontDefaults.primary === f.key;
                   return (
                     <button
                       key={f.key}
@@ -458,7 +591,7 @@ export default function SettingsClient({
                       )}
                       {isInherited && (
                         <span className="ml-3 shrink-0 text-[10px] text-gray-500">
-                          Inherited
+                          Default
                         </span>
                       )}
                     </button>
@@ -473,6 +606,10 @@ export default function SettingsClient({
                   const isActive = scopedFontSecondary === f.key;
                   const isOverride =
                     scope && tournamentSecondaryFonts[scope] === f.key;
+                  const isInherited =
+                    scope &&
+                    !tournamentSecondaryFonts[scope] &&
+                    variantFontDefaults.secondary === f.key;
                   return (
                     <button
                       key={f.key}
@@ -503,6 +640,11 @@ export default function SettingsClient({
                       {(isOverride || (!scope && isActive)) && (
                         <span className="ml-3 shrink-0 text-[10px] font-semibold text-orange-400">
                           ✓
+                        </span>
+                      )}
+                      {isInherited && (
+                        <span className="ml-3 shrink-0 text-[10px] text-gray-500">
+                          Default
                         </span>
                       )}
                     </button>

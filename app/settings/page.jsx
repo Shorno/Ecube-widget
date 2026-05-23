@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db/mongoose";
 import User from "@/lib/db/models/User";
 import {
   VARIANT_DEFAULTS,
+  VARIANT_FONT_DEFAULTS,
   WIDGET_FONTS,
   PREDEFINED_THEMES,
 } from "@/themes/catalog";
@@ -49,8 +50,16 @@ export default async function SettingsPage() {
       userId={session.userId}
       userName={user?.name ?? ""}
       variant={variant}
-      font={user?.themeConfig?.font ?? "oswald"}
-      fontSecondary={user?.themeConfig?.fontSecondary ?? "rajdhani"}
+      font={
+        user?.themeConfig?.font ??
+        VARIANT_FONT_DEFAULTS[variant]?.primary ??
+        "oswald"
+      }
+      fontSecondary={
+        user?.themeConfig?.fontSecondary ??
+        VARIANT_FONT_DEFAULTS[variant]?.secondary ??
+        "rajdhani"
+      }
       savedColors={savedColors}
       defaults={defaults}
       allowedDesignIds={allowedDesignIds}

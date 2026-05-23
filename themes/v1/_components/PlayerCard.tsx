@@ -67,7 +67,7 @@ export default function PlayerCard({
       </div>
       {/* rank badge — top left */}
       <div className="from-widget-primary-dark font-secondary to-widget-primary-accent absolute -top-20 -left-18 grid h-20 w-20 translate-1/2 place-content-center bg-linear-to-b [clip-path:polygon(18%_11%,98%_28%,63%_94%,18%_71%)]">
-        <span className="text-2xl font-bold text-white">#{rank}</span>
+        <span className="text-widget-text-3 text-2xl font-bold">#{rank}</span>
       </div>
     </div>
   );
@@ -82,7 +82,9 @@ function StatRow({
 }) {
   return (
     <div className="font-primary flex w-full items-center px-2 py-1 text-center text-[28px]">
-      <span className="bg-widget-bg flex-1 uppercase">{label}</span>
+      <span className="bg-widget-bg text-widget-text-1 flex-1 uppercase">
+        {label}
+      </span>
       <div className="text-widget-text-2 w-1.5 bg-transparent"></div>
       <span className="text-widget-text-2 bg-widget-secondary flex-1 uppercase">
         {value ?? "0000"}

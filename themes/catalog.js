@@ -1,6 +1,12 @@
 import { h } from "./utils";
-import { defaults as defaultDefaults } from "./default/defaults";
-import { defaults as v1Defaults } from "./v1/defaults";
+import {
+  defaults as defaultDefaults,
+  fontDefaults as defaultFontDefaults,
+} from "./default/defaults";
+import {
+  defaults as v1Defaults,
+  fontDefaults as v1FontDefaults,
+} from "./v1/defaults";
 
 // ── Fonts ─────────────────────────────────────────────────────────────────────
 // key  → must match the CSS variable suffix loaded in app/layout.jsx
@@ -82,6 +88,15 @@ export const TOKEN_MAP = [
   // v1-specific extras — injected for any user whose saved colors include them
   { key: "v1Forest", css: "--widget-v1-forest" },
 ];
+
+// ── Variant font defaults ─────────────────────────────────────────────────────
+// Default primary + secondary font key per design variant.
+// Keys must exist in WIDGET_FONTS above.
+export const VARIANT_FONT_DEFAULTS = {
+  default: defaultFontDefaults,
+  v1: v1FontDefaults,
+  mythical: defaultFontDefaults,
+};
 
 // ── Variant defaults ──────────────────────────────────────────────────────────
 // Used when a user has no saved colors (or saves an empty object).

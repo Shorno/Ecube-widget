@@ -4,6 +4,7 @@ import {
   buildThemeStyle,
   WIDGET_FONTS,
   VARIANT_DEFAULTS,
+  VARIANT_FONT_DEFAULTS,
 } from "@/themes/catalog";
 
 // Public — no auth. Widgets fetch their own effective theme (colors, font, variant).
@@ -20,14 +21,19 @@ export async function GET(_, { params }) {
     user.themeConfig?.designVariant ??
     "default";
 
+  const variantFontDefaults =
+    VARIANT_FONT_DEFAULTS[variant] ?? VARIANT_FONT_DEFAULTS.default;
+
+  // Tournament font: explicit override → variant default (no global bleed)
   const fontKey =
-    user.tournamentFonts?.[tournamentID] ?? user.themeConfig?.font ?? "oswald";
+    user.tournamentFonts?.[tournamentID] ?? variantFontDefaults.primary;
 
   const fontEntry =
     WIDGET_FONTS.find((f) => f.key === fontKey) ?? WIDGET_FONTS[0];
 
+  // Colors: per-tournament per-design → variant defaults (no global bleed)
   const effectiveColors =
-    user.tournamentColors?.[tournamentID] ?? user.themeConfig?.colors ?? {};
+    user.tournamentDesignColors?.[tournamentID]?.[variant] ?? {};
 
   const cssVars = buildThemeStyle(effectiveColors, variant);
 

@@ -8,6 +8,7 @@ import { useGetTopPlayersGroupQuery } from "@/lib/services/widget-api";
  *   info    — tournament metadata
  *   ready
  */
+/** @returns {import("@/types/widgets").UseTopPlayersResult} */
 export function useTopPlayersGroup(tournamentID) {
   const { data, isLoading } = useGetTopPlayersGroupQuery({ tournamentID });
   const players = data?.data ?? [];

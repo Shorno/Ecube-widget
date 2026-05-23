@@ -1,5 +1,10 @@
 import { h } from "../utils";
 
+export const fontDefaults = {
+  primary: "oswald",
+  secondary: "rajdhani",
+};
+
 export const defaults = {
   primary: h("#a54e26"),
   primaryDark: h("#7a3a1c"),

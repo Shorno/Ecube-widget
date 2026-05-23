@@ -1,5 +1,10 @@
 import { h } from "../utils";
 
+export const fontDefaults = {
+  primary: "american-captain",
+  secondary: "agency-fb",
+};
+
 export const defaults = {
   // bg/text/border-widget-primary
   primary: h("#00473C"),

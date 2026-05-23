@@ -19,9 +19,12 @@ export default function WidgetStage({ dataReady, children, onReady }) {
     onReadyRef.current = onReady;
   });
 
-  // Fire onReady exactly once when ready flips true
+  // Fire onReady exactly once when ready flips true, and signal the parent frame
   useEffect(() => {
-    if (ready) onReadyRef.current?.();
+    if (ready) {
+      onReadyRef.current?.();
+      window.parent.postMessage({ type: "widget-ready" }, "*");
+    }
   }, [ready]);
 
   return (
