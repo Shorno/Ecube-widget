@@ -61,7 +61,7 @@ export default function TopPlayersGroupCard({
             <div
               className={cn(
                 "text-widget-text-1 from-widget-secondary to-widget-secondary-accent bg-linear-to-r text-center text-[60px] leading-20",
-                sm && "text-[30px]",
+                sm && "text-[30px] leading-10",
               )}
             >
               {player?.player_ign}
