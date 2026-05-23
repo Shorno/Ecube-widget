@@ -10,7 +10,7 @@ import { useGetMvpGroupQuery } from "@/lib/services/widget-api";
  */
 export function useMVPGroup(tournamentID) {
   const { data, isLoading } = useGetMvpGroupQuery({ tournamentID });
-  const mvp = data?.data ?? [];
-  const player = mvp[0] ?? null;
-  return { mvp, player, ready: !isLoading && !!data };
+  const mvp = data?.data ?? {};
+  const info = data?.info ?? null;
+  return { mvp, info, ready: !isLoading && !!data };
 }

@@ -27,7 +27,7 @@ export default function Title({
   return (
     <div className={cn("flex shrink-0 items-end gap-8 uppercase", className)}>
       {/* left — main title, first word plain, rest in primary color */}
-      <h1 className="font-primary text-widget-text-3 text-[140px] leading-none tracking-tight ">
+      <h1 className="font-primary text-widget-text-3 text-[140px] leading-none tracking-tight">
         {titleMain} {titleHighlight}
       </h1>
 

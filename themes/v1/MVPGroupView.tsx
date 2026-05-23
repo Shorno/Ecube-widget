@@ -6,12 +6,12 @@ import WidgetStage from "@/components/common/WidgetStage";
 import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useMVP } from "@/hooks/widget-data";
+import { useMVPGroup } from "@/hooks/widget-data";
 import Image from "next/image";
 
-export default function MVPView({ tournamentID }: { tournamentID: string }) {
+export default function MVPGroupView({ tournamentID }: { tournamentID: string }) {
   const [stageReady, setStageReady] = useState(false);
-  const { mvp, ready, info } = useMVP(tournamentID);
+  const { mvp, ready, info } = useMVPGroup(tournamentID);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -43,7 +43,7 @@ export default function MVPView({ tournamentID }: { tournamentID: string }) {
       <Layout top className="bg-transparent">
         <div ref={containerRef} className="">
           <div className="anim-title opacity-0">
-            <Title title="MATCH MVP" data={info} />
+            <Title title="TOURNAMENT MVP" data={info} />
           </div>
           <div className="mt-16 flex shrink-0 gap-26">
             <div className="flex shrink-0 flex-col justify-between gap-16">
