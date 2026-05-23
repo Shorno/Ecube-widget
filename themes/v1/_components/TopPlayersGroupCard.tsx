@@ -56,7 +56,7 @@ export default function TopPlayersGroupCard({
                 sm && "text-[20px]",
               )}
             >
-              {player?.player_ign}
+              {player?.team_name}
             </div>
             <div
               className={cn(
