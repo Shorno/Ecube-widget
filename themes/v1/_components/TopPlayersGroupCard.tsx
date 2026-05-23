@@ -29,9 +29,9 @@ export default function TopPlayersGroupCard({
           <Image
             src={player?.player_imageUrl || ""}
             alt={player?.player_ign ?? ""}
-            width={sm ? 130 : 350}
+            width={sm ? 180 : 380}
             height={sm ? 250 : 500}
-            className={cn("object-contain", sm && "h-auto w-auto")}
+            className={cn("object-cover")}
           />
         </div>
         <div className="absolute bottom-0 left-0 flex w-full items-end">

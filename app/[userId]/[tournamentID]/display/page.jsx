@@ -66,6 +66,11 @@ export default function DisplayPage() {
 
       es.addEventListener("widget-change", (e) => {
         const { url } = JSON.parse(e.data);
+        // Clear screen — no pending phase, take effect immediately
+        if (!url) {
+          promote(null);
+          return;
+        }
         pendingUrlRef.current = url;
         setPendingUrl(url);
         // Fallback: promote after 4s for widgets that don't use WidgetStage (e.g. live-ranking)

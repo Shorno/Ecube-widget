@@ -23,17 +23,17 @@ export default function TopPlayersView({ tournamentID }: Props) {
       gsap.set(".anim-card", { opacity: 0, y: 80 });
 
       gsap
-        .timeline({ defaults: { ease: "power3.out" } })
-        .to(".anim-title", { opacity: 1, y: 0, duration: 1.0 })
+        .timeline({ defaults: { ease: "circ.out" } })
+        .to(".anim-title", { opacity: 1, y: 0, duration: 0.5 })
         .to(
           ".anim-card",
           {
             opacity: 1,
             y: 0,
-            duration: 0.9,
-            stagger: { each: 0.08, from: "start" },
+            duration: 0.5,
+            stagger: { each: 0.05, from: "start" },
           },
-          "<0.3",
+          "<0.15",
         );
     },
     { scope: containerRef, dependencies: [stageReady] },

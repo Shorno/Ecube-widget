@@ -23,15 +23,15 @@ export default function WWCDView({ tournamentID }: Props) {
       gsap.set(".anim-player", { opacity: 0, y: 80 });
 
       gsap
-        .timeline({ defaults: { ease: "power3.out" } })
+        .timeline({ defaults: { ease: "circ.out" } })
         .to(".anim-player", {
           opacity: 1,
           y: 0,
-          duration: 0.9,
-          stagger: { each: 0.08, from: "start" },
+          duration: 0.5,
+          stagger: { each: 0.05, from: "start" },
         })
-        .to(".anim-ribbon", { opacity: 1, y: 0, duration: 0.9 }, "<")
-        .to(".anim-title", { opacity: 1, scale: 1, duration: 1.2 }, "<0.5");
+        .to(".anim-ribbon", { opacity: 1, y: 0, duration: 0.5 }, "<")
+        .to(".anim-title", { opacity: 1, scale: 1, duration: 0.6 }, "<0.2");
     },
     { scope: containerRef, dependencies: [stageReady] },
   );
