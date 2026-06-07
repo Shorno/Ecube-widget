@@ -50,7 +50,9 @@
       "Bash(mkdir -p \"d:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/tasks\" \"d:/E-Cube-Projects/Effinity-pubg/pubg-widget/.claude/todos\")",
       "mcp__plugin_playwright_playwright__browser_press_key",
       "Bash(Get-Content \"d:\\\\E-Cube-Projects\\\\Effinity-pubg\\\\pubg-widget\\\\themes\\\\v1\\\\_components\\\\TopPlayersGroupCard.tsx\")",
-      "Bash(grep -v \"node_modules\\\\|.next\\\\|api\\\\|settings\\\\|controller\\\\|display\\\\|widgets/page\\\\|layout\\\\|page.jsx$\")"
+      "Bash(grep -v \"node_modules\\\\|.next\\\\|api\\\\|settings\\\\|controller\\\\|display\\\\|widgets/page\\\\|layout\\\\|page.jsx$\")",
+      "Bash(npx next *)",
+      "Bash(npx eslint *)"
     ],
     "additionalDirectories": [
       "d:\\E-Cube-Projects\\Effinity-pubg\\pubg-widget\\.claude\\tasks"

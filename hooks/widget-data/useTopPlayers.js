@@ -6,5 +6,5 @@ export function useTopPlayers(tournamentID) {
   const { data, isLoading } = useGetTopPlayersQuery({ tournamentID });
   const players = data?.data ?? [];
   const info = data?.info ?? null;
-  return { players, info, ready: !isLoading && !!data };
+  return { players, info, ready: !isLoading && !!data && data?.data != null };
 }

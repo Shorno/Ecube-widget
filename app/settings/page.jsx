@@ -45,21 +45,29 @@ export default async function SettingsPage() {
   const savedColors =
     colorDesignVariant === variant ? (user?.themeConfig?.colors ?? {}) : {};
 
+  // Same guard for fonts: only trust saved fonts if they were saved for the
+  // current design. If design changed, fall back to the new design's font defaults.
+  const fontDesignVariant = user?.themeConfig?.fontDesignVariant ?? "";
+  const variantFontDefaults =
+    VARIANT_FONT_DEFAULTS[variant] ?? VARIANT_FONT_DEFAULTS.default;
+  const font =
+    fontDesignVariant === variant
+      ? (user?.themeConfig?.font ?? variantFontDefaults.primary ?? "oswald")
+      : (variantFontDefaults.primary ?? "oswald");
+  const fontSecondary =
+    fontDesignVariant === variant
+      ? (user?.themeConfig?.fontSecondary ??
+        variantFontDefaults.secondary ??
+        "rajdhani")
+      : (variantFontDefaults.secondary ?? "rajdhani");
+
   return (
     <SettingsClient
       userId={session.userId}
       userName={user?.name ?? ""}
       variant={variant}
-      font={
-        user?.themeConfig?.font ??
-        VARIANT_FONT_DEFAULTS[variant]?.primary ??
-        "oswald"
-      }
-      fontSecondary={
-        user?.themeConfig?.fontSecondary ??
-        VARIANT_FONT_DEFAULTS[variant]?.secondary ??
-        "rajdhani"
-      }
+      font={font}
+      fontSecondary={fontSecondary}
       savedColors={savedColors}
       defaults={defaults}
       allowedDesignIds={allowedDesignIds}

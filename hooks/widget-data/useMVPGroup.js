@@ -12,5 +12,5 @@ export function useMVPGroup(tournamentID) {
   const { data, isLoading } = useGetMvpGroupQuery({ tournamentID });
   const mvp = data?.data ?? {};
   const info = data?.info ?? null;
-  return { mvp, info, ready: !isLoading && !!data };
+  return { mvp, info, ready: !isLoading && !!data && data?.data != null };
 }

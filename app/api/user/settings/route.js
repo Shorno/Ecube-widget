@@ -119,9 +119,14 @@ export async function PUT(request) {
   }
   if (body.designVariant !== undefined)
     $set["themeConfig.designVariant"] = body.designVariant;
-  if (body.font !== undefined) $set["themeConfig.font"] = body.font;
-  if (body.fontSecondary !== undefined)
-    $set["themeConfig.fontSecondary"] = body.fontSecondary;
+  if (body.font !== undefined || body.fontSecondary !== undefined) {
+    if (body.font !== undefined) $set["themeConfig.font"] = body.font;
+    if (body.fontSecondary !== undefined)
+      $set["themeConfig.fontSecondary"] = body.fontSecondary;
+    // Record which design these fonts belong to so settings page can detect design switches.
+    if (body.designVariant !== undefined)
+      $set["themeConfig.fontDesignVariant"] = body.designVariant;
+  }
   if (body.tournamentDesigns !== undefined)
     $set.tournamentDesigns = body.tournamentDesigns;
   if (body.tournamentColors !== undefined)

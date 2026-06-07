@@ -19,5 +19,10 @@ export function useWWC(tournamentID) {
   const team = data?.data ?? null;
   const players = data?.data?.players ?? [];
   const info = data?.info ?? null;
-  return { team, players, info, ready: !isLoading && !!data };
+  return {
+    team,
+    players,
+    info,
+    ready: !isLoading && !!data && data?.data != null,
+  };
 }

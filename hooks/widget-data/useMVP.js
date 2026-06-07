@@ -12,5 +12,5 @@ export function useMVP(tournamentID) {
   const { data, isLoading } = useGetMvpMatchQuery({ tournamentID });
   const mvp = data?.data ?? {};
   const info = data?.info;
-  return { mvp, info, ready: !isLoading && !!data };
+  return { mvp, info, ready: !isLoading && !!data && data?.data != null };
 }

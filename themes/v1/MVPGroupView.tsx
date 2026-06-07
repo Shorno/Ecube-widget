@@ -9,7 +9,11 @@ import gsap from "gsap";
 import { useMVPGroup } from "@/hooks/widget-data";
 import Image from "next/image";
 
-export default function MVPGroupView({ tournamentID }: { tournamentID: string }) {
+export default function MVPGroupView({
+  tournamentID,
+}: {
+  tournamentID: string;
+}) {
   const [stageReady, setStageReady] = useState(false);
   const { mvp, ready, info } = useMVPGroup(tournamentID);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -18,18 +22,27 @@ export default function MVPGroupView({ tournamentID }: { tournamentID: string })
     () => {
       if (!stageReady) return;
 
-      gsap.set(".anim-title",  { opacity: 0, y: -40 });
-      gsap.set(".anim-stat",   { opacity: 0, y: 80 });
+      gsap.set(".anim-title", { opacity: 0, y: -40 });
+      gsap.set(".anim-stat", { opacity: 0, y: 80 });
       gsap.set(".anim-player", { opacity: 0, x: 60 });
 
       gsap
         .timeline({ defaults: { ease: "circ.out" } })
-        .to(".anim-title",  { opacity: 1, y: 0, duration: 0.5 })
+        .to(".anim-title", { opacity: 1, y: 0, duration: 0.5 })
         .to(".anim-player", { opacity: 1, x: 0, duration: 0.6 }, "<0.1")
-        .to(".anim-stat",   { opacity: 1, y: 0, duration: 0.5, stagger: 0.08 }, "<0.15")
+        .to(
+          ".anim-stat",
+          { opacity: 1, y: 0, duration: 0.5, stagger: 0.08 },
+          "<0.15",
+        )
         .from(
           ".anim-counter",
-          { textContent: 0, duration: 1.2, ease: "power2.out", snap: { textContent: 1 } },
+          {
+            textContent: 0,
+            duration: 1.2,
+            ease: "power2.out",
+            snap: { textContent: 1 },
+          },
           "<",
         );
     },
@@ -97,15 +110,9 @@ export default function MVPGroupView({ tournamentID }: { tournamentID: string })
   );
 }
 
-const MVPStatsBox = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: number;
-}) => {
+const MVPStatsBox = ({ label, value }: { label: string; value: number }) => {
   return (
-    <div className="relative flex w-140 gap-0 h-full">
+    <div className="relative flex h-full w-140 gap-0">
       <div className="text-widget-text-3 grid w-60 place-content-center">
         LOGO LEtter
       </div>
