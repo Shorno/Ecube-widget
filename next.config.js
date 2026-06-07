@@ -6,7 +6,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "tournalink.com" },
-      { protocol: "https", hostname: "api.esportsawardsbd.com" },
+      { protocol: "https", hostname: "api.ecube.gg" },
       { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
