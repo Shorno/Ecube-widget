@@ -130,7 +130,7 @@ export interface MatchStats {
 export interface UseAfterMatchScoreResult {
   winner: TeamRow | null;
   col1: TeamRow[];
-  col2: TeamRow[];
+  col2: TeamRow[]; // ranks 8–20
   info: MatchInfo | null;
   ready: boolean;
 }

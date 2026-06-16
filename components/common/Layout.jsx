@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-const Layout = ({ className, children, top }) => {
+const Layout = ({ className = "", children, top = false }) => {
   return (
     <div
       className={cn(
