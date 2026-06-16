@@ -1,4 +1,4 @@
-// Usage: node --env-file=.env scripts/seed-admin.js
+  // Usage: node --env-file=.env scripts/seed-admin.js
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
