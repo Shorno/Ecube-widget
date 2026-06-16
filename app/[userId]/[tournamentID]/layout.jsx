@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getUser } from "@/lib/db/queries";
-import { buildThemeStyle, WIDGET_FONTS } from "@/themes/catalog";
+import { buildThemeStyle, WIDGET_FONTS, VARIANT_FONT_DEFAULTS } from "@/themes/catalog";
 
 export default async function TournamentLayout({ children, params }) {
   const { userId, tournamentID } = await params;
@@ -13,15 +13,19 @@ export default async function TournamentLayout({ children, params }) {
     user.themeConfig?.designVariant ??
     "default";
 
+  const defaultFonts = VARIANT_FONT_DEFAULTS[variant] ?? VARIANT_FONT_DEFAULTS.default;
+
   const fontKey =
-    user.tournamentFonts?.[tournamentID] ?? user.themeConfig?.font ?? "oswald";
+    user.tournamentFonts?.[tournamentID] ??
+    user.themeConfig?.font ??
+    defaultFonts.primary;
   const fontEntry =
     WIDGET_FONTS.find((f) => f.key === fontKey) ?? WIDGET_FONTS[0];
 
   const fontSecondaryKey =
     user.tournamentSecondaryFonts?.[tournamentID] ??
     user.themeConfig?.fontSecondary ??
-    "rajdhani";
+    defaultFonts.secondary;
   const fontSecondaryEntry =
     WIDGET_FONTS.find((f) => f.key === fontSecondaryKey) ?? WIDGET_FONTS[1];
 

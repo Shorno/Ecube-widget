@@ -1,4 +1,5 @@
 import {
+  Anton,
   Oswald,
   Geist,
   Rajdhani,
@@ -52,6 +53,11 @@ const americanCaptain = localFont({
   variable: "--font-american-captain",
   weight: "400",
 });
+const anton = Anton({
+  subsets: ["latin"],
+  variable: "--font-anton",
+  weight: ["400"],
+});
 
 export const metadata = {
   title: "PUBG WIDGET",
@@ -68,6 +74,7 @@ export default function RootLayout({ children }) {
     exo2.variable,
     russoOne.variable,
     americanCaptain.variable,
+    anton.variable,
   ].join(" ");
 
   return (

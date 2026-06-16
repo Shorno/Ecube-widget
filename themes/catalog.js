@@ -194,7 +194,7 @@ export const PREDEFINED_THEMES = [
       primary: h("#7c3aed"),
       primaryDark: h("#4c1d95"),
       primaryAccent: h("#8b5cf6"),
-      secondary: h("#a855f7"),
+      secondary: h("#e9d5ff"),
       secondaryDark: h("#7e22ce"),
       secondaryAccent: h("#c084fc"),
       text1: h("#f5f3ff"),

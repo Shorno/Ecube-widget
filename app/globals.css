@@ -97,12 +97,15 @@
   --color-widget-text-2: var(--widget-text-2);
   --color-widget-text-3: var(--widget-text-3);
   --color-widget-bg: var(--widget-bg);
+  --color-widget-gradient-from: var(--widget-gradient-from);
+  --color-widget-gradient-to: var(--widget-gradient-to);
   --color-widget-status-alive: var(--widget-status-alive);
   --color-widget-status-knocked: var(--widget-status-knocked);
   --color-widget-status-dead: var(--widget-status-dead);
   --color-widget-v1-forest: var(--widget-v1-forest);
   --font-primary: var(--widget-font-primary);
   --font-secondary: var(--widget-font-secondary);
+  --font-anton: var(--font-anton);
   --font-sans: var(--font-sans);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
