@@ -61,7 +61,7 @@ export default function AfterMatchScoreView({ tournamentID }: Props) {
 
   return (
     <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
-      <Layout top className="bg-transparent px-10">
+      <Layout top className="bg-transparent pl-16 pr-10">
         <div ref={containerRef} className="mx-auto flex h-full w-full max-w-[1720px] flex-col justify-between pb-8">
           <div className="anim-title opacity-0">
             <MatchRankingsTitle data={info} />

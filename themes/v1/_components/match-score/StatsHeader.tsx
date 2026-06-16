@@ -68,7 +68,7 @@ export function StatsValues({
     return (
       <div
         className={cn(
-          "font-secondary flex w-full items-center justify-end font-bold pl-[30px]",
+          "font-secondary flex w-full items-center justify-end font-bold pl-11",
           className,
         )}
         style={{ width: STATS_BLOCK_WIDTH }}
