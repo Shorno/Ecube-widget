@@ -7,20 +7,12 @@ import WidgetStage from "@/components/common/WidgetStage";
 import Layout from "@/components/common/Layout";
 import OverallRankingsTitle from "./_components/overall-rankings/OverallRankingsTitle";
 import OverallRankingColumn from "./_components/overall-rankings/OverallRankingColumn";
-import {
-  STATIC_INFO,
-  STATIC_TEAMS,
-} from "./_components/overall-rankings/static-data";
+import { useOverallRankings } from "@/hooks/widget-data";
 
 type Props = { tournamentID: string };
 
-export default function AfterMatchScoreGroupView({ tournamentID: _tournamentID }: Props) {
-  // TODO: wire useAfterMatchScoreGroup — reshape rows into col1 (1–10) / col2 (11–20)
-  const info = STATIC_INFO;
-  const col1 = STATIC_TEAMS.slice(0, 10);
-  const col2 = STATIC_TEAMS.slice(10, 20);
-  const ready = true;
-
+export default function AfterMatchScoreGroupView({ tournamentID }: Props) {
+  const { col1, col2, info, ready } = useOverallRankings(tournamentID);
   const [stageReady, setStageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
