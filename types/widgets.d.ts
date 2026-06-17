@@ -135,6 +135,13 @@ export interface UseAfterMatchScoreResult {
   ready: boolean;
 }
 
+export interface UseOverallRankingsResult {
+  col1: TeamRow[];
+  col2: TeamRow[];
+  info: MatchInfo | null;
+  ready: boolean;
+}
+
 export interface UseMatchSummaryResult {
   stats: MatchStats | null;
   info: MatchInfo | null;
