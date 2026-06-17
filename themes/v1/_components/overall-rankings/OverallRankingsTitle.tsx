@@ -14,7 +14,7 @@ export default function OverallRankingsTitle({ data, className }: Props) {
   return (
     <div className={cn("relative h-[200px] w-full uppercase", className)}>
       <h1
-        className="absolute top-1/2 left-0 -translate-y-1/2 text-[160px] leading-[160px] font-normal tracking-[-0.01em] whitespace-nowrap text-white"
+        className="absolute top-1/2 left-0 -translate-y-1/2 text-[200px] leading-[200px] font-normal tracking-[-0.01em] whitespace-nowrap text-white"
         style={{ fontFamily: "var(--font-american-captain)" }}
       >
         OVERALL RANKINGS
@@ -24,7 +24,7 @@ export default function OverallRankingsTitle({ data, className }: Props) {
         <div className="absolute top-1/2 right-[40px] flex -translate-y-1/2 shrink-0 flex-col items-end">
           {stage && (
             <span
-              className="text-[60px] leading-[60px] font-normal text-white"
+              className="text-[75px] leading-[75px] font-normal text-white"
               style={{ fontFamily: "var(--font-american-captain)" }}
             >
               {stage}
@@ -32,7 +32,7 @@ export default function OverallRankingsTitle({ data, className }: Props) {
           )}
           {(matchName || day) && (
             <div
-              className="flex items-center gap-8 text-[40px] leading-[40px] font-normal text-white"
+              className="flex items-center gap-8 text-[50px] leading-[50px] font-normal text-white"
               style={{ fontFamily: "var(--font-american-captain)" }}
             >
               {matchName && <span>{matchName}</span>}
