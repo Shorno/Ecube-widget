@@ -77,6 +77,7 @@ export interface H2HTeam {
   total_damages: number;
   total_knocks: number;
   total_kills: number;
+  total_heals: number;
   total_survival_time: string | null;
   totalPoints: number;
   players: Player[];
