@@ -120,11 +120,14 @@ export interface WWCPlayer {
 
 export interface MatchStats {
   total_kills: number;
+  total_damages: number;
   total_heals: number;
   total_knocks: number;
-  total_grenade_kills: number;
-  total_assists: number;
-  total_vehicle_kills: number;
+  total_rescues: number;
+  total_airdrops_looted: number;
+  total_grenade_kills?: number;
+  total_assists?: number;
+  total_vehicle_kills?: number;
 }
 
 // Hook return shapes — mirrors what widget-base/ hooks return

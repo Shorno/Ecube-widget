@@ -52,7 +52,7 @@ export const WIDGET_FONTS = [
   {
     key: "agency-fb",
     label: "Agency FB",
-    css: '"Agency FB", sans-serif',
+    css: '"Agency FB", var(--font-barlow-condensed), sans-serif',
     sample: "TEAM ALPHA — 14 PTS",
   },
   {

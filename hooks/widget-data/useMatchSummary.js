@@ -4,7 +4,7 @@ import { useGetMatchSummaryQuery } from "@/lib/services/widget-api";
 /**
  * Match Summary — aggregate match stats.
  * Returns:
- *   stats   — { total_kills, total_heals, total_knocks, total_grenade_kills, total_assists, total_vehicle_kills }
+ *   stats   — { total_damages, total_knocks, total_airdrops_looted, total_heals, total_kills, total_rescues, ... }
  *   info    — tournament/match metadata
  *   ready
  */
