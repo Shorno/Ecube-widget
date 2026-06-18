@@ -3,76 +3,84 @@ import { cn } from "@/lib/utils";
 type Props = {
   name: string;
   className?: string;
+  side?: "left" | "right";
 };
 
-export default function TeamNameplate({ name, className }: Props) {
+export default function TeamNameplate({ name, className, side = "left" }: Props) {
   return (
-    <div className={cn("relative w-full", className)}>
+    <div className={cn("relative w-full py-4", className)}>
+      {/* Octagonal beveled nameplate with light-gray gradient background and dark green text */}
       <div
-        className="bg-widget-primary-dark text-widget-text-3 font-secondary relative mx-auto w-[92%] py-3 text-center text-[28px] font-bold tracking-wide uppercase"
+        className="bg-gradient-to-t from-[#E6EAF5] to-white text-widget-primary font-secondary relative mx-auto w-[88%] py-3 text-center text-[28px] font-bold tracking-wide uppercase shadow-sm"
         style={{
           clipPath:
-            "polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%)",
+            "polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px)",
         }}
       >
         {name}
       </div>
 
-      <svg
-        className="text-widget-secondary-accent absolute top-1/2 left-0 h-10 w-8 -translate-y-1/2"
-        viewBox="0 0 118 85"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden
-      >
-        <path
-          d="M1.11502 0.789919L33.7365 84.1493L50.7352 80.9194L68.3448 77.5732L85.9553 74.2272L103.071 70.9754L116.584 4.90061L1.11502 0.789919Z"
-          fill="url(#h2hGoldLeft)"
-          stroke="currentColor"
-          strokeWidth="1.5"
-        />
-        <defs>
-          <linearGradient
-            id="h2hGoldLeft"
-            x1="56.8003"
-            y1="11.6164"
-            x2="99.1269"
-            y2="67.1814"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop stopColor="var(--widget-secondary-accent)" />
-            <stop offset="1" stopColor="var(--widget-secondary-dark)" />
-          </linearGradient>
-        </defs>
-      </svg>
+      {/* Show left gold techy bracket only for the left team */}
+      {side === "left" && (
+        <div className="absolute top-1/2 left-[2%] h-[60px] w-[50px] -translate-y-1/2 pointer-events-none">
+          <svg className="h-full w-full" viewBox="0 0 50 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M45 4 H14 L4 14 V46 L14 56 H45"
+              stroke="var(--widget-secondary-accent)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M4 20 V40"
+              stroke="var(--widget-secondary-accent)"
+              strokeWidth="4.5"
+              strokeLinecap="round"
+            />
+            <path
+              d="M20 4 H35"
+              stroke="var(--widget-secondary-accent)"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M20 56 H35"
+              stroke="var(--widget-secondary-accent)"
+              strokeWidth="1.5"
+            />
+          </svg>
+        </div>
+      )}
 
-      <svg
-        className="text-widget-secondary-accent absolute top-1/2 right-0 h-10 w-8 -translate-y-1/2 scale-x-[-1]"
-        viewBox="0 0 118 85"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden
-      >
-        <path
-          d="M1.11502 0.789919L33.7365 84.1493L50.7352 80.9194L68.3448 77.5732L85.9553 74.2272L103.071 70.9754L116.584 4.90061L1.11502 0.789919Z"
-          fill="url(#h2hGoldRight)"
-          stroke="currentColor"
-          strokeWidth="1.5"
-        />
-        <defs>
-          <linearGradient
-            id="h2hGoldRight"
-            x1="56.8003"
-            y1="11.6164"
-            x2="99.1269"
-            y2="67.1814"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop stopColor="var(--widget-secondary-accent)" />
-            <stop offset="1" stopColor="var(--widget-secondary-dark)" />
-          </linearGradient>
-        </defs>
-      </svg>
+      {/* Show right gold techy bracket only for the right team */}
+      {side === "right" && (
+        <div className="absolute top-1/2 right-[2%] h-[60px] w-[50px] -translate-y-1/2 scale-x-[-1] pointer-events-none">
+          <svg className="h-full w-full" viewBox="0 0 50 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M45 4 H14 L4 14 V46 L14 56 H45"
+              stroke="var(--widget-secondary-accent)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M4 20 V40"
+              stroke="var(--widget-secondary-accent)"
+              strokeWidth="4.5"
+              strokeLinecap="round"
+            />
+            <path
+              d="M20 4 H35"
+              stroke="var(--widget-secondary-accent)"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M20 56 H35"
+              stroke="var(--widget-secondary-accent)"
+              strokeWidth="1.5"
+            />
+          </svg>
+        </div>
+      )}
     </div>
   );
 }

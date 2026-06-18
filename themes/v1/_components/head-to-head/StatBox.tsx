@@ -17,10 +17,9 @@ export default function StatBox({
   return (
     <div
       className={cn(
-        "bg-[#E6EAF5] flex flex-col justify-between px-4 py-3",
+        "bg-gradient-to-t from-[#E6EAF5] to-white flex flex-col justify-between items-center py-3 px-2 text-center flex-1",
         className,
       )}
-      style={{ height: STAT_ROW_HEIGHT_PX }}
     >
       {showLabel && (
         <span className="text-widget-text-2 font-secondary text-[18px] leading-tight font-bold uppercase">

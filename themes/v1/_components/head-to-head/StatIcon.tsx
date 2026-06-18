@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /** Shared with StatBox — keep row heights in sync for icon/stat alignment */
@@ -21,6 +22,23 @@ export default function StatIcon({
   height,
   colorVar = "--widget-text-3",
 }: Props) {
+  if (src.includes("heal.svg")) {
+    return (
+      <div
+        className={cn("relative shrink-0 flex items-center justify-center", className)}
+        style={{ width, height }}
+      >
+        <Image
+          src={src}
+          alt={label}
+          width={width}
+          height={height}
+          className="object-contain"
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       role="img"

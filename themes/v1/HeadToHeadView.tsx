@@ -35,35 +35,37 @@ export default function HeadToHeadView({ tournamentID }: Props) {
     () => {
       if (!stageReady || !containerRef.current) return;
 
-      gsap.set(".anim-title", { opacity: 0, y: -40 });
-      gsap.set(".anim-team-left", { opacity: 0, x: -100 });
-      gsap.set(".anim-team-right", { opacity: 0, x: 100 });
-      gsap.set(".anim-stat-left", { opacity: 0, x: -80 });
-      gsap.set(".anim-stat-right", { opacity: 0, x: 80 });
-      gsap.set(".anim-icons", { opacity: 0, scale: 0.9 });
+      // Use smaller translation distances and scale offsets to prevent rendering lag
+      gsap.set(".anim-title", { opacity: 0, y: -20 });
+      gsap.set(".anim-team-left", { opacity: 0, x: -40 });
+      gsap.set(".anim-team-right", { opacity: 0, x: 40 });
+      gsap.set(".anim-stat-left", { opacity: 0, x: -30 });
+      gsap.set(".anim-stat-right", { opacity: 0, x: 30 });
+      gsap.set(".anim-icons", { opacity: 0, scale: 0.96 });
 
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.to(".anim-title", { opacity: 1, y: 0, duration: 1.0 })
-        .to(".anim-team-left", { opacity: 1, x: 0, duration: 1.0 }, "<0.2")
-        .to(".anim-team-right", { opacity: 1, x: 0, duration: 1.0 }, "<")
-        .to(".anim-icons", { opacity: 1, scale: 1, duration: 0.8 }, "<0.1")
+      // Enable hardware acceleration (force3D: true) and use power4.out for a snappy start
+      const tl = gsap.timeline({ defaults: { ease: "power4.out", force3D: true } });
+      tl.to(".anim-title", { opacity: 1, y: 0, duration: 0.8 })
+        .to(".anim-team-left", { opacity: 1, x: 0, duration: 0.8 }, "<0.1")
+        .to(".anim-team-right", { opacity: 1, x: 0, duration: 0.8 }, "<")
+        .to(".anim-icons", { opacity: 1, scale: 1, duration: 0.6 }, "<0.05")
         .to(
           ".anim-stat-left",
           {
             opacity: 1,
             x: 0,
-            duration: 0.9,
-            stagger: { each: 0.08, from: "start" },
+            duration: 0.7,
+            stagger: { each: 0.05, from: "start" },
           },
-          "<0.15",
+          "<0.1",
         )
         .to(
           ".anim-stat-right",
           {
             opacity: 1,
             x: 0,
-            duration: 0.9,
-            stagger: { each: 0.08, from: "start" },
+            duration: 0.7,
+            stagger: { each: 0.05, from: "start" },
           },
           "<",
         )
@@ -71,11 +73,11 @@ export default function HeadToHeadView({ tournamentID }: Props) {
           ".anim-counter",
           {
             textContent: 0,
-            duration: 1.2,
-            ease: "power2.out",
+            duration: 1.0,
+            ease: "power3.out",
             snap: { textContent: 1 },
           },
-          "<0.1",
+          "<0.05",
         );
     },
     { scope: containerRef, dependencies: [stageReady] },
@@ -99,9 +101,10 @@ export default function HeadToHeadView({ tournamentID }: Props) {
               teamName={teamA.team_name}
               logoUrl={teamA.team_logoUrl}
               className="anim-team-left opacity-0"
+              side="left"
             />
 
-            <div className="flex flex-col gap-1 py-3">
+            <div className="bg-widget-primary flex flex-col gap-1 h-full">
               {STATS_CONFIG.map((stat) => (
                 <StatBox
                   key={stat.key}
@@ -115,7 +118,7 @@ export default function HeadToHeadView({ tournamentID }: Props) {
 
             <StatIconColumn className="anim-icons opacity-0" />
 
-            <div className="flex flex-col gap-1 py-3">
+            <div className="bg-widget-primary flex flex-col gap-1 h-full">
               {STATS_CONFIG.map((stat) => (
                 <StatBox
                   key={stat.key}
@@ -131,6 +134,7 @@ export default function HeadToHeadView({ tournamentID }: Props) {
               teamName={teamB.team_name}
               logoUrl={teamB.team_logoUrl}
               className="anim-team-right opacity-0"
+              side="right"
             />
           </div>
         </div>

@@ -37,15 +37,14 @@ export default function StatIconColumn({ className }: Props) {
   return (
     <div
       className={cn(
-        "bg-widget-primary flex flex-col gap-1 py-3",
+        "bg-widget-primary flex flex-col gap-1 h-full",
         className,
       )}
     >
       {STAT_ICONS.map((icon) => (
         <div
           key={icon.src}
-          className="flex w-full items-center justify-center"
-          style={{ height: STAT_ROW_HEIGHT_PX }}
+          className="flex w-full items-center justify-center flex-1"
         >
           <StatIcon
             src={icon.src}
