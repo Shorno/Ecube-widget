@@ -21,7 +21,7 @@ export type WidgetSlot =
 
 // ── Built ─────────────────────────────────────────────────────────────────────
 export { default as AfterMatchScore } from "./AfterMatchScoreView";
-// export { default as MatchSummary } from "./MatchSummaryView";
+export { default as MatchSummary } from "./MatchSummaryView";
 export { default as WWC } from "./WWCDView";
 export { default as WWCTwo } from "./WWCDView";
 
