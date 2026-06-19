@@ -24,10 +24,12 @@ const stateList = [
 ];
 
 function sortByPoints(data) {
-  return [...data].sort((a, b) => (b.points ?? 0) - (a.points ?? 0));
+  return [...data].sort(
+    (a, b) => (b.overAllPoints ?? 0) - (a.overAllPoints ?? 0),
+  );
 }
 
-export default function LiveRanking() {
+export default function MatchOverallLiveRanking() {
   const [teams, setTeams] = useState([]);
   const [showTopFour, setShowTopFour] = useState(false);
   const [topFourTeams, setTopFourTeams] = useState([]);
@@ -68,7 +70,7 @@ export default function LiveRanking() {
     const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
     if (!apiBase) {
       console.warn(
-        "LiveRanking: NEXT_PUBLIC_API_BASE_URL is not set — WebSocket skipped",
+        "OverallLiveRanking: NEXT_PUBLIC_API_BASE_URL is not set — WebSocket skipped",
       );
       return;
     }
@@ -99,7 +101,7 @@ export default function LiveRanking() {
       }
     };
 
-    ws.onerror = (err) => console.error("LiveRanking WS error:", err);
+    ws.onerror = (err) => console.error("OverallLiveRanking WS error:", err);
     ws.onclose = () => setIsMatchConnected(false);
 
     return () => ws.close();
@@ -246,6 +248,7 @@ export default function LiveRanking() {
                 key={entry.team.id}
                 entry={entry}
                 isObserved={observingTeamId === entry.team.id}
+                isOverall
                 rank={index + 1}
               />
             ))}
