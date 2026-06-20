@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import EcubeBrand from "@/components/common/EcubeBrand";
+import TeamNameSwitch from "@/components/common/TeamNameSwitch";
+import TeamFlagsSwitch from "@/components/common/TeamFlagsSwitch";
 import {
   Select,
   SelectContent,
@@ -174,7 +176,7 @@ export default function ControllerClient({
       )}
 
       {/* Sources bar: LEFT sources | CENTER live | RIGHT controls */}
-      <div className="flex items-center border-b border-gray-800 bg-gray-950 px-5 py-2">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-gray-800 bg-gray-950 px-5 py-2">
         {/* LEFT — Sources + display URL */}
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <span className="shrink-0 text-xs font-bold tracking-widest text-gray-500 uppercase">
@@ -187,7 +189,7 @@ export default function ControllerClient({
         </div>
 
         {/* CENTER — live status + send feedback */}
-        <div className="flex flex-1 items-center justify-center gap-3">
+        <div className="flex shrink-0 items-center justify-center gap-3">
           {activeLabel && activeUrl ? (
             <span className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-green-400 uppercase">
               <span className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
@@ -210,7 +212,7 @@ export default function ControllerClient({
         </div>
 
         {/* RIGHT — score group + settings + copy + open + individual links */}
-        <div className="flex flex-1 items-center justify-end gap-2">
+        <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2">
           <Select
             value={scoreGroupView || "default"}
             onValueChange={(v) => {
@@ -219,7 +221,7 @@ export default function ControllerClient({
               localStorage.setItem("scoreGroupView", val);
             }}
           >
-            <SelectTrigger className="h-7 w-40 text-xs">
+            <SelectTrigger className="h-7 w-40 shrink-0 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -228,10 +230,13 @@ export default function ControllerClient({
             </SelectContent>
           </Select>
 
+          <TeamFlagsSwitch className="shrink-0" />
+          <TeamNameSwitch className="shrink-0" />
+
           <button
             onClick={copyDisplayUrl}
             className={[
-              "border px-3 py-1 text-xs font-bold tracking-wider uppercase transition-colors",
+              "shrink-0 whitespace-nowrap border px-3 py-1 text-xs font-bold tracking-wider uppercase transition-colors",
               copied
                 ? "border-green-500 bg-green-950 text-green-400"
                 : "border-gray-600 text-gray-400 hover:border-blue-500 hover:text-blue-400",
@@ -242,20 +247,20 @@ export default function ControllerClient({
           <Link
             href={`/${userId}/${tournamentId}/display`}
             target="_blank"
-            className="border border-gray-600 px-3 py-1 text-xs font-bold tracking-wider text-gray-400 uppercase hover:border-blue-500 hover:text-blue-400"
+            className="shrink-0 whitespace-nowrap border border-gray-600 px-3 py-1 text-xs font-bold tracking-wider text-gray-400 uppercase hover:border-blue-500 hover:text-blue-400"
           >
             Open ↗
           </Link>
           <Link
             href={`/${userId}/${tournamentId}/widgets`}
             target="_blank"
-            className="border border-gray-600 px-3 py-1 text-xs font-bold tracking-wider text-gray-400 uppercase hover:border-blue-500 hover:text-blue-400"
+            className="shrink-0 whitespace-nowrap border border-gray-600 px-3 py-1 text-xs font-bold tracking-wider text-gray-400 uppercase hover:border-blue-500 hover:text-blue-400"
           >
             Individual Links
           </Link>
           <Link
             href="/settings"
-            className="inline-flex items-center gap-1 border border-blue-600 bg-blue-700/30 px-3 py-1 text-xs font-bold tracking-wider text-blue-300 uppercase transition-colors hover:bg-blue-700/60 hover:text-white"
+            className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap border border-blue-600 bg-blue-700/30 px-3 py-1 text-xs font-bold tracking-wider text-blue-300 uppercase transition-colors hover:bg-blue-700/60 hover:text-white"
           >
             ⚙ Settings
           </Link>

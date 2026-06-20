@@ -43,5 +43,11 @@ export default async function TournamentLayout({ children, params }) {
     "--widget-font-secondary": fontSecondaryEntry.css,
   };
 
-  return <div style={style}>{children}</div>;
+  const showTeamFlags = user.themeConfig?.showTeamFlags !== false;
+
+  return (
+    <div style={style} data-show-team-flags={showTeamFlags ? "1" : "0"}>
+      {children}
+    </div>
+  );
 }

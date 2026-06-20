@@ -16,6 +16,8 @@ import {
   getWidgetPath,
   getWidgetPlaceholder,
 } from "@/lib/widget-catalog";
+import TeamNameSwitch from "@/components/common/TeamNameSwitch";
+import TeamFlagsSwitch from "@/components/common/TeamFlagsSwitch";
 
 export default function WidgetsPage() {
   const { userId, tournamentID } = useParams();
@@ -101,6 +103,18 @@ export default function WidgetsPage() {
               </span>
             )}
           </div>
+        </section>
+
+        <section>
+          <SectionLabel color="blue" title="Team Display" />
+          <div className="mt-3 flex flex-wrap items-center gap-4">
+            <TeamFlagsSwitch />
+            <TeamNameSwitch />
+          </div>
+          <p className="mt-2 text-xs text-gray-500">
+            Applies to live overall ranking and team elimination overlays.
+            Refresh the OBS browser source after changing.
+          </p>
         </section>
 
         <section>

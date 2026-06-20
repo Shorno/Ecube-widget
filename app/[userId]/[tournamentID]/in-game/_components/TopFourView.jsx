@@ -17,6 +17,9 @@ function isTeamEliminated(players) {
   return players.every((p) => p.liveState === 5);
 }
 
+/**
+ * @param {{ teams: Array<{ team: { id?: string }, players?: Array<{ liveState: number }> }>, observingTeamId?: string | null }} props
+ */
 export function TopFourView({ teams, observingTeamId = null }) {
   const [visibleIds, setVisibleIds] = useState(() =>
     teams.filter((t) => !isTeamEliminated(t.players)).map((t) => t.team.id),

@@ -9,3 +9,5 @@ export { default as TopPlayersGroup } from "./TopPlayersGroupView";
 export { default as WWC } from "./WWCView";
 export { default as WWCTwo } from "./WWCTwoView";
 export { default as WWCStats } from "./WWCStatsView";
+export { default as LiveOverallRanking } from "./LiveOverallRankingView";
+export { default as TeamElimination } from "./TeamEliminationView";

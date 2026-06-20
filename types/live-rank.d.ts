@@ -8,6 +8,16 @@ export interface LiveRankTeam {
   logo?: string;
   logoImageUrl?: string;
   index?: number;
+  country_code?: string;
+  country_name?: string;
+  country_alpha3?: string;
+  country_flag_emoji?: string;
+}
+
+export interface LiveRankPlayer {
+  liveState: number;
+  healths: number;
+  isOutsideZone?: boolean;
 }
 
 export interface LiveRankEntry {
@@ -18,7 +28,7 @@ export interface LiveRankEntry {
   kills: number;
   wwcd?: number;
   positionPoints?: number;
-  players?: unknown[];
+  players?: LiveRankPlayer[];
   isMissing?: boolean;
   isEliminated?: boolean;
   winProbability?: number | null;
