@@ -1,10 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import type { TeamEliminationPayload } from "@/types/team-elimination";
-import { getMockTeamElimination } from "./mockTeamElimination";
-
-const HOLD_MS = 4500;
+import { useEliminationQueue } from "./useEliminationQueue";
 
 type Options = { preview?: boolean };
 
@@ -12,59 +10,7 @@ export function useTeamElimination(
   tournamentID: string,
   { preview = false }: Options = {},
 ) {
-  const [currentElimination, setCurrentElimination] =
-    useState<TeamEliminationPayload | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isLocked, setIsLocked] = useState(false);
-
-  const queueRef = useRef<TeamEliminationPayload[]>([]);
-  const playingRef = useRef(false);
-  const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const clearTimers = useCallback(() => {
-    if (holdTimerRef.current) {
-      clearTimeout(holdTimerRef.current);
-      holdTimerRef.current = null;
-    }
-  }, []);
-
-  const processNext = useCallback(() => {
-    if (playingRef.current) return;
-    const next = queueRef.current.shift();
-    if (!next) {
-      setIsLocked(false);
-      return;
-    }
-
-    clearTimers();
-    playingRef.current = true;
-    setIsLocked(true);
-    setCurrentElimination(next);
-    setIsVisible(true);
-
-    holdTimerRef.current = setTimeout(() => {
-      setIsVisible(false);
-    }, HOLD_MS);
-  }, [clearTimers]);
-
-  const enqueue = useCallback(
-    (payload: TeamEliminationPayload) => {
-      queueRef.current.push(payload);
-      processNext();
-    },
-    [processNext],
-  );
-
-  const triggerPreview = useCallback(() => {
-    if (!preview || isLocked) return;
-    enqueue(getMockTeamElimination());
-  }, [preview, isLocked, enqueue]);
-
-  const onExitComplete = useCallback(() => {
-    setCurrentElimination(null);
-    playingRef.current = false;
-    processNext();
-  }, [processNext]);
+  const queue = useEliminationQueue({ preview });
 
   useEffect(() => {
     if (preview || !tournamentID) return;
@@ -84,24 +30,12 @@ export function useTeamElimination(
       }
 
       if (parsed.event === "TEAM_ELIMINATION" && parsed.data) {
-        enqueue(parsed.data as TeamEliminationPayload);
+        queue.enqueue(parsed.data as TeamEliminationPayload);
       }
     };
 
-    return () => {
-      ws.close();
-      clearTimers();
-    };
-  }, [tournamentID, preview, enqueue, clearTimers]);
+    return () => ws.close();
+  }, [tournamentID, preview, queue.enqueue]);
 
-  useEffect(() => () => clearTimers(), [clearTimers]);
-
-  return {
-    currentElimination,
-    isVisible,
-    isLocked,
-    triggerPreview,
-    onExitComplete,
-    preview,
-  };
+  return { ...queue, preview };
 }

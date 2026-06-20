@@ -19,13 +19,13 @@ function DefaultEliminationOverlay({ data }) {
       animate={{ width: 320 }}
       exit={{ width: 0, opacity: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="relative h-24 overflow-hidden border-t-2 border-yellow-600 bg-yellow-700"
+      className="relative h-24 overflow-hidden border-t-2 border-widget-secondary-dark bg-widget-secondary-dark"
     >
       <motion.div
         initial={{ width: 0 }}
         animate={{ width: "100%" }}
         transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-        className="relative h-full w-full bg-[#414098]"
+        className="relative h-full w-full bg-widget-primary"
       >
         <div className="flex h-full w-full items-center justify-between px-3">
           <motion.div
@@ -42,14 +42,16 @@ function DefaultEliminationOverlay({ data }) {
               className="object-contain"
               unoptimized
             />
-            <span className="mt-1 text-xs font-bold text-white">#{placement}</span>
+            <span className="mt-1 text-xs font-bold text-widget-text-3">
+              #{placement}
+            </span>
           </motion.div>
           <div className="flex flex-col items-center justify-center">
             <motion.h2
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               transition={{ duration: 0.5, delay: 0.6, ease: "easeOut" }}
-              className="text-2xl leading-none font-bold text-white uppercase italic"
+              className="text-2xl leading-none font-bold text-widget-text-3 uppercase italic"
             >
               {kills} ELIMS
             </motion.h2>
@@ -57,17 +59,17 @@ function DefaultEliminationOverlay({ data }) {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.5, delay: 0.7, ease: "easeOut" }}
-              className="my-1 h-0.5 w-full origin-center bg-blue-300"
+              className="my-1 h-0.5 w-full origin-center bg-widget-primary-accent"
             />
             <motion.h3
               initial={{ y: "-100%" }}
               animate={{ y: 0 }}
               transition={{ duration: 0.5, delay: 0.8, ease: "easeOut" }}
-              className="text-lg leading-none font-bold tracking-widest text-[#FCD34D] uppercase italic"
+              className="text-lg leading-none font-bold tracking-widest text-widget-secondary uppercase italic"
             >
               ELIMINATED
             </motion.h3>
-            <p className="mt-1 max-w-[120px] truncate text-[10px] text-white/80">
+            <p className="mt-1 max-w-[120px] truncate text-[10px] text-widget-text-3 opacity-80">
               {teamLabel}
             </p>
           </div>

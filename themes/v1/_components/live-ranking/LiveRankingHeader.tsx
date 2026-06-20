@@ -1,24 +1,32 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { getLiveRankingLayout } from "./layout";
 
 type Props = {
   className?: string;
+  showFullTeamName?: boolean;
 };
 
-export default function LiveRankingHeader({ className }: Props) {
+export default function LiveRankingHeader({
+  className,
+  showFullTeamName = false,
+}: Props) {
+  const layout = getLiveRankingLayout(showFullTeamName);
+
   return (
     <div
       className={cn(
-        "relative h-[40px] w-[350px] shrink-0 select-none overflow-hidden",
-        className
+        "relative h-[40px] shrink-0 select-none overflow-hidden",
+        className,
       )}
       style={{
-        background: "linear-gradient(90deg, var(--widget-gradient-from, #009980) 0%, var(--widget-gradient-to, #00332B) 100%)",
+        width: layout.panelWidth,
+        background:
+          "linear-gradient(90deg, var(--widget-gradient-from, #009980) 0%, var(--widget-gradient-to, #00332B) 100%)",
       }}
     >
-      {/* Helmet Icon Background Block (Rectangle 289) */}
       <div
-        className="absolute left-0 top-0 h-[40px] w-[48px] flex items-center justify-center"
+        className="absolute left-0 top-0 flex h-[40px] w-[48px] items-center justify-center"
         style={{ backgroundColor: "var(--widget-primary, #00473C)" }}
       >
         <div
@@ -34,15 +42,15 @@ export default function LiveRankingHeader({ className }: Props) {
             alt=""
             width={32}
             height={32}
-            className="w-full h-full object-contain brightness-0 invert"
+            className="h-full w-full object-contain brightness-0 invert"
           />
         </div>
       </div>
 
-      {/* TEAM Label */}
       <span
-        className="absolute top-[14px] left-[59px] h-[18px] font-bold text-white uppercase"
+        className="absolute top-[14px] h-[18px] font-bold text-white uppercase"
         style={{
+          left: layout.headerLabels.team,
           fontFamily: "var(--widget-font-primary), 'American Captain', sans-serif",
           fontSize: "18px",
           lineHeight: "18px",
@@ -51,10 +59,10 @@ export default function LiveRankingHeader({ className }: Props) {
         TEAM
       </span>
 
-      {/* ALIVE Label */}
       <span
-        className="absolute top-[14px] left-[200px] h-[18px] w-[50px] text-center font-bold text-white uppercase"
+        className="absolute top-[14px] h-[18px] w-[50px] text-center font-bold text-white uppercase"
         style={{
+          left: layout.headerLabels.alive,
           fontFamily: "var(--widget-font-primary), 'American Captain', sans-serif",
           fontSize: "18px",
           lineHeight: "18px",
@@ -63,10 +71,10 @@ export default function LiveRankingHeader({ className }: Props) {
         ALIVE
       </span>
 
-      {/* PTS Label */}
       <span
-        className="absolute top-[14px] left-[255px] h-[18px] w-[40px] text-center font-bold text-white uppercase"
+        className="absolute top-[14px] h-[18px] w-[40px] text-center font-bold text-white uppercase"
         style={{
+          left: layout.headerLabels.pts,
           fontFamily: "var(--widget-font-primary), 'American Captain', sans-serif",
           fontSize: "18px",
           lineHeight: "18px",
@@ -75,10 +83,10 @@ export default function LiveRankingHeader({ className }: Props) {
         PTS
       </span>
 
-      {/* ELIMS Label */}
       <span
-        className="absolute top-[14px] left-[300px] h-[18px] w-[40px] text-center font-bold text-white uppercase"
+        className="absolute top-[14px] h-[18px] w-[40px] text-center font-bold text-white uppercase"
         style={{
+          left: layout.headerLabels.elims,
           fontFamily: "var(--widget-font-primary), 'American Captain', sans-serif",
           fontSize: "18px",
           lineHeight: "18px",

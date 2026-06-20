@@ -16,6 +16,7 @@ import {
   getWidgetPath,
   getWidgetPlaceholder,
 } from "@/lib/widget-catalog";
+import TeamNameSwitch from "@/components/common/TeamNameSwitch";
 import TeamFlagsSwitch from "@/components/common/TeamFlagsSwitch";
 
 export default function WidgetsPage() {
@@ -105,14 +106,15 @@ export default function WidgetsPage() {
         </section>
 
         <section>
-          <SectionLabel color="blue" title="Team Flags" />
-          <div className="mt-3">
+          <SectionLabel color="blue" title="Team Display" />
+          <div className="mt-3 flex flex-wrap items-center gap-4">
             <TeamFlagsSwitch />
-            <p className="mt-2 text-xs text-gray-500">
-              Applies to overall live ranking. Refresh the OBS browser source
-              after changing.
-            </p>
+            <TeamNameSwitch />
           </div>
+          <p className="mt-2 text-xs text-gray-500">
+            Applies to live overall ranking and team elimination overlays.
+            Refresh the OBS browser source after changing.
+          </p>
         </section>
 
         <section>

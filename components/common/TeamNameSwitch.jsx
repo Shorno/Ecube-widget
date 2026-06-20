@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
-export default function TeamFlagsSwitch({ className, size = "sm" }) {
-  const [showTeamFlags, setShowTeamFlags] = useState(true);
+export default function TeamNameSwitch({ className, size = "sm" }) {
+  const [showFullTeamName, setShowFullTeamName] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -14,27 +14,27 @@ export default function TeamFlagsSwitch({ className, size = "sm" }) {
     fetch("/api/user/settings")
       .then((r) => r.json())
       .then((data) => {
-        setShowTeamFlags(data.themeConfig?.showTeamFlags !== false);
+        setShowFullTeamName(data.themeConfig?.showFullTeamName === true);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
   async function handleChange(checked) {
-    setShowTeamFlags(checked);
+    setShowFullTeamName(checked);
     setSaving(true);
     try {
       const res = await fetch("/api/user/settings", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ showTeamFlags: checked }),
+        body: JSON.stringify({ showFullTeamName: checked }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error ?? "Save failed");
       }
     } catch (err) {
-      setShowTeamFlags(!checked);
+      setShowFullTeamName(!checked);
       toast.error(err instanceof Error ? err.message : "Failed to save");
     } finally {
       setSaving(false);
@@ -51,12 +51,12 @@ export default function TeamFlagsSwitch({ className, size = "sm" }) {
     >
       <Switch
         size={size}
-        checked={showTeamFlags}
+        checked={showFullTeamName}
         onCheckedChange={handleChange}
         disabled={loading || saving}
       />
       <span className="text-xs font-bold tracking-wide text-gray-400 uppercase">
-        Team Flags
+        Full Team Name
       </span>
     </label>
   );

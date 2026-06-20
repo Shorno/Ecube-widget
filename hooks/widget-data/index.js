@@ -14,4 +14,5 @@ export { useTopPlayersGroup } from "./useTopPlayersGroup";
 export { useWWC } from "./useWWC";
 export { useLiveOverallRanking } from "./useLiveOverallRanking";
 export { useTeamElimination } from "./useTeamElimination";
+export { useEliminationQueue } from "./useEliminationQueue";
 // Note: WWCTwo and WWCStats both use useWWC — same data, different visuals

@@ -10,10 +10,12 @@ import { TopFourView } from "@/app/[userId]/[tournamentID]/in-game/_components/T
 import LiveRankingHeader from "./_components/live-ranking/LiveRankingHeader";
 import LiveRankingRow from "./_components/live-ranking/LiveRankingRow";
 import LiveRankingLegend from "./_components/live-ranking/LiveRankingLegend";
+import TeamEliminationLayer from "./_components/team-elimination/TeamEliminationLayer";
+import { getLiveRankingLayout } from "./_components/live-ranking/layout";
 
 gsap.registerPlugin(Flip);
 
-type Props = { tournamentID: string; showTeamFlags?: boolean; preview?: boolean };
+type Props = { tournamentID: string; showTeamFlags?: boolean; showFullTeamName?: boolean; preview?: boolean };
 
 function teamId(entry: LiveRankEntry) {
   return entry.team.id ?? entry.team._id ?? String(entry.rank);
@@ -22,12 +24,20 @@ function teamId(entry: LiveRankEntry) {
 export default function LiveOverallRankingView({
   tournamentID,
   showTeamFlags = true,
+  showFullTeamName = false,
   preview = false,
 }: Props) {
-  const { teams, observingTeamId, ready } = useLiveOverallRanking(
-    tournamentID,
-    { preview },
-  );
+  const rankingLayout = getLiveRankingLayout(showFullTeamName);
+  const {
+    teams,
+    observingTeamId,
+    ready,
+    currentElimination,
+    isVisible: eliminationVisible,
+    isLocked: eliminationLocked,
+    triggerPreview,
+    onExitComplete,
+  } = useLiveOverallRanking(tournamentID, { preview });
 
   const [showTopFour, setShowTopFour] = useState(false);
   const [topFourTeams, setTopFourTeams] = useState<LiveRankEntry[]>([]);
@@ -151,6 +161,19 @@ export default function LiveOverallRankingView({
             Preview mode
           </div>
         )}
+
+        <TeamEliminationLayer
+          currentElimination={currentElimination}
+          isVisible={eliminationVisible}
+          onExitComplete={onExitComplete}
+          preview={preview}
+          isLocked={eliminationLocked}
+          onTriggerPreview={triggerPreview}
+          showTriggerButton={preview}
+          showTeamFlags={showTeamFlags}
+          showFullTeamName={showFullTeamName}
+        />
+
         {showTopFour && topFourTeams.length > 0 && (
           <div className="fixed top-12 left-1/2 w-full max-w-[1100px] -translate-x-1/2 px-4">
             <TopFourView
@@ -163,10 +186,10 @@ export default function LiveOverallRankingView({
         {!showTopFour && displayTeams.length > 0 && (
           <div
             ref={listPanelRef}
-            className="absolute right-0 flex w-[350px] h-[709px] flex-col overflow-hidden select-none"
-            style={{ top: "247px" }}
+            className="absolute right-0 flex h-[709px] flex-col overflow-hidden select-none"
+            style={{ top: "247px", width: rankingLayout.panelWidth }}
           >
-            <LiveRankingHeader />
+            <LiveRankingHeader showFullTeamName={showFullTeamName} />
 
             <div
               ref={containerRef}
@@ -179,11 +202,12 @@ export default function LiveOverallRankingView({
                   rank={index + 1}
                   isObserved={observingTeamId === teamId(entry)}
                   showTeamFlags={showTeamFlags}
+                  showFullTeamName={showFullTeamName}
                 />
               ))}
             </div>
 
-            <LiveRankingLegend />
+            <LiveRankingLegend showFullTeamName={showFullTeamName} />
           </div>
         )}
       </div>

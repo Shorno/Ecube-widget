@@ -1,16 +1,24 @@
 import { cn } from "@/lib/utils";
+import { getLiveRankingLayout } from "./layout";
 
 type Props = {
   className?: string;
+  showFullTeamName?: boolean;
 };
 
-export default function LiveRankingLegend({ className }: Props) {
+export default function LiveRankingLegend({
+  className,
+  showFullTeamName = false,
+}: Props) {
+  const { panelWidth } = getLiveRankingLayout(showFullTeamName);
+
   return (
     <div
       className={cn(
-        "flex h-[19px] w-[350px] shrink-0 select-none items-center justify-start bg-white pl-[5px]",
-        className
+        "flex h-[19px] shrink-0 select-none items-center justify-start bg-white pl-[5px]",
+        className,
       )}
+      style={{ width: panelWidth }}
     >
       {/* ALIVE */}
       <div className="flex items-center gap-[4px] mr-[20px] shrink-0">

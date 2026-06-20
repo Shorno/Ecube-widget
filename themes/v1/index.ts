@@ -6,11 +6,14 @@ import type { FC } from "react";
 export type WidgetProps = {
   tournamentID: string;
   showTeamFlags?: boolean;
+  showFullTeamName?: boolean;
   preview?: boolean;
 };
 export type TeamEliminationProps = {
   tournamentID: string;
   preview?: boolean;
+  showTeamFlags?: boolean;
+  showFullTeamName?: boolean;
 };
 export type WidgetComponent = FC<WidgetProps>;
 

@@ -1,11 +1,16 @@
 import type { LiveRankTeam } from "@/types/live-rank";
 
+export interface TeamFlagFields {
+  country_code?: string;
+  country_flag_emoji?: string;
+}
+
 export type TeamFlagDisplay =
   | { kind: "emoji"; value: string }
   | { kind: "image"; value: string }
   | { kind: "none" };
 
-export function getTeamFlagDisplay(team: LiveRankTeam): TeamFlagDisplay {
+export function getTeamFlagDisplay(team: TeamFlagFields | LiveRankTeam): TeamFlagDisplay {
   const emoji = team.country_flag_emoji?.trim();
   if (emoji) {
     return { kind: "emoji", value: emoji };
