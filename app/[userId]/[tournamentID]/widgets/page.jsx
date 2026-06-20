@@ -16,6 +16,7 @@ import {
   getWidgetPath,
   getWidgetPlaceholder,
 } from "@/lib/widget-catalog";
+import TeamFlagsSwitch from "@/components/common/TeamFlagsSwitch";
 
 export default function WidgetsPage() {
   const { userId, tournamentID } = useParams();
@@ -100,6 +101,17 @@ export default function WidgetsPage() {
                 Full mode active
               </span>
             )}
+          </div>
+        </section>
+
+        <section>
+          <SectionLabel color="blue" title="Team Flags" />
+          <div className="mt-3">
+            <TeamFlagsSwitch />
+            <p className="mt-2 text-xs text-gray-500">
+              Applies to overall live ranking. Refresh the OBS browser source
+              after changing.
+            </p>
           </div>
         </section>
 

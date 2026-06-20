@@ -3,7 +3,11 @@
 
 import type { FC } from "react";
 
-export type WidgetProps = { tournamentID: string };
+export type WidgetProps = {
+  tournamentID: string;
+  showTeamFlags?: boolean;
+  preview?: boolean;
+};
 export type WidgetComponent = FC<WidgetProps>;
 
 export type WidgetSlot =
@@ -17,7 +21,8 @@ export type WidgetSlot =
   | "TopPlayersGroup"
   | "WWC"
   | "WWCTwo"
-  | "WWCStats";
+  | "WWCStats"
+  | "LiveOverallRanking";
 
 // ── Built ─────────────────────────────────────────────────────────────────────
 export { default as AfterMatchScore } from "./AfterMatchScoreView";
@@ -33,6 +38,7 @@ export { default as HeadToHead } from "./HeadToHeadView";
 export { default as TopPlayers } from "./TopPlayersView";
 export { default as TopPlayersGroup } from "./TopPlayersGroupView";
 export { default as WWCStats } from "./WWCStatsView";
+export { default as LiveOverallRanking } from "./LiveOverallRankingView";
 
 // ── Token manifest ────────────────────────────────────────────────────────────
 export { COLOR_TOKENS, TOKEN_DEFAULTS } from "./tokens";

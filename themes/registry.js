@@ -71,6 +71,7 @@ const ALL_SLOTS = [
   "WWC",
   "WWCTwo",
   "WWCStats",
+  "LiveOverallRanking",
 ];
 
 // Returns the component set for a given variant string.

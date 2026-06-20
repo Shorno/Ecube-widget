@@ -47,6 +47,7 @@ export async function GET(request) {
     "themeConfig.designVariant": 1,
     "themeConfig.font": 1,
     "themeConfig.colors": 1,
+    "themeConfig.showTeamFlags": 1,
     allowedDesignIds: 1,
     allowedTournamentIds: 1,
     tournamentDesigns: 1,
@@ -102,6 +103,12 @@ export async function PUT(request) {
   ) {
     checks.colors = "Must be an object";
   }
+  if (
+    body.showTeamFlags !== undefined &&
+    typeof body.showTeamFlags !== "boolean"
+  ) {
+    checks.showTeamFlags = "Must be a boolean";
+  }
 
   const errors = validate(checks);
   if (errors)
@@ -135,6 +142,8 @@ export async function PUT(request) {
     $set.tournamentFonts = body.tournamentFonts;
   if (body.tournamentSecondaryFonts !== undefined)
     $set.tournamentSecondaryFonts = body.tournamentSecondaryFonts;
+  if (body.showTeamFlags !== undefined)
+    $set["themeConfig.showTeamFlags"] = body.showTeamFlags;
 
   if (body.tournamentDesignColors !== undefined) {
     // Normalize nested structure: { tid: { design: colorObj } }

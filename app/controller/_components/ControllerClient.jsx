@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import EcubeBrand from "@/components/common/EcubeBrand";
+import TeamFlagsSwitch from "@/components/common/TeamFlagsSwitch";
 import {
   Select,
   SelectContent,
@@ -169,6 +170,8 @@ export default function ControllerClient({ userId, allowedTournamentIds }) {
                 <SelectItem value="full">Score Group: Full</SelectItem>
               </SelectContent>
             </Select>
+
+            <TeamFlagsSwitch />
 
             {allowedTournamentIds.length === 0 ? (
               <span className="text-xs text-red-400">
