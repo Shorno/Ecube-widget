@@ -42,6 +42,10 @@ export default function LiveRankingRow({
   const eliminated = isEliminated(entry.players);
   const missing =
     entry.isMissing && (!entry.players || entry.players.length === 0);
+  const hasBlueZone =
+    entry.players?.some(
+      (player) => player.isOutsideZone && player.liveState !== 5,
+    ) ?? false;
   const logo = teamLogo(entry);
   const layout = getLiveRankingLayout(showFullTeamName);
   const teamLabel = getTeamDisplayLabel(entry.team, showFullTeamName);
@@ -59,10 +63,12 @@ export default function LiveRankingRow({
       data-flip-id={teamId(entry)}
     >
       <div
-        className="flex w-[48px] shrink-0 items-center justify-center font-bold"
+        className="flex w-[48px] shrink-0 items-center justify-center font-bold transition-colors duration-200"
         style={{
-          backgroundColor: "var(--widget-primary, #00473C)",
-          color: "var(--widget-secondary, #FFDD75)",
+          backgroundColor: isObserved
+            ? "var(--widget-secondary, #FFDD75)"
+            : "var(--widget-primary, #00473C)",
+          color: isObserved ? "#000000" : "var(--widget-secondary, #FFDD75)",
           fontFamily: "var(--widget-font-secondary), 'Agency FB', sans-serif",
           fontSize: "25px",
           lineHeight: "30px",
@@ -183,6 +189,16 @@ export default function LiveRankingRow({
           <div className="pointer-events-none absolute inset-0 bg-black/45" />
         )}
       </div>
+
+      {hasBlueZone && (
+        <div
+          className="pointer-events-none absolute inset-0 z-50 animate-pulse ring-2 ring-blue-400 ring-inset"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(147,197,253,0.5) 50%, rgba(59,130,246,0.5) 100%, transparent 100%)",
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { TopFourView } from "@/app/[userId]/[tournamentID]/in-game/_components/T
 import LiveRankingHeader from "./_components/live-ranking/LiveRankingHeader";
 import LiveRankingRow from "./_components/live-ranking/LiveRankingRow";
 import LiveRankingLegend from "./_components/live-ranking/LiveRankingLegend";
+import LiveRankingPreviewControls from "./_components/live-ranking/LiveRankingPreviewControls";
 import TeamEliminationLayer from "./_components/team-elimination/TeamEliminationLayer";
 import { getLiveRankingLayout } from "./_components/live-ranking/layout";
 
@@ -36,6 +37,7 @@ export default function LiveOverallRankingView({
     isVisible: eliminationVisible,
     isLocked: eliminationLocked,
     triggerPreview,
+    triggerObservingPreview,
     onExitComplete,
   } = useLiveOverallRanking(tournamentID, { preview });
 
@@ -157,9 +159,16 @@ export default function LiveOverallRankingView({
     <WidgetStage dataReady={ready} onReady={() => {}}>
       <div className="relative h-screen w-screen overflow-hidden">
         {preview && (
-          <div className="fixed top-2 left-2 z-50 rounded bg-black/70 px-2 py-1 font-mono text-[10px] text-yellow-300 uppercase">
-            Preview mode
-          </div>
+          <>
+            <div className="fixed top-2 left-2 z-50 rounded bg-black/70 px-2 py-1 font-mono text-[10px] text-yellow-300 uppercase">
+              Preview mode
+            </div>
+            <LiveRankingPreviewControls
+              onTriggerObserver={triggerObservingPreview}
+              onTriggerElimination={triggerPreview}
+              eliminationLocked={eliminationLocked}
+            />
+          </>
         )}
 
         <TeamEliminationLayer
@@ -168,8 +177,6 @@ export default function LiveOverallRankingView({
           onExitComplete={onExitComplete}
           preview={preview}
           isLocked={eliminationLocked}
-          onTriggerPreview={triggerPreview}
-          showTriggerButton={preview}
           showTeamFlags={showTeamFlags}
           showFullTeamName={showFullTeamName}
         />
