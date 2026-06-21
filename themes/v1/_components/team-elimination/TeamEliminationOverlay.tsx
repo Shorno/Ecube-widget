@@ -52,15 +52,8 @@ export default function TeamEliminationOverlay({
   const centerLogo = pubgLogoFailed ? logoSrc : PUBG_LOGO;
   const flagVisible =
     showTeamFlags && getTeamFlagDisplay(data.victimTeam).kind !== "none";
-  const leftPanelWidth = flagVisible
-    ? showFullTeamName
-      ? 168
-      : 136
-    : showFullTeamName
-      ? 148
-      : 108;
-  const bannerWidth =
-    (flagVisible ? 668 : 640) + (showFullTeamName ? 40 : 0);
+  const leftPanelWidth = 120;
+  const bannerWidth = 544;
 
   return (
     <motion.div
@@ -80,26 +73,9 @@ export default function TeamEliminationOverlay({
           style={{ background: SIDE_PANEL_GRADIENT, width: leftPanelWidth }}
           className="relative flex shrink-0 flex-col items-center justify-between px-2 py-2"
         >
-          <div
-            className={cn(
-              "flex w-full min-h-[32px] items-center",
-              flagVisible ? "justify-start gap-2 px-0.5" : "justify-center",
-            )}
-          >
-            {flagVisible && (
-              <TeamFlag
-                team={data.victimTeam}
-                showTeamFlags={showTeamFlags}
-                className="shrink-0"
-                emojiClassName="text-[18px]"
-                imageClassName="h-[16px] w-[22px] rounded-[1px] shadow-sm"
-              />
-            )}
+          <div className="flex flex-col items-center justify-center gap-1 w-full min-h-[32px] px-1">
             <p
-              className={cn(
-                "font-primary min-w-0 font-bold leading-tight tracking-wide text-widget-text-3 uppercase",
-                flagVisible ? "line-clamp-2 flex-1 text-left" : "truncate text-center",
-              )}
+              className="font-primary min-w-0 font-bold leading-tight tracking-wide text-widget-text-3 uppercase text-center line-clamp-2 w-full"
               style={{
                 fontSize: showFullTeamName ? "11px" : "13px",
                 lineHeight: showFullTeamName ? "12px" : "14px",
@@ -107,6 +83,15 @@ export default function TeamEliminationOverlay({
             >
               {teamLabel}
             </p>
+            {flagVisible && (
+              <TeamFlag
+                team={data.victimTeam}
+                showTeamFlags={showTeamFlags}
+                className="shrink-0"
+                emojiClassName="text-[18px]"
+                imageClassName="h-[14px] w-[20px] rounded-[1px] shadow-sm"
+              />
+            )}
           </div>
           <div className="relative h-8 w-full">
             <Image
@@ -141,7 +126,7 @@ export default function TeamEliminationOverlay({
           }}
           className="relative flex min-w-0 flex-1 flex-col"
         >
-          <div className="flex flex-1 items-end justify-center gap-0.5 px-2 pb-0.5 pt-1">
+          <div className="flex flex-1 items-end justify-center gap-0.5 pb-0.5 pt-1">
             {playerImages.map((src, i) => (
               <motion.div
                 key={i}
@@ -152,13 +137,13 @@ export default function TeamEliminationOverlay({
                   delay: 0.25 + i * 0.08,
                   ease: "easeOut",
                 }}
-                className="relative h-[72px] max-w-[72px] flex-1"
+                className="relative h-[80px] flex-1 overflow-hidden"
               >
                 <Image
                   src={src}
                   alt={`Player ${i + 1}`}
                   fill
-                  className="object-contain object-bottom"
+                  className="object-cover object-top scale-[1.4] origin-top"
                   unoptimized
                 />
               </motion.div>
@@ -186,8 +171,8 @@ export default function TeamEliminationOverlay({
           initial={{ x: 60, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.35, delay: 0.05, ease: "easeOut" }}
-          style={{ background: SIDE_PANEL_GRADIENT }}
-          className="flex w-[88px] shrink-0 items-center justify-center"
+          style={{ background: SIDE_PANEL_GRADIENT, width: leftPanelWidth }}
+          className="flex shrink-0 items-center justify-center"
         >
           <motion.span
             initial={{ scale: 0.5, opacity: 0 }}
