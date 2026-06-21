@@ -4,22 +4,36 @@ import type { LiveRankPlayer } from "@/types/live-rank";
 type Props = {
   players?: LiveRankPlayer[];
   className?: string;
+  size?: "default" | "large";
 };
 
-export default function PlayerStatusBars({ players = [], className }: Props) {
+export default function PlayerStatusBars({
+  players = [],
+  className,
+  size = "default",
+}: Props) {
   const slots = Array.from({ length: 4 }, (_, i) => players[i] ?? null);
+  const isLarge = size === "large";
 
   return (
-    <div className={cn("flex items-center justify-start gap-[2px] h-[32px] w-[42px]", className)}>
+    <div
+      className={cn(
+        "flex items-center justify-start gap-[2px]",
+        isLarge ? "h-[38px] w-[50px]" : "h-[32px] w-[42px]",
+        className,
+      )}
+    >
       {slots.map((player, idx) => {
         const isEliminated = !player || player.liveState === 5;
         const isKnocked = player && player.liveState === 4;
-        const isAlive = player && !isEliminated && !isKnocked;
 
         return (
           <div
             key={idx}
-            className="relative h-[32px] w-[9px] overflow-hidden"
+            className={cn(
+              "relative overflow-hidden",
+              isLarge ? "h-[38px] w-[10px]" : "h-[32px] w-[9px]",
+            )}
             style={{ backgroundColor: "var(--widget-status-dead, #4E4E4E)" }}
           >
             {!isEliminated && (

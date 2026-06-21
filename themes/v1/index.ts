@@ -7,6 +7,7 @@ export type WidgetProps = {
   tournamentID: string;
   showTeamFlags?: boolean;
   showFullTeamName?: boolean;
+  showObserverHighlight?: boolean;
   preview?: boolean;
 };
 export type TeamEliminationProps = {

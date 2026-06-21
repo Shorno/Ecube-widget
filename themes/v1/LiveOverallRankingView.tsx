@@ -16,7 +16,13 @@ import { getLiveRankingLayout } from "./_components/live-ranking/layout";
 
 gsap.registerPlugin(Flip);
 
-type Props = { tournamentID: string; showTeamFlags?: boolean; showFullTeamName?: boolean; preview?: boolean };
+type Props = {
+  tournamentID: string;
+  showTeamFlags?: boolean;
+  showFullTeamName?: boolean;
+  showObserverHighlight?: boolean;
+  preview?: boolean;
+};
 
 function teamId(entry: LiveRankEntry) {
   return entry.team.id ?? entry.team._id ?? String(entry.rank);
@@ -26,6 +32,7 @@ export default function LiveOverallRankingView({
   tournamentID,
   showTeamFlags = true,
   showFullTeamName = false,
+  showObserverHighlight = true,
   preview = false,
 }: Props) {
   const rankingLayout = getLiveRankingLayout(showFullTeamName);
@@ -153,6 +160,8 @@ export default function LiveOverallRankingView({
     };
   }, []);
 
+  const activeObservingTeamId = showObserverHighlight ? observingTeamId : null;
+
   if (!ready) return null;
 
   return (
@@ -185,7 +194,7 @@ export default function LiveOverallRankingView({
           <div className="fixed top-12 left-1/2 w-full max-w-[1100px] -translate-x-1/2 px-4">
             <TopFourView
               teams={topFourTeams}
-              observingTeamId={observingTeamId}
+              observingTeamId={activeObservingTeamId}
             />
           </div>
         )}
@@ -207,7 +216,7 @@ export default function LiveOverallRankingView({
                   key={teamId(entry)}
                   entry={entry}
                   rank={index + 1}
-                  isObserved={observingTeamId === teamId(entry)}
+                  isObserved={activeObservingTeamId === teamId(entry)}
                   showTeamFlags={showTeamFlags}
                   showFullTeamName={showFullTeamName}
                 />

@@ -29,7 +29,10 @@ function sortByPoints(data) {
   );
 }
 
-export default function LiveOverallRankingView({ tournamentID }) {
+export default function LiveOverallRankingView({
+  tournamentID,
+  showObserverHighlight = true,
+}) {
   const [teams, setTeams] = useState([]);
   const [showTopFour, setShowTopFour] = useState(false);
   const [topFourTeams, setTopFourTeams] = useState([]);
@@ -191,11 +194,13 @@ export default function LiveOverallRankingView({ tournamentID }) {
 
   if (!isMatchConnected) return null;
 
+  const activeObservingTeamId = showObserverHighlight ? observingTeamId : null;
+
   return (
     <div className="relative h-screen w-screen font-sans">
       {showTopFour && topFourTeams.length > 0 && (
         <div className="fixed top-12 left-1/2 w-full max-w-275 -translate-x-1/2 px-4">
-          <TopFourView teams={topFourTeams} observingTeamId={observingTeamId} />
+          <TopFourView teams={topFourTeams} observingTeamId={activeObservingTeamId} />
         </div>
       )}
 
@@ -226,7 +231,7 @@ export default function LiveOverallRankingView({ tournamentID }) {
               <TeamRow
                 key={entry.team.id}
                 entry={entry}
-                isObserved={observingTeamId === entry.team.id}
+                isObserved={activeObservingTeamId === entry.team.id}
                 isOverall
                 rank={index + 1}
               />

@@ -18,6 +18,7 @@ import {
 } from "@/lib/widget-catalog";
 import TeamNameSwitch from "@/components/common/TeamNameSwitch";
 import TeamFlagsSwitch from "@/components/common/TeamFlagsSwitch";
+import ObserverHighlightSwitch from "@/components/common/ObserverHighlightSwitch";
 
 export default function WidgetsPage() {
   const { userId, tournamentID } = useParams();
@@ -110,10 +111,12 @@ export default function WidgetsPage() {
           <div className="mt-3 flex flex-wrap items-center gap-4">
             <TeamFlagsSwitch />
             <TeamNameSwitch />
+            <ObserverHighlightSwitch />
           </div>
           <p className="mt-2 text-xs text-gray-500">
             Applies to live overall ranking and team elimination overlays.
-            Refresh the OBS browser source after changing.
+            Observer highlight shows which team the camera is on. Refresh the
+            OBS browser source after changing.
           </p>
         </section>
 

@@ -49,6 +49,7 @@ export async function GET(request) {
     "themeConfig.colors": 1,
     "themeConfig.showTeamFlags": 1,
     "themeConfig.showFullTeamName": 1,
+    "themeConfig.showObserverHighlight": 1,
     allowedDesignIds: 1,
     allowedTournamentIds: 1,
     tournamentDesigns: 1,
@@ -118,6 +119,13 @@ export async function PUT(request) {
     checks.showFullTeamName = "Must be a boolean";
   }
 
+  if (
+    body.showObserverHighlight !== undefined &&
+    typeof body.showObserverHighlight !== "boolean"
+  ) {
+    checks.showObserverHighlight = "Must be a boolean";
+  }
+
   const errors = validate(checks);
   if (errors)
     return NextResponse.json(
@@ -154,6 +162,8 @@ export async function PUT(request) {
     $set["themeConfig.showTeamFlags"] = body.showTeamFlags;
   if (body.showFullTeamName !== undefined)
     $set["themeConfig.showFullTeamName"] = body.showFullTeamName;
+  if (body.showObserverHighlight !== undefined)
+    $set["themeConfig.showObserverHighlight"] = body.showObserverHighlight;
 
   if (body.tournamentDesignColors !== undefined) {
     // Normalize nested structure: { tid: { design: colorObj } }

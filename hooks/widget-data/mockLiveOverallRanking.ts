@@ -45,7 +45,7 @@ const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
     players: players([
       [0, 100],
       [0, 100],
-      [4, 30, true],
+      [4, 30],
       [0, 55],
     ]),
   },
@@ -63,7 +63,7 @@ const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
     players: players([
       [0, 60],
       [0, 45],
-      [4, 20],
+      [4, 20, true],
       [5, 0],
     ]),
   },

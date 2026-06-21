@@ -5,7 +5,7 @@ import { getTeamDisplayLabel } from "@/lib/utils/teamDisplay";
 import { getTeamFlagDisplay } from "@/lib/utils/teamFlag";
 import type { LiveRankEntry } from "@/types/live-rank";
 import PlayerStatusBars from "./PlayerStatusBars";
-import { getLiveRankingLayout } from "./layout";
+import { getLiveRankingLayout, LIVE_RANKING_RANK_WIDTH } from "./layout";
 
 function teamId(entry: LiveRankEntry) {
   return entry.team.id ?? entry.team._id ?? String(entry.rank);
@@ -51,6 +51,13 @@ export default function LiveRankingRow({
   const teamLabel = getTeamDisplayLabel(entry.team, showFullTeamName);
   const flagDisplay = getTeamFlagDisplay(entry.team);
   const hasFlag = showTeamFlags && flagDisplay.kind !== "none";
+  const observedBg = "var(--widget-secondary, #FFDD75)";
+  const observedText = "var(--widget-primary, #00473C)";
+
+  const identityWidth = LIVE_RANKING_RANK_WIDTH + layout.teamColWidth;
+  const statsWidth = layout.panelWidth - identityWidth;
+  const statsFontSize = 25;
+  const statsLineHeight = 30;
 
   return (
     <div
@@ -63,88 +70,104 @@ export default function LiveRankingRow({
       data-flip-id={teamId(entry)}
     >
       <div
-        className="flex w-[48px] shrink-0 items-center justify-center font-bold transition-colors duration-200"
-        style={{
-          backgroundColor: isObserved
-            ? "var(--widget-secondary, #FFDD75)"
-            : "var(--widget-primary, #00473C)",
-          color: isObserved ? "#000000" : "var(--widget-secondary, #FFDD75)",
-          fontFamily: "var(--widget-font-secondary), 'Agency FB', sans-serif",
-          fontSize: "25px",
-          lineHeight: "30px",
-        }}
+        className="relative flex shrink-0 items-stretch"
+        style={{ width: identityWidth }}
       >
-        {rank}
-      </div>
+        <div
+          className="flex shrink-0 items-center justify-center font-bold"
+          style={{
+            width: LIVE_RANKING_RANK_WIDTH,
+            backgroundColor: isObserved
+              ? observedBg
+              : "var(--widget-primary, #00473C)",
+            color: isObserved
+              ? observedText
+              : "var(--widget-secondary, #FFDD75)",
+            fontFamily: "var(--widget-font-secondary), 'Agency FB', sans-serif",
+            fontSize: `${statsFontSize}px`,
+            lineHeight: `${statsLineHeight}px`,
+          }}
+        >
+          {rank}
+        </div>
 
-      <div
-        className={cn(
-          "relative box-border flex shrink-0 items-center border border-widget-secondary-dark px-2",
-          isObserved && "ring-2 ring-widget-secondary ring-inset",
-        )}
-        style={{
-          width: layout.teamColWidth,
-          background:
-            "linear-gradient(90deg, var(--widget-gradient-from, #009980) 0%, var(--widget-primary, #00473C) 100%)",
-          borderColor: "var(--widget-secondary-dark, #C6A646)",
-          marginTop: "-1.5px",
-          height: "42px",
-        }}
-      >
-        {missing ? (
-          <span
-            className="w-full text-center font-bold text-widget-status-knocked uppercase"
-            style={{
-              fontFamily:
-                "var(--widget-font-secondary), 'Agency FB', sans-serif",
-              fontSize: "16px",
-            }}
-          >
-            MISSING
-          </span>
-        ) : (
-          <>
-            {hasFlag && (
-              <span className="w-[24px] flex items-center justify-center shrink-0 mr-1.5">
-                <TeamFlag
-                  team={entry.team}
-                  showTeamFlags={showTeamFlags}
-                />
-              </span>
-            )}
-            {logo && (
-              <Image
-                src={logo}
-                alt={entry.team.name}
-                width={22}
-                height={22}
-                className="mr-2 size-[22px] shrink-0 object-contain"
-                unoptimized
-              />
-            )}
+        <div
+          className={cn(
+            "relative box-border flex shrink-0 items-center px-2",
+            !isObserved && "border",
+          )}
+          style={{
+            width: layout.teamColWidth,
+            background: isObserved
+              ? observedBg
+              : "linear-gradient(90deg, var(--widget-gradient-from, #009980) 0%, var(--widget-primary, #00473C) 100%)",
+            borderColor: "var(--widget-secondary-dark, #C6A646)",
+            ...(isObserved ? {} : { marginTop: "-1.5px", height: "42px" }),
+          }}
+        >
+          {missing ? (
             <span
-              className="min-w-0 flex-1 truncate font-bold text-white uppercase"
+              className="w-full text-center font-bold text-widget-status-knocked uppercase"
               style={{
                 fontFamily:
                   "var(--widget-font-secondary), 'Agency FB', sans-serif",
-                fontSize: showFullTeamName ? "14px" : "18px",
-                lineHeight: showFullTeamName ? "16px" : "18px",
+                fontSize: "16px",
               }}
             >
-              {teamLabel}
+              MISSING
             </span>
-          </>
-        )}
+          ) : (
+            <>
+              {hasFlag && (
+                <span className="mr-1.5 flex w-[24px] shrink-0 items-center justify-center">
+                  <TeamFlag team={entry.team} showTeamFlags={showTeamFlags} />
+                </span>
+              )}
+              {logo && (
+                <Image
+                  src={logo}
+                  alt={entry.team.name}
+                  width={22}
+                  height={22}
+                  className="mr-2 size-[22px] shrink-0 object-contain"
+                  unoptimized
+                />
+              )}
+              <span
+                className="min-w-0 flex-1 truncate font-bold uppercase"
+                style={{
+                  color: isObserved ? observedText : "#FFFFFF",
+                  fontFamily:
+                    "var(--widget-font-secondary), 'Agency FB', sans-serif",
+                  fontSize: `${statsFontSize}px`,
+                  lineHeight: `${statsLineHeight}px`,
+                }}
+              >
+                {teamLabel}
+              </span>
+            </>
+          )}
 
-        {eliminated && (
-          <div className="pointer-events-none absolute inset-0 bg-black/45" />
+          {eliminated && (
+            <div className="pointer-events-none absolute inset-0 bg-black/45" />
+          )}
+        </div>
+
+        {hasBlueZone && (
+          <div
+            className="pointer-events-none absolute inset-0 z-10 animate-pulse ring-2 ring-blue-400 ring-inset"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(147,197,253,0.5) 50%, rgba(59,130,246,0.5) 100%, transparent 100%)",
+            }}
+          />
         )}
       </div>
 
       <div
         className="relative flex shrink-0 items-center overflow-hidden"
         style={{
-          width: layout.panelWidth - layout.teamColWidth - 48,
+          width: statsWidth,
           backgroundColor: "var(--widget-v1-forest, #003129)",
         }}
       >
@@ -163,8 +186,8 @@ export default function LiveRankingRow({
                 left: layout.statsValues.ptsLeft,
                 fontFamily:
                   "var(--widget-font-secondary), 'Agency FB', sans-serif",
-                fontSize: "25px",
-                lineHeight: "30px",
+                fontSize: `${statsFontSize}px`,
+                lineHeight: `${statsLineHeight}px`,
               }}
             >
               {String(entry.overAllPoints ?? 0).padStart(2, "0")}
@@ -176,8 +199,8 @@ export default function LiveRankingRow({
                 left: layout.statsValues.elimsLeft,
                 fontFamily:
                   "var(--widget-font-secondary), 'Agency FB', sans-serif",
-                fontSize: "25px",
-                lineHeight: "30px",
+                fontSize: `${statsFontSize}px`,
+                lineHeight: `${statsLineHeight}px`,
               }}
             >
               {String(entry.kills ?? 0).padStart(2, "0")}
@@ -189,16 +212,6 @@ export default function LiveRankingRow({
           <div className="pointer-events-none absolute inset-0 bg-black/45" />
         )}
       </div>
-
-      {hasBlueZone && (
-        <div
-          className="pointer-events-none absolute inset-0 z-50 animate-pulse ring-2 ring-blue-400 ring-inset"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(147,197,253,0.5) 50%, rgba(59,130,246,0.5) 100%, transparent 100%)",
-          }}
-        />
-      )}
     </div>
   );
 }
