@@ -2,6 +2,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import TeamFlag from "@/components/common/TeamFlag";
 import { getTeamDisplayLabel } from "@/lib/utils/teamDisplay";
+import { getTeamFlagDisplay } from "@/lib/utils/teamFlag";
 import type { LiveRankEntry } from "@/types/live-rank";
 import PlayerStatusBars from "./PlayerStatusBars";
 import { getLiveRankingLayout } from "./layout";
@@ -44,6 +45,8 @@ export default function LiveRankingRow({
   const logo = teamLogo(entry);
   const layout = getLiveRankingLayout(showFullTeamName);
   const teamLabel = getTeamDisplayLabel(entry.team, showFullTeamName);
+  const flagDisplay = getTeamFlagDisplay(entry.team);
+  const hasFlag = showTeamFlags && flagDisplay.kind !== "none";
 
   return (
     <div
@@ -95,11 +98,14 @@ export default function LiveRankingRow({
           </span>
         ) : (
           <>
-            <TeamFlag
-              team={entry.team}
-              showTeamFlags={showTeamFlags}
-              className="mr-1.5 shrink-0"
-            />
+            {hasFlag && (
+              <span className="w-[24px] flex items-center justify-center shrink-0 mr-1.5">
+                <TeamFlag
+                  team={entry.team}
+                  showTeamFlags={showTeamFlags}
+                />
+              </span>
+            )}
             {logo && (
               <Image
                 src={logo}
