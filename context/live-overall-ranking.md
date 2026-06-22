@@ -1,6 +1,6 @@
 # Live Overall Ranking Widget
 
-OBS overlay for **tournament-wide standings** during a live match. Shows all teams ranked by **overall points** (not just match points), with live player status, kills, and broadcast-style effects.
+OBS overlay for **tournament-wide standings** during a live match. Shows **all teams** ranked by **overall points** (not just match points), with live player status, kills, and broadcast-style effects. Supports official brackets (~16 teams) and **local tournaments** with larger team counts — the list is not capped at 16.
 
 ---
 
@@ -20,6 +20,7 @@ OBS overlay for **tournament-wide standings** during a live match. Shows all tea
 - **Initial load:** HTTP snapshot via RTK Query
 - **Live updates:** WebSocket on `/tournament?id={tournamentId}`
 - **Sort:** By `overAllPoints` (descending)
+- **Team count:** No slice or limit on the sidebar list — every team in `MATCH_LIVE_RANK_DATA` / the HTTP snapshot is rendered. The only `.slice(0, 4)` in the hook is for **Top Four**, not the ranking panel.
 
 ### WebSocket Events
 
@@ -29,6 +30,7 @@ OBS overlay for **tournament-wide standings** during a live match. Shows all tea
 | `MATCH_LIVE_RANK_DATA` | Refreshes full ranking list |
 | `SET_OBSERVING_PLAYER` | Marks the team the camera is on |
 | `TEAM_ELIMINATION` | Queues elimination overlay |
+| `TOP_FOUR` | Shows Top Four banner; hides sidebar for rest of match |
 
 ---
 
@@ -48,12 +50,47 @@ Footer legend: **ALIVE** (cyan) · **KNOCKED** (red) · **ELIMINATED** (gray)
 
 Typography: clan tag / team name uses the same font size as PTS and ELIMS (25px).
 
+### Panel height (all teams)
+
+The v1 sidebar lists **every team** returned by the API. There is **no 16-team cap** — official and local tournaments use the same code path.
+
+Panel height is **content-driven** (not a fixed 709px). It grows with team count:
+
+```
+panelHeight = header + (teamCount × rowHeight) + legend
+            = 40px + (teamCount × 40.625px) + 19px
+```
+
+Use `getLiveRankingPanelHeight(teamCount)` in [`layout.ts`](themes/v1/_components/live-ranking/layout.ts) for the exact pixel value.
+
+| Constant | Value | Used in |
+|----------|-------|---------|
+| `LIVE_RANKING_HEADER_HEIGHT` | 40px | `LiveRankingHeader` |
+| `LIVE_RANKING_ROW_HEIGHT` | 40.625px | `LiveRankingRow` |
+| `LIVE_RANKING_LEGEND_HEIGHT` | 19px | `LiveRankingLegend` |
+| Panel `top` offset | 247px | `LiveOverallRankingView` |
+
+**Examples**
+
+| Teams | Panel height |
+|-------|----------------|
+| 16 (official) | 709px |
+| 24 (local preview mock) | 1034px |
+
+**OBS / canvas**
+
+- Stage wrapper: `min-h-screen overflow-x-hidden` — vertical overflow is allowed so extra rows are not clipped.
+- Panel starts at `top: 247px`. On a 1080p browser source, rows below ~833px from the panel top sit outside the default fold.
+- For local brackets with 20+ teams, **increase the OBS browser source height** if lower rows must appear on stream.
+
+**Historical note:** v1 previously used fixed `h-[709px]` / `h-[650px]` with `overflow-hidden` on the list, which clipped at exactly 16 rows (`650 ÷ 40.625 = 16`). That was a UI constraint only — data always included all teams.
+
 ---
 
 ## Live Behaviors
 
 1. **GSAP Flip animations** — rows reorder smoothly when ranks change; pending updates queued during animation
-2. **Top Four transition** — when ≤4 teams alive, list slides out and **Top Four** cards appear (WWCD % when available)
+2. **Top Four transition** — on `TOP_FOUR` event, sidebar slides out and v1 **Top Four** cards slide down from top (persistent; WWCD % on rank-1 card)
 3. **Team elimination overlay** — same OBS source; animated overlay on `TEAM_ELIMINATION` (~4.5s, queued)
 4. **Observer highlight** — solid yellow on **# + team only** when camera is on that team (stats columns unchanged)
 5. **Outside zone (blue zone)** — blue pulse on **# + team only** when any alive player has `isOutsideZone: true`
@@ -77,10 +114,11 @@ Available in **controller toolbar** and **widgets page** under Team Display.
 
 ## Preview Mode (`?preview=1`)
 
-- 16 mock teams (flags, clan tags, knocked/dead/missing, outside zone on team 3)
+- 24 mock teams (flags, clan tags, knocked/dead/missing, outside zone on team 3)
 - No WebSocket or API calls
 - **Trigger Observer** — cycles observed team (team-1 → team-2 → team-3 → team-4 → clear)
 - **Trigger Elimination** — fires sample elimination overlay
+- **Trigger Top Four** — shows Top Four banner with mock top 4 teams
 - Default observed team: **team-2** (SECTOR 12 ES)
 
 Example:
@@ -103,6 +141,8 @@ Example:
 | Data hook | `hooks/widget-data/useLiveOverallRanking.ts` |
 | Mock data | `hooks/widget-data/mockLiveOverallRanking.ts` |
 | Elimination | `themes/v1/_components/team-elimination/*` |
+| Top Four | `themes/v1/_components/top-four/*` |
+| Top Four types | `types/top-four.d.ts` |
 | Toggles | `components/common/TeamFlagsSwitch.jsx`, `TeamNameSwitch.jsx`, `ObserverHighlightSwitch.jsx` |
 | User model | `lib/db/models/User.js` (`themeConfig.*`) |
 | Settings API | `app/api/user/settings/route.js` |
@@ -120,6 +160,7 @@ Example:
 
 ## Architecture Notes
 
-- **Theme registry:** `getUserDesignRegistry()` routes v1 users to `themes/v1/LiveOverallRankingView.tsx`; default bundle falls back to legacy `TeamRow` layout.
+- **Theme registry:** `getUserDesignRegistry()` routes v1 users to `themes/v1/LiveOverallRankingView.tsx`; default bundle falls back to legacy `TeamRow` layout (also uncapped — no fixed list height).
+- **Dynamic team list:** v1 panel/list heights are not fixed; rows stack naturally. Layout math lives in `themes/v1/_components/live-ranking/layout.ts`.
 - **Observer vs blue zone:** Both effects apply to the rank + team identity block only, not PTS/ALIVE/ELIMS.
 - **Elimination integration:** Elimination overlay is layered on the same page as the ranking list — no separate OBS source required for eliminations during overall ranking.

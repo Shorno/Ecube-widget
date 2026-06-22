@@ -306,12 +306,176 @@ const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
       [5, 0],
     ]),
   },
+  {
+    team: {
+      id: "team-17",
+      name: "DESERT VIPERS",
+      clanTag: "DSV",
+      logo: "https://api.ecube.gg/images/defaults/default-team.png",
+      country_code: "AE",
+      country_flag_emoji: "🇦🇪",
+    },
+    points: 0,
+    overAllPoints: 1,
+    kills: 0,
+    players: players([
+      [0, 100],
+      [0, 80],
+      [0, 60],
+      [0, 40],
+    ]),
+  },
+  {
+    team: {
+      id: "team-18",
+      name: "COASTAL RAIDERS",
+      clanTag: "CSR",
+      logo: "https://api.ecube.gg/images/defaults/default-team.png",
+      country_code: "AU",
+      country_flag_emoji: "🇦🇺",
+    },
+    points: 0,
+    overAllPoints: 1,
+    kills: 0,
+    players: players([
+      [5, 0],
+      [5, 0],
+      [5, 0],
+      [5, 0],
+    ]),
+  },
+  {
+    team: {
+      id: "team-19",
+      name: "NORTHERN LIGHTS",
+      clanTag: "NRL",
+      logo: "https://api.ecube.gg/images/defaults/default-team.png",
+      country_code: "CA",
+      country_flag_emoji: "🇨🇦",
+    },
+    points: 0,
+    overAllPoints: 0,
+    kills: 0,
+    players: players([
+      [0, 55],
+      [0, 45],
+      [4, 20],
+      [5, 0],
+    ]),
+  },
+  {
+    team: {
+      id: "team-20",
+      name: "SILVER STORM",
+      clanTag: "SLS",
+      logo: "https://api.ecube.gg/images/defaults/default-team.png",
+      country_code: "BR",
+      country_flag_emoji: "🇧🇷",
+    },
+    points: 0,
+    overAllPoints: 0,
+    kills: 0,
+    players: players([
+      [0, 100],
+      [0, 100],
+      [0, 100],
+      [0, 100],
+    ]),
+  },
+  {
+    team: {
+      id: "team-21",
+      name: "EAGLE SQUAD",
+      clanTag: "EGL",
+      logo: "https://api.ecube.gg/images/defaults/default-team.png",
+      country_code: "MX",
+      country_flag_emoji: "🇲🇽",
+    },
+    points: 0,
+    overAllPoints: 0,
+    kills: 0,
+    isMissing: true,
+    players: [],
+  },
+  {
+    team: {
+      id: "team-22",
+      name: "MIDNIGHT CREW",
+      clanTag: "MDC",
+      logo: "https://api.ecube.gg/images/defaults/default-team.png",
+      country_code: "PH",
+      country_flag_emoji: "🇵🇭",
+    },
+    points: 0,
+    overAllPoints: 0,
+    kills: 0,
+    players: players([
+      [0, 30],
+      [0, 25],
+      [0, 20],
+      [0, 15],
+    ]),
+  },
+  {
+    team: {
+      id: "team-23",
+      name: "TITAN FORCE",
+      clanTag: "TTN",
+      logo: "https://api.ecube.gg/images/defaults/default-team.png",
+      country_code: "TR",
+      country_flag_emoji: "🇹🇷",
+    },
+    points: 0,
+    overAllPoints: 0,
+    kills: 0,
+    players: players([
+      [4, 10],
+      [4, 8],
+      [5, 0],
+      [5, 0],
+    ]),
+  },
+  {
+    team: {
+      id: "team-24",
+      name: "LOCAL LEGENDS",
+      clanTag: "LLG",
+      logo: "https://api.ecube.gg/images/defaults/default-team.png",
+      country_code: "BD",
+      country_flag_emoji: "🇧🇩",
+    },
+    points: 0,
+    overAllPoints: 0,
+    kills: 0,
+    players: players([
+      [0, 90],
+      [0, 85],
+      [0, 75],
+      [0, 70],
+    ]),
+  },
 ];
 
 export function getMockLiveOverallRanking(): LiveRankEntry[] {
   return [...MOCK_TEAMS]
     .sort((a, b) => (b.overAllPoints ?? 0) - (a.overAllPoints ?? 0))
     .map((entry, index) => ({ ...entry, rank: index + 1 }));
+}
+
+/** Sample WWCD % for preview top-four cards (rank order) */
+const MOCK_TOP_FOUR_WIN_PROBABILITIES = [72, 18, 6, 4];
+
+/** Top 4 alive teams for preview TOP_FOUR trigger */
+export function getMockTopFour(): LiveRankEntry[] {
+  const alive = getMockLiveOverallRanking().filter(
+    (entry) =>
+      !(entry.players ?? []).every((player) => player.liveState === 5),
+  );
+  return alive.slice(0, 4).map((entry, index) => ({
+    ...entry,
+    rank: index + 1,
+    winProbability: MOCK_TOP_FOUR_WIN_PROBABILITIES[index] ?? null,
+  }));
 }
 
 /** Team id used for observed-team highlight in preview mode */

@@ -5,7 +5,7 @@ import { getTeamDisplayLabel } from "@/lib/utils/teamDisplay";
 import { getTeamFlagDisplay } from "@/lib/utils/teamFlag";
 import type { LiveRankEntry } from "@/types/live-rank";
 import PlayerStatusBars from "./PlayerStatusBars";
-import { getLiveRankingLayout, LIVE_RANKING_RANK_WIDTH } from "./layout";
+import { getLiveRankingLayout, LIVE_RANKING_RANK_WIDTH, LIVE_RANKING_ROW_HEIGHT } from "./layout";
 
 function teamId(entry: LiveRankEntry) {
   return entry.team.id ?? entry.team._id ?? String(entry.rank);
@@ -62,11 +62,11 @@ export default function LiveRankingRow({
   return (
     <div
       className={cn(
-        "relative flex h-[40.625px] items-stretch select-none overflow-visible",
+        "relative flex items-stretch select-none overflow-visible",
         eliminated && "opacity-75",
         className,
       )}
-      style={{ width: layout.panelWidth }}
+      style={{ width: layout.panelWidth, height: LIVE_RANKING_ROW_HEIGHT }}
       data-flip-id={teamId(entry)}
     >
       <div

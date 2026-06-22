@@ -4,8 +4,9 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
+import { useLiveOverallRanking } from "@/hooks/widget-data";
 import { TeamRow } from "@/app/[userId]/[tournamentID]/in-game/_components/TeamRow";
-import { TopFourView } from "@/app/[userId]/[tournamentID]/in-game/_components/TopFourView";
+import TopFourLayer from "@/themes/v1/_components/top-four/TopFourLayer";
 
 gsap.registerPlugin(Flip);
 
@@ -23,22 +24,24 @@ const stateList = [
   { label: "ELIMINATED", color: "bg-gray-500" },
 ];
 
-function sortByPoints(data) {
-  return [...data].sort(
-    (a, b) => (b.overAllPoints ?? 0) - (a.overAllPoints ?? 0),
-  );
+function teamId(entry) {
+  return entry.team?.id ?? entry.team?._id ?? String(entry.rank);
 }
 
 export default function LiveOverallRankingView({
   tournamentID,
+  showTeamFlags = true,
+  showFullTeamName = false,
   showObserverHighlight = true,
+  preview = false,
 }) {
-  const [teams, setTeams] = useState([]);
-  const [showTopFour, setShowTopFour] = useState(false);
-  const [topFourTeams, setTopFourTeams] = useState([]);
-  const wasTopFourRef = useRef(false);
-  const [observingTeamId, setObservingTeamId] = useState(null);
-  const [isMatchConnected, setIsMatchConnected] = useState(false);
+  const {
+    teams,
+    showTopFour,
+    topFourTeams,
+    observingTeamId,
+    ready,
+  } = useLiveOverallRanking(tournamentID, { preview });
 
   const containerRef = useRef(null);
   const listPanelRef = useRef(null);
@@ -46,9 +49,11 @@ export default function LiveOverallRankingView({
   const isFirstRenderRef = useRef(true);
   const isAnimatingRef = useRef(false);
   const pendingDataRef = useRef(null);
-  const applyTeamsDataRef = useRef(null);
+  const sidebarHiddenRef = useRef(false);
+  const [displayTeams, setDisplayTeams] = useState([]);
+  const applyTeamsRef = useRef(null);
 
-  applyTeamsDataRef.current = (newData) => {
+  applyTeamsRef.current = (newData) => {
     if (isAnimatingRef.current) {
       pendingDataRef.current = newData;
       return;
@@ -59,58 +64,13 @@ export default function LiveOverallRankingView({
       );
     }
     isFirstRenderRef.current = false;
-    setTeams(newData);
+    setDisplayTeams(newData);
   };
 
   useEffect(() => {
-    if (!tournamentID) return;
-
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-    if (!apiBase) return;
-
-    const wsBase = apiBase.replace(/^https/, "wss").replace(/^http/, "ws");
-    const ws = new WebSocket(`${wsBase}/tournament?id=${tournamentID}`);
-
-    ws.onmessage = (event) => {
-      let parsed;
-      try {
-        parsed = JSON.parse(event.data);
-      } catch {
-        return;
-      }
-
-      const { event: eventName, data } = parsed;
-
-      if (eventName === "match-connected") setIsMatchConnected(true);
-
-      if (eventName === "MATCH_LIVE_RANK_DATA" && Array.isArray(data)) {
-        applyTeamsDataRef.current(sortByPoints(data));
-      }
-
-      if (eventName === "SET_OBSERVING_PLAYER") {
-        setObservingTeamId(data?.player?.teamId ?? null);
-      }
-    };
-
-    ws.onclose = () => setIsMatchConnected(false);
-
-    return () => ws.close();
-  }, [tournamentID]);
-
-  useEffect(() => {
-    if (!tournamentID) return;
-
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-    if (!apiBase) return;
-
-    fetch(`${apiBase}/matches/active-match/rank-data/${tournamentID}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (!Array.isArray(data)) return;
-        applyTeamsDataRef.current(sortByPoints(data));
-      })
-      .catch(() => {});
-  }, [tournamentID]);
+    if (teams.length === 0) return;
+    applyTeamsRef.current(teams);
+  }, [teams]);
 
   useLayoutEffect(() => {
     if (!flipStateRef.current) return;
@@ -123,68 +83,28 @@ export default function LiveOverallRankingView({
         if (pendingDataRef.current) {
           const next = pendingDataRef.current;
           pendingDataRef.current = null;
-          applyTeamsDataRef.current(next);
+          applyTeamsRef.current(next);
         }
       },
     });
     flipStateRef.current = null;
-  }, [teams]);
+  }, [displayTeams]);
 
   useEffect(() => {
-    if (teams.length === 0) return;
+    if (!showTopFour || sidebarHiddenRef.current) return;
 
-    const aliveTeams = teams.filter(
-      (t) => !(t.players ?? []).every((p) => p.liveState === 5),
-    );
-
-    if (wasTopFourRef.current && aliveTeams.length > 4) {
-      wasTopFourRef.current = false;
-      setTopFourTeams([]);
-      setShowTopFour(false);
-      return;
+    if (listPanelRef.current) {
+      sidebarHiddenRef.current = true;
+      gsap.to(listPanelRef.current, {
+        x: "110%",
+        opacity: 0,
+        duration: 0.4,
+        ease: "power2.in",
+      });
+    } else {
+      sidebarHiddenRef.current = true;
     }
-
-    if (
-      !wasTopFourRef.current &&
-      aliveTeams.length <= 4 &&
-      aliveTeams.length > 0
-    ) {
-      wasTopFourRef.current = true;
-      const captured = aliveTeams;
-
-      if (listPanelRef.current) {
-        gsap.to(listPanelRef.current, {
-          x: "110%",
-          opacity: 0,
-          duration: 0.4,
-          ease: "power2.in",
-          onComplete: () => {
-            setTopFourTeams(captured);
-            setShowTopFour(true);
-          },
-        });
-      } else {
-        setTopFourTeams(captured);
-        setShowTopFour(true);
-      }
-      return;
-    }
-
-    if (wasTopFourRef.current) {
-      const liveById = Object.fromEntries(teams.map((t) => [t.team.id, t]));
-      setTopFourTeams((prev) =>
-        prev.map((frozen) => {
-          const live = liveById[frozen.team.id];
-          if (!live) return frozen;
-          return {
-            ...frozen,
-            players: live.players,
-            winProbability: live.winProbability ?? frozen.winProbability,
-          };
-        }),
-      );
-    }
-  }, [teams]);
+  }, [showTopFour]);
 
   useEffect(() => {
     return () => {
@@ -192,19 +112,22 @@ export default function LiveOverallRankingView({
     };
   }, []);
 
-  if (!isMatchConnected) return null;
+  if (!ready) return null;
 
   const activeObservingTeamId = showObserverHighlight ? observingTeamId : null;
 
   return (
     <div className="relative h-screen w-screen font-sans">
       {showTopFour && topFourTeams.length > 0 && (
-        <div className="fixed top-12 left-1/2 w-full max-w-275 -translate-x-1/2 px-4">
-          <TopFourView teams={topFourTeams} observingTeamId={activeObservingTeamId} />
-        </div>
+        <TopFourLayer
+          teams={topFourTeams}
+          observingTeamId={activeObservingTeamId}
+          showTeamFlags={showTeamFlags}
+          showFullTeamName={showFullTeamName}
+        />
       )}
 
-      {!showTopFour && teams.length > 0 && (
+      {!showTopFour && displayTeams.length > 0 && (
         <div
           ref={listPanelRef}
           className="fixed right-4 bottom-4 w-full max-w-100"
@@ -227,11 +150,11 @@ export default function LiveOverallRankingView({
             ref={containerRef}
             className="relative flex flex-col bg-slate-900"
           >
-            {teams.map((entry, index) => (
+            {displayTeams.map((entry, index) => (
               <TeamRow
-                key={entry.team.id}
+                key={teamId(entry)}
                 entry={entry}
-                isObserved={activeObservingTeamId === entry.team.id}
+                isObserved={activeObservingTeamId === teamId(entry)}
                 isOverall
                 rank={index + 1}
               />

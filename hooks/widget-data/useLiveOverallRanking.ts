@@ -4,8 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetLiveRankingQuery } from "@/lib/services/widget-api";
 import type { LiveRankEntry } from "@/types/live-rank";
 import type { TeamEliminationPayload } from "@/types/team-elimination";
+import type { TopFourPayload } from "@/types/top-four";
 import {
   getMockLiveOverallRanking,
+  getMockTopFour,
   MOCK_OBSERVING_TEAM_ID,
   MOCK_OBSERVE_TEAM_IDS,
 } from "./mockLiveOverallRanking";
@@ -22,6 +24,26 @@ function withRankPositions(data: LiveRankEntry[]): LiveRankEntry[] {
     ...entry,
     rank: index + 1,
   }));
+}
+
+function teamId(entry: LiveRankEntry) {
+  return entry.team.id ?? entry.team._id ?? String(entry.rank);
+}
+
+function mergeTopFourTeams(
+  frozen: LiveRankEntry[],
+  liveData: LiveRankEntry[],
+): LiveRankEntry[] {
+  const liveById = Object.fromEntries(liveData.map((t) => [teamId(t), t]));
+  return frozen.map((entry) => {
+    const live = liveById[teamId(entry)];
+    if (!live) return entry;
+    return {
+      ...entry,
+      players: live.players,
+      winProbability: live.winProbability ?? entry.winProbability,
+    };
+  });
 }
 
 type Options = { preview?: boolean };
@@ -42,15 +64,32 @@ export function useLiveOverallRanking(
   const [teams, setTeams] = useState<LiveRankEntry[]>(() =>
     preview ? getMockLiveOverallRanking() : [],
   );
+  const [showTopFour, setShowTopFour] = useState(false);
+  const [topFourTeams, setTopFourTeams] = useState<LiveRankEntry[]>([]);
   const [isMatchConnected, setIsMatchConnected] = useState(preview);
   const [observingTeamId, setObservingTeamId] = useState<string | null>(
     preview ? MOCK_OBSERVING_TEAM_ID : null,
   );
+  const showTopFourRef = useRef(showTopFour);
   const applyTeamsRef = useRef<(data: LiveRankEntry[]) => void>(() => {});
 
+  showTopFourRef.current = showTopFour;
+
   applyTeamsRef.current = (data) => {
-    setTeams(withRankPositions(data));
+    const ranked = withRankPositions(data);
+    setTeams(ranked);
+    if (showTopFourRef.current) {
+      setTopFourTeams((prev) =>
+        prev.length > 0 ? mergeTopFourTeams(prev, ranked) : prev,
+      );
+    }
   };
+
+  const applyTopFour = useCallback((data: TopFourPayload) => {
+    const ranked = withRankPositions(data).slice(0, 4);
+    setTopFourTeams(ranked);
+    setShowTopFour(true);
+  }, []);
 
   useEffect(() => {
     if (preview) return;
@@ -85,6 +124,10 @@ export function useLiveOverallRanking(
         applyTeamsRef.current(data as LiveRankEntry[]);
       }
 
+      if (eventName === "TOP_FOUR" && Array.isArray(data)) {
+        applyTopFour(data as TopFourPayload);
+      }
+
       if (eventName === "SET_OBSERVING_PLAYER") {
         const payload = data as { player?: { teamId?: string } } | null;
         setObservingTeamId(payload?.player?.teamId ?? null);
@@ -98,7 +141,7 @@ export function useLiveOverallRanking(
     ws.onclose = () => setIsMatchConnected(false);
 
     return () => ws.close();
-  }, [tournamentID, preview, elimination.enqueue]);
+  }, [tournamentID, preview, elimination.enqueue, applyTopFour]);
 
   const triggerObservingPreview = useCallback(() => {
     if (!preview) return;
@@ -111,12 +154,20 @@ export function useLiveOverallRanking(
     });
   }, [preview]);
 
+  const triggerTopFourPreview = useCallback(() => {
+    if (!preview || showTopFour) return;
+    applyTopFour(getMockTopFour());
+  }, [preview, showTopFour, applyTopFour]);
+
   return {
     teams,
+    showTopFour,
+    topFourTeams,
     observingTeamId,
     ready: isMatchConnected && teams.length > 0,
     preview,
     triggerObservingPreview,
+    triggerTopFourPreview,
     ...elimination,
   };
 }

@@ -38,4 +38,7 @@ export const defaults = {
   statusDead: h("#4E4E4E"),
   // bg/text/border-widget-v1-forest
   v1Forest: h("#00332B"),
+  // Top-four WWCD bar fills
+  v1WwcdFrom: h("#4F63CE"),
+  v1WwcdTo: h("#3C41B4"),
 };

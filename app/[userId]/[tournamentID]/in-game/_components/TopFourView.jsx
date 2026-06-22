@@ -130,10 +130,10 @@ export function TopFourView({ teams, observingTeamId = null }) {
 
             {hasWinProb && (
               <div className="flex h-7 w-full">
-                <div className="flex flex-1 items-center justify-center bg-[#4F63CE] text-xs font-bold text-white">
+                <div className="flex flex-1 items-center justify-center bg-[var(--widget-v1-wwcd-from,#4F63CE)] text-xs font-bold text-widget-text-3">
                   WWCD
                 </div>
-                <div className="flex flex-1 items-center justify-center bg-[#3C41B4] text-xs font-bold text-white">
+                <div className="flex flex-1 items-center justify-center bg-[var(--widget-v1-wwcd-to,#3C41B4)] text-xs font-bold text-widget-text-3">
                   {Math.round(entry.winProbability)}%
                 </div>
               </div>
