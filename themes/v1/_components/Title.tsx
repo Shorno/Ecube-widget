@@ -27,26 +27,26 @@ export default function Title({
   return (
     <div className={cn("flex shrink-0 items-end gap-8 uppercase", className)}>
       {/* left — main title, first word plain, rest in primary color */}
-      <h1 className="font-primary text-widget-text-3 text-[140px] leading-none tracking-tight">
+      <h1 className="font-primary text-widget-text-3 text-[200px] leading-[200px] tracking-[-0.01em]">
         {titleMain} {titleHighlight}
       </h1>
 
       {/* right — match meta stacked */}
       {(data || subtitle) && (
-        <div className="mb-4 flex flex-col justify-center">
+        <div className="mb-6 flex flex-col justify-center">
           {data && stage && (
-            <span className="text-widget-text-3 text-[44px] leading-none">
+            <span className="text-widget-text-3 font-primary text-[50px] leading-[50px]">
               {stage}
             </span>
           )}
           {data && !stageOnly && (day || matchName) && (
-            <span className="text-widget-text-3 text-[44px] leading-none">
+            <span className="text-widget-text-3 font-primary text-[50px] leading-[50px]">
               {matchName && <span className="mr-14">{matchName}</span>}
               {day && <span>{day}</span>}
             </span>
           )}
           {subtitle && (
-            <span className="text-widget-text-3 text-[44px] leading-none">
+            <span className="text-widget-text-3 font-primary text-[50px] leading-[50px]">
               {subtitle}
             </span>
           )}

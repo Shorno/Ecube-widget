@@ -32,7 +32,7 @@ export default function SummaryDataBox({
   const outerGradId = `outerBoxGrad-${statKey || "default"}`;
 
   return (
-    <div className={cn("relative w-[436px] h-[179px] select-none mx-auto shrink-0", className)}>
+    <div className={cn("relative w-[436px] h-[179px] select-none shrink-0", className)}>
       {/* Background and Borders SVG */}
       <svg
         viewBox="0 0 436 179"
@@ -101,10 +101,7 @@ export default function SummaryDataBox({
       {/* Right Header Tab Content (Title Area) */}
       <div className="absolute left-[147px] top-[10.5px] w-[249px] h-[40px] flex items-center justify-center px-3">
         <span
-          className={cn(
-            "text-white font-secondary font-bold uppercase text-center select-none whitespace-nowrap",
-            label.length > 15 ? "text-[23px] leading-[28px]" : "text-[30px] leading-[36px]"
-          )}
+          className="text-white font-secondary font-bold uppercase text-center select-none whitespace-nowrap text-[30px] leading-[36px]"
           style={{ fontFamily: "var(--font-secondary), var(--font-barlow-condensed), sans-serif" }}
         >
           {label}
