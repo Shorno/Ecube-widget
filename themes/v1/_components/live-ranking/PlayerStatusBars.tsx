@@ -48,7 +48,9 @@ export default function PlayerStatusBars({
                   className="absolute bottom-0 left-0 w-full transition-all duration-300"
                   style={{
                     height: `${player.healths ?? 100}%`,
-                    backgroundColor: isKnocked ? "#FF0000" : "#00FFD5",
+                    backgroundColor: isKnocked
+                      ? "var(--widget-status-knocked, #FF0000)"
+                      : "var(--widget-status-alive, #00FFD5)",
                   }}
                 />
               </>

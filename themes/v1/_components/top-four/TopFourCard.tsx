@@ -67,7 +67,7 @@ export default function TopFourCard({
       >
         <TopFourCardShape />
 
-        <div className="relative z-10 flex h-full items-center pr-3 pl-3">
+        <div className="relative z-10 flex h-full items-center pl-6 pr-8">
           <div
             className={cn(
               "flex min-w-0 flex-1 items-center gap-2",
@@ -90,15 +90,18 @@ export default function TopFourCard({
               <Image
                 src={logo}
                 alt={entry.team.name}
-                width={28}
-                height={28}
+                width={40}
+                height={40}
                 className="shrink-0 object-contain"
                 unoptimized
               />
             )}
             <span
-              className="min-w-0 truncate font-primary font-bold uppercase"
-              style={{ fontSize: 18, lineHeight: "22px" }}
+              className={cn(
+                "min-w-0 truncate font-primary font-bold uppercase",
+                !isObserved && "text-widget-text-3",
+              )}
+              style={{ fontSize: 22, lineHeight: "26px" }}
             >
               {teamLabel}
             </span>
