@@ -12,6 +12,7 @@ import TopFourWwcdBar from "./TopFourWwcdBar";
 import {
   TOP_FOUR_CARD_HEIGHT,
   TOP_FOUR_CARD_WIDTH,
+  TOP_FOUR_WWCD_GAP,
 } from "./layout";
 
 function teamId(entry: LiveRankEntry) {
@@ -51,14 +52,14 @@ export default function TopFourCard({
   const teamLabel = getTeamDisplayLabel(entry.team, showFullTeamName);
   const flagDisplay = getTeamFlagDisplay(entry.team);
   const hasFlag = showTeamFlags && flagDisplay.kind !== "none";
-  const hasWinProb = rank === 1 && entry.winProbability != null;
+  const hasWinProb = entry.winProbability != null;
   const observedBg = "var(--widget-secondary, #FFDD75)";
   const observedText = "var(--widget-primary, #00473C)";
 
   return (
     <div
       className={cn("top-four-card relative flex shrink-0 flex-col", className)}
-      style={{ width: TOP_FOUR_CARD_WIDTH }}
+      style={{ width: TOP_FOUR_CARD_WIDTH, gap: TOP_FOUR_WWCD_GAP }}
       data-flip-id={teamId(entry)}
     >
       <div

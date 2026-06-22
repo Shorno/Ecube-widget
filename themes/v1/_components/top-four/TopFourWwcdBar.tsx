@@ -9,7 +9,7 @@ type Props = {
 export default function TopFourWwcdBar({ winProbability, className }: Props) {
   return (
     <div
-      className={cn("relative font-bold text-white", className)}
+      className={cn("relative font-bold text-widget-text-3", className)}
       style={{ width: TOP_FOUR_CARD_WIDTH, height: TOP_FOUR_WWCD_HEIGHT }}
     >
       {/* Background SVG Shape and Borders */}
@@ -24,12 +24,12 @@ export default function TopFourWwcdBar({ winProbability, className }: Props) {
         {/* Left Section Background (WWCD) */}
         <path
           d="M9 0 H150.5 V26 H22 L9 13 Z"
-          fill="#4F63CE"
+          fill="var(--widget-v1-wwcd-from, #4F63CE)"
         />
         {/* Right Section Background (Win Probability %) */}
         <path
           d="M150.5 0 H292 V13 L279 26 H150.5 Z"
-          fill="#3C41B4"
+          fill="var(--widget-v1-wwcd-to, #3C41B4)"
         />
         {/* Outer Border Frame */}
         <path

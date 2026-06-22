@@ -87,6 +87,8 @@ export const TOKEN_MAP = [
   { key: "statusDead", css: "--widget-status-dead" },
   // v1-specific extras — injected for any user whose saved colors include them
   { key: "v1Forest", css: "--widget-v1-forest" },
+  { key: "v1WwcdFrom", css: "--widget-v1-wwcd-from" },
+  { key: "v1WwcdTo", css: "--widget-v1-wwcd-to" },
 ];
 
 // ── Variant font defaults ─────────────────────────────────────────────────────

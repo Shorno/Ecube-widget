@@ -15,6 +15,18 @@ export const COLOR_TOKENS: TokenEntry[] = [
     css: "--widget-v1-forest",
     group: "v1 Extras",
   },
+  {
+    key: "v1WwcdFrom",
+    label: "WWCD From",
+    css: "--widget-v1-wwcd-from",
+    group: "v1 Extras",
+  },
+  {
+    key: "v1WwcdTo",
+    label: "WWCD To",
+    css: "--widget-v1-wwcd-to",
+    group: "v1 Extras",
+  },
 ];
 
 // Default CSS var values for v1-specific tokens.

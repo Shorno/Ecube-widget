@@ -314,6 +314,9 @@ export function getMockLiveOverallRanking(): LiveRankEntry[] {
     .map((entry, index) => ({ ...entry, rank: index + 1 }));
 }
 
+/** Sample WWCD % for preview top-four cards (rank order) */
+const MOCK_TOP_FOUR_WIN_PROBABILITIES = [72, 18, 6, 4];
+
 /** Top 4 alive teams for preview TOP_FOUR trigger */
 export function getMockTopFour(): LiveRankEntry[] {
   const alive = getMockLiveOverallRanking().filter(
@@ -323,7 +326,7 @@ export function getMockTopFour(): LiveRankEntry[] {
   return alive.slice(0, 4).map((entry, index) => ({
     ...entry,
     rank: index + 1,
-    winProbability: index === 0 ? 72 : entry.winProbability ?? null,
+    winProbability: MOCK_TOP_FOUR_WIN_PROBABILITIES[index] ?? null,
   }));
 }
 
