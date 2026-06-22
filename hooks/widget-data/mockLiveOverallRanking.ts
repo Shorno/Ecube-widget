@@ -314,6 +314,19 @@ export function getMockLiveOverallRanking(): LiveRankEntry[] {
     .map((entry, index) => ({ ...entry, rank: index + 1 }));
 }
 
+/** Top 4 alive teams for preview TOP_FOUR trigger */
+export function getMockTopFour(): LiveRankEntry[] {
+  const alive = getMockLiveOverallRanking().filter(
+    (entry) =>
+      !(entry.players ?? []).every((player) => player.liveState === 5),
+  );
+  return alive.slice(0, 4).map((entry, index) => ({
+    ...entry,
+    rank: index + 1,
+    winProbability: index === 0 ? 72 : entry.winProbability ?? null,
+  }));
+}
+
 /** Team id used for observed-team highlight in preview mode */
 export const MOCK_OBSERVING_TEAM_ID = "team-2";
 

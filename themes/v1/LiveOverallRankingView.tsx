@@ -6,12 +6,12 @@ import { Flip } from "gsap/Flip";
 import WidgetStage from "@/components/common/WidgetStage";
 import { useLiveOverallRanking } from "@/hooks/widget-data";
 import type { LiveRankEntry } from "@/types/live-rank";
-import { TopFourView } from "@/app/[userId]/[tournamentID]/in-game/_components/TopFourView";
 import LiveRankingHeader from "./_components/live-ranking/LiveRankingHeader";
 import LiveRankingRow from "./_components/live-ranking/LiveRankingRow";
 import LiveRankingLegend from "./_components/live-ranking/LiveRankingLegend";
 import LiveRankingPreviewControls from "./_components/live-ranking/LiveRankingPreviewControls";
 import TeamEliminationLayer from "./_components/team-elimination/TeamEliminationLayer";
+import TopFourLayer from "./_components/top-four/TopFourLayer";
 import { getLiveRankingLayout } from "./_components/live-ranking/layout";
 
 gsap.registerPlugin(Flip);
@@ -38,6 +38,8 @@ export default function LiveOverallRankingView({
   const rankingLayout = getLiveRankingLayout(showFullTeamName);
   const {
     teams,
+    showTopFour,
+    topFourTeams,
     observingTeamId,
     ready,
     currentElimination,
@@ -45,12 +47,9 @@ export default function LiveOverallRankingView({
     isLocked: eliminationLocked,
     triggerPreview,
     triggerObservingPreview,
+    triggerTopFourPreview,
     onExitComplete,
   } = useLiveOverallRanking(tournamentID, { preview });
-
-  const [showTopFour, setShowTopFour] = useState(false);
-  const [topFourTeams, setTopFourTeams] = useState<LiveRankEntry[]>([]);
-  const wasTopFourRef = useRef(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const listPanelRef = useRef<HTMLDivElement>(null);
@@ -58,6 +57,7 @@ export default function LiveOverallRankingView({
   const isFirstRenderRef = useRef(true);
   const isAnimatingRef = useRef(false);
   const pendingDataRef = useRef<LiveRankEntry[] | null>(null);
+  const sidebarHiddenRef = useRef(false);
   const [displayTeams, setDisplayTeams] = useState<LiveRankEntry[]>([]);
   const applyTeamsRef = useRef<(data: LiveRankEntry[]) => void>(() => {});
 
@@ -99,60 +99,20 @@ export default function LiveOverallRankingView({
   }, [displayTeams]);
 
   useEffect(() => {
-    if (displayTeams.length === 0) return;
+    if (!showTopFour || sidebarHiddenRef.current) return;
 
-    const aliveTeams = displayTeams.filter(
-      (t) => !(t.players ?? []).every((p) => p.liveState === 5),
-    );
-
-    if (wasTopFourRef.current && aliveTeams.length > 4) {
-      wasTopFourRef.current = false;
-      setTopFourTeams([]);
-      setShowTopFour(false);
-      return;
+    if (listPanelRef.current) {
+      sidebarHiddenRef.current = true;
+      gsap.to(listPanelRef.current, {
+        x: "110%",
+        opacity: 0,
+        duration: 0.4,
+        ease: "power2.in",
+      });
+    } else {
+      sidebarHiddenRef.current = true;
     }
-
-    if (
-      !wasTopFourRef.current &&
-      aliveTeams.length <= 4 &&
-      aliveTeams.length > 0
-    ) {
-      wasTopFourRef.current = true;
-      const captured = aliveTeams;
-
-      if (listPanelRef.current) {
-        gsap.to(listPanelRef.current, {
-          x: "110%",
-          opacity: 0,
-          duration: 0.4,
-          ease: "power2.in",
-          onComplete: () => {
-            setTopFourTeams(captured);
-            setShowTopFour(true);
-          },
-        });
-      } else {
-        setTopFourTeams(captured);
-        setShowTopFour(true);
-      }
-      return;
-    }
-
-    if (wasTopFourRef.current) {
-      const liveById = Object.fromEntries(displayTeams.map((t) => [teamId(t), t]));
-      setTopFourTeams((prev) =>
-        prev.map((frozen) => {
-          const live = liveById[teamId(frozen)];
-          if (!live) return frozen;
-          return {
-            ...frozen,
-            players: live.players,
-            winProbability: live.winProbability ?? frozen.winProbability,
-          };
-        }),
-      );
-    }
-  }, [displayTeams]);
+  }, [showTopFour]);
 
   useEffect(() => {
     return () => {
@@ -175,7 +135,9 @@ export default function LiveOverallRankingView({
             <LiveRankingPreviewControls
               onTriggerObserver={triggerObservingPreview}
               onTriggerElimination={triggerPreview}
+              onTriggerTopFour={triggerTopFourPreview}
               eliminationLocked={eliminationLocked}
+              topFourActive={showTopFour}
             />
           </>
         )}
@@ -191,12 +153,12 @@ export default function LiveOverallRankingView({
         />
 
         {showTopFour && topFourTeams.length > 0 && (
-          <div className="fixed top-12 left-1/2 w-full max-w-[1100px] -translate-x-1/2 px-4">
-            <TopFourView
-              teams={topFourTeams}
-              observingTeamId={activeObservingTeamId}
-            />
-          </div>
+          <TopFourLayer
+            teams={topFourTeams}
+            observingTeamId={activeObservingTeamId}
+            showTeamFlags={showTeamFlags}
+            showFullTeamName={showFullTeamName}
+          />
         )}
 
         {!showTopFour && displayTeams.length > 0 && (
