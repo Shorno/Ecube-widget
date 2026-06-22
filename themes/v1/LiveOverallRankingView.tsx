@@ -10,12 +10,19 @@ import { TopFourView } from "@/app/[userId]/[tournamentID]/in-game/_components/T
 import LiveRankingHeader from "./_components/live-ranking/LiveRankingHeader";
 import LiveRankingRow from "./_components/live-ranking/LiveRankingRow";
 import LiveRankingLegend from "./_components/live-ranking/LiveRankingLegend";
+import LiveRankingPreviewControls from "./_components/live-ranking/LiveRankingPreviewControls";
 import TeamEliminationLayer from "./_components/team-elimination/TeamEliminationLayer";
 import { getLiveRankingLayout } from "./_components/live-ranking/layout";
 
 gsap.registerPlugin(Flip);
 
-type Props = { tournamentID: string; showTeamFlags?: boolean; showFullTeamName?: boolean; preview?: boolean };
+type Props = {
+  tournamentID: string;
+  showTeamFlags?: boolean;
+  showFullTeamName?: boolean;
+  showObserverHighlight?: boolean;
+  preview?: boolean;
+};
 
 function teamId(entry: LiveRankEntry) {
   return entry.team.id ?? entry.team._id ?? String(entry.rank);
@@ -25,6 +32,7 @@ export default function LiveOverallRankingView({
   tournamentID,
   showTeamFlags = true,
   showFullTeamName = false,
+  showObserverHighlight = true,
   preview = false,
 }: Props) {
   const rankingLayout = getLiveRankingLayout(showFullTeamName);
@@ -36,6 +44,7 @@ export default function LiveOverallRankingView({
     isVisible: eliminationVisible,
     isLocked: eliminationLocked,
     triggerPreview,
+    triggerObservingPreview,
     onExitComplete,
   } = useLiveOverallRanking(tournamentID, { preview });
 
@@ -151,15 +160,24 @@ export default function LiveOverallRankingView({
     };
   }, []);
 
+  const activeObservingTeamId = showObserverHighlight ? observingTeamId : null;
+
   if (!ready) return null;
 
   return (
     <WidgetStage dataReady={ready} onReady={() => {}}>
       <div className="relative h-screen w-screen overflow-hidden">
         {preview && (
-          <div className="fixed top-2 left-2 z-50 rounded bg-black/70 px-2 py-1 font-mono text-[10px] text-yellow-300 uppercase">
-            Preview mode
-          </div>
+          <>
+            <div className="fixed top-2 left-2 z-50 rounded bg-black/70 px-2 py-1 font-mono text-[10px] text-yellow-300 uppercase">
+              Preview mode
+            </div>
+            <LiveRankingPreviewControls
+              onTriggerObserver={triggerObservingPreview}
+              onTriggerElimination={triggerPreview}
+              eliminationLocked={eliminationLocked}
+            />
+          </>
         )}
 
         <TeamEliminationLayer
@@ -168,8 +186,6 @@ export default function LiveOverallRankingView({
           onExitComplete={onExitComplete}
           preview={preview}
           isLocked={eliminationLocked}
-          onTriggerPreview={triggerPreview}
-          showTriggerButton={preview}
           showTeamFlags={showTeamFlags}
           showFullTeamName={showFullTeamName}
         />
@@ -178,7 +194,7 @@ export default function LiveOverallRankingView({
           <div className="fixed top-12 left-1/2 w-full max-w-[1100px] -translate-x-1/2 px-4">
             <TopFourView
               teams={topFourTeams}
-              observingTeamId={observingTeamId}
+              observingTeamId={activeObservingTeamId}
             />
           </div>
         )}
@@ -200,7 +216,7 @@ export default function LiveOverallRankingView({
                   key={teamId(entry)}
                   entry={entry}
                   rank={index + 1}
-                  isObserved={observingTeamId === teamId(entry)}
+                  isObserved={activeObservingTeamId === teamId(entry)}
                   showTeamFlags={showTeamFlags}
                   showFullTeamName={showFullTeamName}
                 />

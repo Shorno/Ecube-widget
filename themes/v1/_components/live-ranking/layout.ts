@@ -2,7 +2,7 @@ export const LIVE_RANKING_RANK_WIDTH = 48;
 export const LIVE_RANKING_STATS_WIDTH = 152;
 
 export function getLiveRankingLayout(showFullTeamName: boolean) {
-  const teamColWidth = showFullTeamName ? 210 : 150;
+  const teamColWidth = showFullTeamName ? 210 : 130;
   const panelWidth =
     LIVE_RANKING_RANK_WIDTH + teamColWidth + LIVE_RANKING_STATS_WIDTH;
   const statsColStart = LIVE_RANKING_RANK_WIDTH + teamColWidth;

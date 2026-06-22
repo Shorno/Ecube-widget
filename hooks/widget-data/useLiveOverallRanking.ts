@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetLiveRankingQuery } from "@/lib/services/widget-api";
 import type { LiveRankEntry } from "@/types/live-rank";
 import type { TeamEliminationPayload } from "@/types/team-elimination";
 import {
   getMockLiveOverallRanking,
   MOCK_OBSERVING_TEAM_ID,
+  MOCK_OBSERVE_TEAM_IDS,
 } from "./mockLiveOverallRanking";
 import { useEliminationQueue } from "./useEliminationQueue";
 
@@ -99,11 +100,23 @@ export function useLiveOverallRanking(
     return () => ws.close();
   }, [tournamentID, preview, elimination.enqueue]);
 
+  const triggerObservingPreview = useCallback(() => {
+    if (!preview) return;
+
+    setObservingTeamId((current) => {
+      const cycle = [...MOCK_OBSERVE_TEAM_IDS, null] as const;
+      const currentIndex = current ? cycle.indexOf(current) : -1;
+      const nextIndex = (currentIndex + 1) % cycle.length;
+      return cycle[nextIndex] ?? null;
+    });
+  }, [preview]);
+
   return {
     teams,
     observingTeamId,
     ready: isMatchConnected && teams.length > 0,
     preview,
+    triggerObservingPreview,
     ...elimination,
   };
 }

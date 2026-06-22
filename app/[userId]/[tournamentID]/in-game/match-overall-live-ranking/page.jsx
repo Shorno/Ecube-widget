@@ -8,6 +8,8 @@ export default async function MatchOverallLiveRanking({ params, searchParams }) 
   const user = await getUser(userId);
   const showTeamFlags = user?.themeConfig?.showTeamFlags !== false;
   const showFullTeamName = user?.themeConfig?.showFullTeamName === true;
+  const showObserverHighlight =
+    user?.themeConfig?.showObserverHighlight !== false;
   const { LiveOverallRanking: View } = await getUserDesignRegistry(
     userId,
     tournamentID,
@@ -17,6 +19,7 @@ export default async function MatchOverallLiveRanking({ params, searchParams }) 
       tournamentID={tournamentID}
       showTeamFlags={showTeamFlags}
       showFullTeamName={showFullTeamName}
+      showObserverHighlight={showObserverHighlight}
       preview={preview}
     />
   );

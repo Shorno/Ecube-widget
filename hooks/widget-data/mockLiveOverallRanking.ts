@@ -1,7 +1,13 @@
 import type { LiveRankEntry, LiveRankPlayer } from "@/types/live-rank";
 
-function players(states: Array<[number, number]>): LiveRankPlayer[] {
-  return states.map(([liveState, healths]) => ({ liveState, healths }));
+function players(
+  states: Array<[number, number, boolean?]>,
+): LiveRankPlayer[] {
+  return states.map(([liveState, healths, isOutsideZone]) => ({
+    liveState,
+    healths,
+    ...(isOutsideZone ? { isOutsideZone: true } : {}),
+  }));
 }
 
 const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
@@ -57,7 +63,7 @@ const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
     players: players([
       [0, 60],
       [0, 45],
-      [4, 20],
+      [4, 20, true],
       [5, 0],
     ]),
   },
@@ -310,3 +316,6 @@ export function getMockLiveOverallRanking(): LiveRankEntry[] {
 
 /** Team id used for observed-team highlight in preview mode */
 export const MOCK_OBSERVING_TEAM_ID = "team-2";
+
+/** Teams cycled by the preview observer trigger button */
+export const MOCK_OBSERVE_TEAM_IDS = ["team-1", "team-2", "team-3", "team-4"];

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import EcubeBrand from "@/components/common/EcubeBrand";
 import TeamNameSwitch from "@/components/common/TeamNameSwitch";
 import TeamFlagsSwitch from "@/components/common/TeamFlagsSwitch";
+import ObserverHighlightSwitch from "@/components/common/ObserverHighlightSwitch";
 import {
   Select,
   SelectContent,
@@ -232,6 +233,7 @@ export default function ControllerClient({
 
           <TeamFlagsSwitch className="shrink-0" />
           <TeamNameSwitch className="shrink-0" />
+          <ObserverHighlightSwitch className="shrink-0" />
 
           <button
             onClick={copyDisplayUrl}
