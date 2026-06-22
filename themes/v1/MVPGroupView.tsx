@@ -7,6 +7,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { useMVPGroup } from "@/hooks/widget-data";
 import Image from "next/image";
+import Title from "./_components/Title";
+import MVPPlayerNameplate from "./_components/mvp-nameplate/MVPPlayerNameplate";
 
 export default function MVPGroupView({ tournamentID }: { tournamentID: string }) {
   const [stageReady, setStageReady] = useState(false);
@@ -60,10 +62,6 @@ export default function MVPGroupView({ tournamentID }: { tournamentID: string })
 
   if (!ready) return null;
 
-  const stage = info?.stage_name || info?.game_stage || "GRAND FINAL";
-  const day = info?.day || info?.game_day || "DAY 99";
-  const matchName = info?.match_name || info?.game_name || "MATCH 99";
-
   return (
     <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
       <Layout className="!p-0 bg-transparent w-[1920px] h-[1080px] relative overflow-hidden">
@@ -72,90 +70,10 @@ export default function MVPGroupView({ tournamentID }: { tournamentID: string })
           className="absolute left-0 top-0 w-[1920px] h-[1080px]"
         >
           {/* Title Area */}
-          <div className="anim-title absolute left-0 top-0 w-[1920px] h-[1080px] pointer-events-none">
-            {/* TOURNAMENT MVP */}
-            <div
-              style={{
-                position: "absolute",
-                width: "max-content",
-                height: "180px",
-                left: "89px",
-                top: "209px",
-                fontFamily: "var(--widget-font-primary)",
-                fontStyle: "normal",
-                fontWeight: 400,
-                fontSize: "180px",
-                lineHeight: "180px",
-                textAlign: "left",
-                letterSpacing: "-0.01em",
-                color: "var(--widget-text-3)",
-                whiteSpace: "nowrap",
-              }}
-            >
-              TOURNAMENT MVP
-            </div>
-
-            {/* GRAND FINAL */}
-            <div
-              style={{
-                position: "absolute",
-                width: "max-content",
-                height: "80px",
-                left: "748px",
-                top: "219px",
-                fontFamily: "var(--widget-font-primary)",
-                fontStyle: "normal",
-                fontWeight: 400,
-                fontSize: "80px",
-                lineHeight: "80px",
-                textAlign: "left",
-                color: "var(--widget-text-3)",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {stage}
-            </div>
-
-            {/* DAY 99 */}
-            <div
-              style={{
-                position: "absolute",
-                width: "max-content",
-                height: "50px",
-                left: "748px",
-                top: "299px",
-                fontFamily: "var(--widget-font-primary)",
-                fontStyle: "normal",
-                fontWeight: 400,
-                fontSize: "50px",
-                lineHeight: "50px",
-                color: "var(--widget-text-3)",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {day}
-            </div>
-
-            {/* MATCH 99 */}
-            <div
-              style={{
-                position: "absolute",
-                width: "max-content",
-                height: "50px",
-                left: "918px",
-                top: "299px",
-                fontFamily: "var(--widget-font-primary)",
-                fontStyle: "normal",
-                fontWeight: 400,
-                fontSize: "50px",
-                lineHeight: "50px",
-                textAlign: "right",
-                color: "var(--widget-text-3)",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {matchName}
-            </div>
+          <div
+            className="anim-title pointer-events-none absolute left-[89px] top-[209px]"
+          >
+            <Title title="TOURNAMENT MVP" data={info} />
           </div>
 
           {/* Player Card Area */}
@@ -180,86 +98,11 @@ export default function MVPGroupView({ tournamentID }: { tournamentID: string })
               )}
             </div>
 
-            {/* Player IGN White Banner (Rectangle 24) */}
-            <div
-              style={{
-                position: "absolute",
-                left: "1049px",
-                top: "771px",
-                width: "800px",
-                height: "123px",
-                background: "linear-gradient(90deg, var(--widget-bg) 36.18%, color-mix(in srgb, var(--widget-bg) 85%, var(--widget-text-1)) 95.25%)",
-                transform: "skewX(13.39deg)",
-              }}
-            >
-              {/* Unskewed Player IGN Text centered in the visible area */}
-              <div
-                style={{
-                  position: "absolute",
-                  left: "250px",
-                  width: "520px",
-                  height: "123px",
-                  transform: "skewX(-13.39deg)",
-                  fontFamily: "var(--widget-font-secondary)",
-                  fontStyle: "normal",
-                  fontWeight: 700,
-                  fontSize: "70px",
-                  lineHeight: "123px",
-                  color: "var(--widget-text-1)",
-                  textAlign: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {mvp?.player_ign || "PLAYER"}
-              </div>
-            </div>
-
-            {/* Slanted logo background box (Rectangle 2) */}
-            <div
-              style={{
-                position: "absolute",
-                width: "229px",
-                height: "214px",
-                left: "1065px",
-                top: "726px",
-                background: "linear-gradient(var(--widget-gradient-angle, 234.1deg), var(--widget-gradient-from) 37.51%, var(--widget-gradient-to) 83.91%)",
-                transform: "skewX(13.39deg)",
-              }}
+            <MVPPlayerNameplate
+              playerIgn={mvp?.player_ign}
+              teamLogoUrl={mvp?.team_logoUrl}
+              teamName={mvp?.team_name}
             />
-            {/* Team Logo Image inside the slanted box */}
-            <div
-              style={{
-                position: "absolute",
-                width: "126px",
-                height: "84px",
-                left: "1091px",
-                top: "778px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {mvp?.team_logoUrl ? (
-                <Image
-                  src={mvp.team_logoUrl}
-                  alt="Team Logo"
-                  width={126}
-                  height={84}
-                  className="object-contain"
-                />
-              ) : (
-                <div
-                  style={{
-                    fontFamily: "var(--widget-font-secondary)",
-                    fontWeight: 700,
-                    fontSize: "40px",
-                    color: "var(--widget-text-3)",
-                  }}
-                >
-                  {mvp?.team_name || "LOGO"}
-                </div>
-              )}
-            </div>
           </div>
 
           {/* Box 1: ELIMINATIONS */}
@@ -279,7 +122,7 @@ export default function MVPGroupView({ tournamentID }: { tournamentID: string })
               <div
                 className="anim-count"
                 data-value={mvp?.kills || 0}
-                data-pad={4}
+                data-pad={2}
                 style={{
                   fontFamily: "var(--widget-font-primary)",
                   fontSize: "90px",
@@ -290,7 +133,7 @@ export default function MVPGroupView({ tournamentID }: { tournamentID: string })
                   height: "100%",
                 }}
               >
-                {String(mvp?.kills || 0).padStart(4, "0")}
+                {String(mvp?.kills || 0).padStart(2, "0")}
               </div>
             </div>
 
@@ -457,7 +300,7 @@ export default function MVPGroupView({ tournamentID }: { tournamentID: string })
               <div
                 className="anim-count"
                 data-value={mvp?.knocks || 0}
-                data-pad={4}
+                data-pad={2}
                 style={{
                   fontFamily: "var(--widget-font-primary)",
                   fontSize: "90px",
@@ -468,7 +311,7 @@ export default function MVPGroupView({ tournamentID }: { tournamentID: string })
                   height: "100%",
                 }}
               >
-                {String(mvp?.knocks || 0).padStart(4, "0")}
+                {String(mvp?.knocks || 0).padStart(2, "0")}
               </div>
             </div>
 
