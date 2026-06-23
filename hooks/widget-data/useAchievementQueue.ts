@@ -50,6 +50,15 @@ export function useAchievementQueue() {
     [processNext],
   );
 
+  const reset = useCallback(() => {
+    clearTimers();
+    queueRef.current = [];
+    playingRef.current = false;
+    setCurrentEvent(null);
+    setIsVisible(false);
+    setIsLocked(false);
+  }, [clearTimers]);
+
   const onExitComplete = useCallback(() => {
     setCurrentEvent(null);
     playingRef.current = false;
@@ -63,6 +72,7 @@ export function useAchievementQueue() {
     isVisible,
     isLocked,
     enqueue,
+    reset,
     onExitComplete,
   };
 }

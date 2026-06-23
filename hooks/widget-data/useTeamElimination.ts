@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback } from "react";
 import type { TeamEliminationPayload } from "@/types/team-elimination";
 import { useEliminationQueue } from "./useEliminationQueue";
+import {
+  shouldResetForMatchBoundary,
+  useTournamentSocket,
+  type TournamentSocketMeta,
+} from "./useTournamentSocket";
 
 type Options = { preview?: boolean };
 
@@ -11,31 +16,26 @@ export function useTeamElimination(
   { preview = false }: Options = {},
 ) {
   const queue = useEliminationQueue({ preview });
+  const { enqueue, reset } = queue;
 
-  useEffect(() => {
-    if (preview || !tournamentID) return;
-
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-    if (!apiBase) return;
-
-    const wsBase = apiBase.replace(/^https/, "wss").replace(/^http/, "ws");
-    const ws = new WebSocket(`${wsBase}/tournament?id=${tournamentID}`);
-
-    ws.onmessage = (event) => {
-      let parsed: { event?: string; data?: unknown };
-      try {
-        parsed = JSON.parse(event.data);
-      } catch {
+  const handleSocketMessage = useCallback(
+    (parsed: { event?: string; data?: unknown }, meta: TournamentSocketMeta) => {
+      if (shouldResetForMatchBoundary(parsed.event, meta)) {
+        reset();
         return;
       }
 
       if (parsed.event === "TEAM_ELIMINATION" && parsed.data) {
-        queue.enqueue(parsed.data as TeamEliminationPayload);
+        enqueue(parsed.data as TeamEliminationPayload);
       }
-    };
+    },
+    [enqueue, reset],
+  );
 
-    return () => ws.close();
-  }, [tournamentID, preview, queue.enqueue]);
+  useTournamentSocket(tournamentID, {
+    preview,
+    onMessage: handleSocketMessage,
+  });
 
   return { ...queue, preview };
 }

@@ -10,6 +10,11 @@ import {
   MOCK_OBSERVING_TEAM_ID,
   MOCK_OBSERVE_TEAM_IDS,
 } from "./mockLiveOverallRanking";
+import {
+  shouldResetForMatchBoundary,
+  useTournamentSocket,
+  type TournamentSocketMeta,
+} from "./useTournamentSocket";
 
 function sortByOverallPoints(data: LiveRankEntry[]) {
   return [...data].sort(
@@ -64,7 +69,12 @@ export function useLiveOverallRanking(
 ) {
   const { data: initialData } = useGetLiveRankingQuery(
     { tournamentID },
-    { skip: preview },
+    {
+      skip: preview,
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+    },
   );
   const [teams, setTeams] = useState<LiveRankEntry[]>(() =>
     preview ? getMockLiveOverallRanking() : [],
@@ -89,6 +99,12 @@ export function useLiveOverallRanking(
     setTopFourTeams([]);
     setShowTopFour(false);
   }, []);
+
+  const resetLiveMatchState = useCallback(() => {
+    setTeams([]);
+    resetTopFour();
+    setObservingTeamId(null);
+  }, [resetTopFour]);
 
   const applyTeams = useCallback((data: LiveRankEntry[]) => {
     const ranked = withRankPositions(data);
@@ -124,24 +140,13 @@ export function useLiveOverallRanking(
     applyTeams(initialData as LiveRankEntry[]);
   }, [initialData, preview, applyTeams]);
 
-  useEffect(() => {
-    if (preview || !tournamentID) return;
-
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-    if (!apiBase) return;
-
-    const wsBase = apiBase.replace(/^https/, "wss").replace(/^http/, "ws");
-    const ws = new WebSocket(`${wsBase}/tournament?id=${tournamentID}`);
-
-    ws.onmessage = (event) => {
-      let parsed: { event?: string; data?: unknown };
-      try {
-        parsed = JSON.parse(event.data);
-      } catch {
-        return;
-      }
-
+  const handleSocketMessage = useCallback(
+    (parsed: { event?: string; data?: unknown }, meta: TournamentSocketMeta) => {
       const { event: eventName, data } = parsed;
+
+      if (shouldResetForMatchBoundary(eventName, meta)) {
+        resetLiveMatchState();
+      }
 
       if (eventName === "match-connected") {
         setIsMatchConnected(true);
@@ -159,12 +164,19 @@ export function useLiveOverallRanking(
         const payload = data as { player?: { teamId?: string } } | null;
         setObservingTeamId(payload?.player?.teamId ?? null);
       }
-    };
+    },
+    [applyTeams, applyTopFour, resetLiveMatchState],
+  );
 
-    ws.onclose = () => setIsMatchConnected(false);
+  const handleSocketClose = useCallback(() => {
+    setIsMatchConnected(false);
+  }, []);
 
-    return () => ws.close();
-  }, [tournamentID, preview, applyTeams, applyTopFour]);
+  useTournamentSocket(tournamentID, {
+    preview,
+    onMessage: handleSocketMessage,
+    onClose: handleSocketClose,
+  });
 
   const triggerObservingPreview = useCallback(() => {
     if (!preview) return;

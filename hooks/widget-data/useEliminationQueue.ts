@@ -57,6 +57,15 @@ export function useEliminationQueue({ preview = false }: Options = {}) {
     enqueue(getMockTeamElimination());
   }, [preview, isLocked, enqueue]);
 
+  const reset = useCallback(() => {
+    clearTimers();
+    queueRef.current = [];
+    playingRef.current = false;
+    setCurrentElimination(null);
+    setIsVisible(false);
+    setIsLocked(false);
+  }, [clearTimers]);
+
   const onExitComplete = useCallback(() => {
     setCurrentElimination(null);
     playingRef.current = false;
@@ -71,6 +80,7 @@ export function useEliminationQueue({ preview = false }: Options = {}) {
     isLocked,
     triggerPreview,
     enqueue,
+    reset,
     onExitComplete,
   };
 }
