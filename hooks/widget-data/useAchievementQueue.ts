@@ -2,13 +2,18 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PlayerAchievementPayload } from "@/types/player-achievement";
-import { getMockRampageAchievement } from "./mockRampageAchievement";
 
 const HOLD_MS = 4500;
 
-type Options = { preview?: boolean };
+type Options = {
+  preview?: boolean;
+  getMock?: () => PlayerAchievementPayload;
+};
 
-export function useAchievementQueue({ preview = false }: Options = {}) {
+export function useAchievementQueue({
+  preview = false,
+  getMock,
+}: Options = {}) {
   const [currentAchievement, setCurrentAchievement] =
     useState<PlayerAchievementPayload | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -53,9 +58,9 @@ export function useAchievementQueue({ preview = false }: Options = {}) {
   );
 
   const triggerPreview = useCallback(() => {
-    if (!preview || isLocked) return;
-    enqueue(getMockRampageAchievement());
-  }, [preview, isLocked, enqueue]);
+    if (!preview || isLocked || !getMock) return;
+    enqueue(getMock());
+  }, [preview, isLocked, enqueue, getMock]);
 
   const onExitComplete = useCallback(() => {
     setCurrentAchievement(null);

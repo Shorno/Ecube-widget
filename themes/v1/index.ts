@@ -32,7 +32,8 @@ export type WidgetSlot =
   | "WWCStats"
   | "LiveOverallRanking"
   | "TeamElimination"
-  | "RampageAchievement";
+  | "RampageAchievement"
+  | "DominationAchievement";
 
 // ── Built ─────────────────────────────────────────────────────────────────────
 export { default as AfterMatchScore } from "./AfterMatchScoreView";
@@ -51,6 +52,7 @@ export { default as WWCStats } from "./WWCStatsView";
 export { default as LiveOverallRanking } from "./LiveOverallRankingView";
 export { default as TeamElimination } from "./TeamEliminationView";
 export { default as RampageAchievement } from "./RampageAchievementView";
+export { default as DominationAchievement } from "./DominationAchievementView";
 
 // ── Token manifest ────────────────────────────────────────────────────────────
 export { COLOR_TOKENS, TOKEN_DEFAULTS } from "./tokens";

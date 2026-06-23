@@ -1,17 +1,17 @@
 "use client";
 
-import { getMockRampageAchievement } from "./mockRampageAchievement";
+import { getMockDominationAchievement } from "./mockDominationAchievement";
 import { usePlayerAchievement } from "./usePlayerAchievement";
 
 type Options = { preview?: boolean };
 
-export function useRampageAchievement(
+export function useDominationAchievement(
   tournamentID: string,
   { preview = false }: Options = {},
 ) {
   return usePlayerAchievement(tournamentID, {
     preview,
-    achievement: "RAMPAGE",
-    getMock: getMockRampageAchievement,
+    achievement: "DOMINATION",
+    getMock: getMockDominationAchievement,
   });
 }

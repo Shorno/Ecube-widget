@@ -74,6 +74,7 @@ const ALL_SLOTS = [
   "LiveOverallRanking",
   "TeamElimination",
   "RampageAchievement",
+  "DominationAchievement",
 ];
 
 // Returns the component set for a given variant string.
