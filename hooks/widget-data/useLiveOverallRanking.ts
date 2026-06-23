@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetLiveRankingQuery } from "@/lib/services/widget-api";
 import type { LiveRankEntry } from "@/types/live-rank";
-import type { TeamEliminationPayload } from "@/types/team-elimination";
 import type { TopFourPayload } from "@/types/top-four";
 import {
   getMockLiveOverallRanking,
@@ -11,7 +10,6 @@ import {
   MOCK_OBSERVING_TEAM_ID,
   MOCK_OBSERVE_TEAM_IDS,
 } from "./mockLiveOverallRanking";
-import { useEliminationQueue } from "./useEliminationQueue";
 
 function sortByOverallPoints(data: LiveRankEntry[]) {
   return [...data].sort(
@@ -56,7 +54,6 @@ export function useLiveOverallRanking(
   tournamentID: string,
   { preview = false }: Options = {},
 ) {
-  const elimination = useEliminationQueue({ preview });
   const { data: initialData } = useGetLiveRankingQuery(
     { tournamentID },
     { skip: preview },
@@ -132,16 +129,12 @@ export function useLiveOverallRanking(
         const payload = data as { player?: { teamId?: string } } | null;
         setObservingTeamId(payload?.player?.teamId ?? null);
       }
-
-      if (eventName === "TEAM_ELIMINATION" && data) {
-        elimination.enqueue(data as TeamEliminationPayload);
-      }
     };
 
     ws.onclose = () => setIsMatchConnected(false);
 
     return () => ws.close();
-  }, [tournamentID, preview, elimination.enqueue, applyTopFour]);
+  }, [tournamentID, preview, applyTopFour]);
 
   const triggerObservingPreview = useCallback(() => {
     if (!preview) return;
@@ -168,6 +161,5 @@ export function useLiveOverallRanking(
     preview,
     triggerObservingPreview,
     triggerTopFourPreview,
-    ...elimination,
   };
 }

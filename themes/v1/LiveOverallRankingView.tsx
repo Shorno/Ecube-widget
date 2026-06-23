@@ -10,7 +10,6 @@ import LiveRankingHeader from "./_components/live-ranking/LiveRankingHeader";
 import LiveRankingRow from "./_components/live-ranking/LiveRankingRow";
 import LiveRankingLegend from "./_components/live-ranking/LiveRankingLegend";
 import LiveRankingPreviewControls from "./_components/live-ranking/LiveRankingPreviewControls";
-import TeamEliminationLayer from "./_components/team-elimination/TeamEliminationLayer";
 import TopFourLayer from "./_components/top-four/TopFourLayer";
 import { getLiveRankingLayout } from "./_components/live-ranking/layout";
 
@@ -42,13 +41,8 @@ export default function LiveOverallRankingView({
     topFourTeams,
     observingTeamId,
     ready,
-    currentElimination,
-    isVisible: eliminationVisible,
-    isLocked: eliminationLocked,
-    triggerPreview,
     triggerObservingPreview,
     triggerTopFourPreview,
-    onExitComplete,
   } = useLiveOverallRanking(tournamentID, { preview });
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -134,23 +128,11 @@ export default function LiveOverallRankingView({
             </div>
             <LiveRankingPreviewControls
               onTriggerObserver={triggerObservingPreview}
-              onTriggerElimination={triggerPreview}
               onTriggerTopFour={triggerTopFourPreview}
-              eliminationLocked={eliminationLocked}
               topFourActive={showTopFour}
             />
           </>
         )}
-
-        <TeamEliminationLayer
-          currentElimination={currentElimination}
-          isVisible={eliminationVisible}
-          onExitComplete={onExitComplete}
-          preview={preview}
-          isLocked={eliminationLocked}
-          showTeamFlags={showTeamFlags}
-          showFullTeamName={showFullTeamName}
-        />
 
         {showTopFour && topFourTeams.length > 0 && (
           <TopFourLayer

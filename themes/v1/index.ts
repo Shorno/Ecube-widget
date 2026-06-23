@@ -31,7 +31,10 @@ export type WidgetSlot =
   | "WWCTwo"
   | "WWCStats"
   | "LiveOverallRanking"
-  | "TeamElimination";
+  | "TeamElimination"
+  | "RampageAchievement"
+  | "DominationAchievement"
+  | "FirstBloodAchievement";
 
 // ── Built ─────────────────────────────────────────────────────────────────────
 export { default as AfterMatchScore } from "./AfterMatchScoreView";
@@ -49,6 +52,9 @@ export { default as TopPlayersGroup } from "./TopPlayersGroupView";
 export { default as WWCStats } from "./WWCStatsView";
 export { default as LiveOverallRanking } from "./LiveOverallRankingView";
 export { default as TeamElimination } from "./TeamEliminationView";
+export { default as RampageAchievement } from "./RampageAchievementView";
+export { default as DominationAchievement } from "./DominationAchievementView";
+export { default as FirstBloodAchievement } from "./FirstBloodAchievementView";
 
 // ── Token manifest ────────────────────────────────────────────────────────────
 export { COLOR_TOKENS, TOKEN_DEFAULTS } from "./tokens";
