@@ -75,6 +75,7 @@ const ALL_SLOTS = [
   "TeamElimination",
   "RampageAchievement",
   "DominationAchievement",
+  "FirstBloodAchievement",
 ];
 
 // Returns the component set for a given variant string.
