@@ -45,7 +45,9 @@ export default function TeamColumn({ teamName, logoUrl, className, side = "left"
             priority
           />
         ) : (
-          <div className="bg-widget-primary-dark h-[280px] w-[280px]" />
+          <span className="font-primary text-widget-text-3 text-[120px] font-bold uppercase tracking-wider select-none leading-none opacity-90">
+            LOGO
+          </span>
         )}
       </div>
 

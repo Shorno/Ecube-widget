@@ -26,9 +26,7 @@ export default function StatBox({
           {label}
         </span>
       )}
-      <span className="font-primary text-widget-text-2 anim-counter text-[56px] leading-none">
-        {value}
-      </span>
+      <span className="font-primary text-widget-text-2 anim-counter text-[56px] leading-none">{value}</span>
     </div>
   );
 }

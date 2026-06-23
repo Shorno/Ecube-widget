@@ -1,10 +1,10 @@
 import { getUserDesignRegistry } from "@/themes/registry";
 
-export default async function FirstBloodAchievementPage({ params, searchParams }) {
+export default async function AchievementsPage({ params, searchParams }) {
   const { userId, tournamentID } = await params;
   const resolvedSearchParams = await searchParams;
   const preview = resolvedSearchParams?.preview === "1";
-  const { FirstBloodAchievement: View } = await getUserDesignRegistry(
+  const { Achievements: View } = await getUserDesignRegistry(
     userId,
     tournamentID,
   );
