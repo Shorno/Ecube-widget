@@ -25,28 +25,28 @@ export default function Title({
   const matchName = data?.match_name || data?.game_name;
 
   return (
-    <div className={cn("flex shrink-0 items-end gap-8 uppercase", className)}>
+    <div className={cn("flex shrink-0 items-start gap-8 uppercase", className)}>
       {/* left — main title, first word plain, rest in primary color */}
-      <h1 className="font-primary text-widget-text-3 text-[140px] leading-none tracking-tight">
+      <h1 className="font-primary text-widget-text-3 text-[180px] leading-[180px] tracking-[-0.01em]">
         {titleMain} {titleHighlight}
       </h1>
 
       {/* right — match meta stacked */}
       {(data || subtitle) && (
-        <div className="mb-4 flex flex-col justify-center">
+        <div className="flex flex-col justify-between h-[180px] py-[8px]">
           {data && stage && (
-            <span className="text-widget-text-3 text-[44px] leading-none">
+            <span className="text-widget-text-3 font-primary text-[80px] leading-[80px]">
               {stage}
             </span>
           )}
           {data && !stageOnly && (day || matchName) && (
-            <span className="text-widget-text-3 text-[44px] leading-none">
+            <span className="text-widget-text-3 font-primary text-[50px] leading-[50px]">
               {matchName && <span className="mr-14">{matchName}</span>}
               {day && <span>{day}</span>}
             </span>
           )}
           {subtitle && (
-            <span className="text-widget-text-3 text-[44px] leading-none">
+            <span className="text-widget-text-3 font-primary text-[50px] leading-[50px]">
               {subtitle}
             </span>
           )}

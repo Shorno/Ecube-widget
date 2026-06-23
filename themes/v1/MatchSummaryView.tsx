@@ -9,6 +9,7 @@ import Title from "./_components/Title";
 import SummaryDataBox from "./_components/match-summary/SummaryDataBox";
 import { useMatchSummary } from "@/hooks/widget-data";
 import type { MatchStats } from "@/types/widgets";
+import { cn } from "@/lib/utils";
 
 type Props = { tournamentID: string };
 
@@ -155,13 +156,13 @@ export default function MatchSummaryView({ tournamentID }: Props) {
       <Layout top className="bg-transparent pl-16 pr-10">
         <div
           ref={containerRef}
-          className="mx-auto flex h-full w-full max-w-[1720px] flex-col justify-between pb-10"
+          className="mx-auto flex w-full max-w-[1398px] flex-col pb-10"
         >
           <div className="anim-title opacity-0">
             <Title title="MATCH SUMMARY" data={info} />
           </div>
 
-          <div className="grid w-full grid-cols-3 gap-x-10 gap-y-8">
+          <div className="grid w-full grid-cols-3 gap-x-[45px] gap-y-[41px] mt-[26px]">
             {STATS_CONFIG.map((stat) => (
               <SummaryDataBox
                 key={stat.key}
@@ -174,10 +175,6 @@ export default function MatchSummaryView({ tournamentID }: Props) {
               />
             ))}
           </div>
-
-          <p className="text-widget-text-3 font-primary text-[28px] uppercase">
-            Match Summary
-          </p>
         </div>
       </Layout>
     </WidgetStage>
