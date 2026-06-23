@@ -1,12 +1,17 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import type { AchievementQueueItem } from "@/types/achievement-event";
 import { getMockDominationAchievement } from "./mockDominationAchievement";
 import { getMockFirstBloodAchievement } from "./mockFirstBloodAchievement";
 import { getMockRampageAchievement } from "./mockRampageAchievement";
 import { parseAchievementEvent } from "./parseAchievementEvent";
 import { useAchievementQueue } from "./useAchievementQueue";
+import {
+  shouldResetForMatchBoundary,
+  useTournamentSocket,
+  type TournamentSocketMeta,
+} from "./useTournamentSocket";
 
 type Options = { preview?: boolean };
 
@@ -15,37 +20,32 @@ export function useAchievements(
   { preview = false }: Options = {},
 ) {
   const queue = useAchievementQueue();
+  const { enqueue, isLocked, reset } = queue;
 
-  useEffect(() => {
-    if (preview || !tournamentID) return;
-
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-    if (!apiBase) return;
-
-    const wsBase = apiBase.replace(/^https/, "wss").replace(/^http/, "ws");
-    const ws = new WebSocket(`${wsBase}/tournament?id=${tournamentID}`);
-
-    ws.onmessage = (event) => {
-      let parsed: { event?: string; data?: unknown };
-      try {
-        parsed = JSON.parse(event.data);
-      } catch {
+  const handleSocketMessage = useCallback(
+    (parsed: { event?: string; data?: unknown }, meta: TournamentSocketMeta) => {
+      if (shouldResetForMatchBoundary(parsed.event, meta)) {
+        reset();
         return;
       }
 
       const item = parseAchievementEvent(parsed.event ?? "", parsed.data);
-      if (item) queue.enqueue(item);
-    };
+      if (item) enqueue(item);
+    },
+    [enqueue, reset],
+  );
 
-    return () => ws.close();
-  }, [tournamentID, preview, queue.enqueue]);
+  useTournamentSocket(tournamentID, {
+    preview,
+    onMessage: handleSocketMessage,
+  });
 
   const triggerPreview = useCallback(
     (item: AchievementQueueItem) => {
-      if (!preview || queue.isLocked) return;
-      queue.enqueue(item);
+      if (!preview || isLocked) return;
+      enqueue(item);
     },
-    [preview, queue.isLocked, queue.enqueue],
+    [preview, isLocked, enqueue],
   );
 
   const triggerRampagePreview = useCallback(() => {

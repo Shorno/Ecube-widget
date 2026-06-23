@@ -10,6 +10,11 @@ import {
   MOCK_OBSERVING_TEAM_ID,
   MOCK_OBSERVE_TEAM_IDS,
 } from "./mockLiveOverallRanking";
+import {
+  shouldResetForMatchBoundary,
+  useTournamentSocket,
+  type TournamentSocketMeta,
+} from "./useTournamentSocket";
 
 function sortByOverallPoints(data: LiveRankEntry[]) {
   return [...data].sort(
@@ -26,6 +31,14 @@ function withRankPositions(data: LiveRankEntry[]): LiveRankEntry[] {
 
 function teamId(entry: LiveRankEntry) {
   return entry.team.id ?? entry.team._id ?? String(entry.rank);
+}
+
+function isTeamEliminated(players?: LiveRankEntry["players"]) {
+  return (players ?? []).every((player) => player.liveState === 5);
+}
+
+function getAliveTeams(data: LiveRankEntry[]) {
+  return data.filter((entry) => !isTeamEliminated(entry.players));
 }
 
 function mergeTopFourTeams(
@@ -56,7 +69,12 @@ export function useLiveOverallRanking(
 ) {
   const { data: initialData } = useGetLiveRankingQuery(
     { tournamentID },
-    { skip: preview },
+    {
+      skip: preview,
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+    },
   );
   const [teams, setTeams] = useState<LiveRankEntry[]>(() =>
     preview ? getMockLiveOverallRanking() : [],
@@ -67,58 +85,75 @@ export function useLiveOverallRanking(
   const [observingTeamId, setObservingTeamId] = useState<string | null>(
     preview ? MOCK_OBSERVING_TEAM_ID : null,
   );
-  const showTopFourRef = useRef(showTopFour);
-  const applyTeamsRef = useRef<(data: LiveRankEntry[]) => void>(() => {});
-
-  showTopFourRef.current = showTopFour;
-
-  applyTeamsRef.current = (data) => {
-    const ranked = withRankPositions(data);
-    setTeams(ranked);
-    if (showTopFourRef.current) {
-      setTopFourTeams((prev) =>
-        prev.length > 0 ? mergeTopFourTeams(prev, ranked) : prev,
-      );
-    }
-  };
+  const topFourModeRef = useRef(false);
 
   const applyTopFour = useCallback((data: TopFourPayload) => {
     const ranked = withRankPositions(data).slice(0, 4);
+    topFourModeRef.current = true;
     setTopFourTeams(ranked);
     setShowTopFour(true);
   }, []);
 
+  const resetTopFour = useCallback(() => {
+    topFourModeRef.current = false;
+    setTopFourTeams([]);
+    setShowTopFour(false);
+  }, []);
+
+  const resetLiveMatchState = useCallback(() => {
+    setTeams([]);
+    resetTopFour();
+    setObservingTeamId(null);
+  }, [resetTopFour]);
+
+  const applyTeams = useCallback((data: LiveRankEntry[]) => {
+    const ranked = withRankPositions(data);
+    const aliveTeams = getAliveTeams(ranked);
+
+    setTeams(ranked);
+
+    if (topFourModeRef.current && aliveTeams.length > 4) {
+      resetTopFour();
+      return;
+    }
+
+    if (
+      !topFourModeRef.current &&
+      aliveTeams.length <= 4 &&
+      aliveTeams.length > 0
+    ) {
+      applyTopFour(aliveTeams);
+      return;
+    }
+
+    if (topFourModeRef.current) {
+      setTopFourTeams((prev) =>
+        prev.length > 0 ? mergeTopFourTeams(prev, ranked) : prev,
+      );
+    }
+  }, [applyTopFour, resetTopFour]);
+
   useEffect(() => {
     if (preview) return;
     if (!Array.isArray(initialData) || initialData.length === 0) return;
-    applyTeamsRef.current(initialData as LiveRankEntry[]);
-  }, [initialData, preview]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Sync external RTK Query snapshot into the live WebSocket state.
+    applyTeams(initialData as LiveRankEntry[]);
+  }, [initialData, preview, applyTeams]);
 
-  useEffect(() => {
-    if (preview || !tournamentID) return;
-
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-    if (!apiBase) return;
-
-    const wsBase = apiBase.replace(/^https/, "wss").replace(/^http/, "ws");
-    const ws = new WebSocket(`${wsBase}/tournament?id=${tournamentID}`);
-
-    ws.onmessage = (event) => {
-      let parsed: { event?: string; data?: unknown };
-      try {
-        parsed = JSON.parse(event.data);
-      } catch {
-        return;
-      }
-
+  const handleSocketMessage = useCallback(
+    (parsed: { event?: string; data?: unknown }, meta: TournamentSocketMeta) => {
       const { event: eventName, data } = parsed;
+
+      if (shouldResetForMatchBoundary(eventName, meta)) {
+        resetLiveMatchState();
+      }
 
       if (eventName === "match-connected") {
         setIsMatchConnected(true);
       }
 
       if (eventName === "MATCH_LIVE_RANK_DATA" && Array.isArray(data)) {
-        applyTeamsRef.current(data as LiveRankEntry[]);
+        applyTeams(data as LiveRankEntry[]);
       }
 
       if (eventName === "TOP_FOUR" && Array.isArray(data)) {
@@ -129,12 +164,19 @@ export function useLiveOverallRanking(
         const payload = data as { player?: { teamId?: string } } | null;
         setObservingTeamId(payload?.player?.teamId ?? null);
       }
-    };
+    },
+    [applyTeams, applyTopFour, resetLiveMatchState],
+  );
 
-    ws.onclose = () => setIsMatchConnected(false);
+  const handleSocketClose = useCallback(() => {
+    setIsMatchConnected(false);
+  }, []);
 
-    return () => ws.close();
-  }, [tournamentID, preview, applyTopFour]);
+  useTournamentSocket(tournamentID, {
+    preview,
+    onMessage: handleSocketMessage,
+    onClose: handleSocketClose,
+  });
 
   const triggerObservingPreview = useCallback(() => {
     if (!preview) return;

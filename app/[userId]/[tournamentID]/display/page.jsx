@@ -16,18 +16,19 @@ function buildPreloadUrls(userId, tournamentID) {
 
 export default function DisplayPage() {
   const { userId, tournamentID } = useParams();
-  const [activeUrl, setActiveUrl] = useState(null);
-  const [pendingUrl, setPendingUrl] = useState(null);
+  const [activeFrame, setActiveFrame] = useState(null);
+  const [pendingFrame, setPendingFrame] = useState(null);
   const [preloadUrls, setPreloadUrls] = useState([]);
   const esRef = useRef(null);
-  const pendingUrlRef = useRef(null);
+  const pendingFrameRef = useRef(null);
   const fallbackTimerRef = useRef(null);
+  const frameIdRef = useRef(0);
 
-  const promote = useCallback((url) => {
-    pendingUrlRef.current = null;
+  const promote = useCallback((frame) => {
+    pendingFrameRef.current = null;
     clearTimeout(fallbackTimerRef.current);
-    setActiveUrl(url);
-    setPendingUrl(null);
+    setActiveFrame(frame);
+    setPendingFrame(null);
   }, []);
 
   // Warm the browser cache: load all widget iframes hidden, then discard after 25s.
@@ -35,6 +36,7 @@ export default function DisplayPage() {
   useEffect(() => {
     if (!userId || !tournamentID) return;
     if (process.env.NEXT_PUBLIC_DISABLE_WIDGET_PRELOAD === "true") return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Cache-warm widget iframes after the display route mounts.
     setPreloadUrls(buildPreloadUrls(userId, tournamentID));
     const timer = setTimeout(() => setPreloadUrls([]), 25_000);
     return () => clearTimeout(timer);
@@ -44,9 +46,9 @@ export default function DisplayPage() {
   const handleMessage = useCallback(
     (event) => {
       if (event.data?.type !== "widget-ready") return;
-      const url = pendingUrlRef.current;
-      if (!url) return;
-      promote(url);
+      const frame = pendingFrameRef.current;
+      if (!frame) return;
+      promote(frame);
     },
     [promote],
   );
@@ -71,11 +73,12 @@ export default function DisplayPage() {
           promote(null);
           return;
         }
-        pendingUrlRef.current = url;
-        setPendingUrl(url);
+        const frame = { url, id: ++frameIdRef.current };
+        pendingFrameRef.current = frame;
+        setPendingFrame(frame);
         // Fallback: promote after 4s for widgets that don't use WidgetStage (e.g. live-ranking)
         clearTimeout(fallbackTimerRef.current);
-        fallbackTimerRef.current = setTimeout(() => promote(url), 4000);
+        fallbackTimerRef.current = setTimeout(() => promote(frame), 4000);
       });
 
       es.onerror = () => {
@@ -110,20 +113,20 @@ export default function DisplayPage() {
       }}
     >
       {/* Active (visible) widget */}
-      {activeUrl && (
+      {activeFrame && (
         <iframe
-          key={activeUrl}
-          src={activeUrl}
+          key={`${activeFrame.url}:${activeFrame.id}`}
+          src={activeFrame.url}
           style={sharedStyle}
           title="widget-display"
         />
       )}
 
       {/* Pending widget — rendered but invisible; promoted on widget-ready message */}
-      {pendingUrl && pendingUrl !== activeUrl && (
+      {pendingFrame && pendingFrame.id !== activeFrame?.id && (
         <iframe
-          key={pendingUrl}
-          src={pendingUrl}
+          key={`${pendingFrame.url}:${pendingFrame.id}`}
+          src={pendingFrame.url}
           style={{ ...sharedStyle, opacity: 0, pointerEvents: "none" }}
           title="widget-pending"
         />
