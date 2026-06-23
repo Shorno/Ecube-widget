@@ -6,7 +6,7 @@ export function getMockRampageAchievement(): PlayerAchievementPayload {
       id: "6a36583a84b592178a2430ed",
       name: "M5xAYM4N",
       ign: "M5xAYM4N",
-      image: "https://api.ecube.gg/images/defaults/default-player.png",
+      image: "/default-player.png",
       gameId: "5793568913",
     },
     team: {
