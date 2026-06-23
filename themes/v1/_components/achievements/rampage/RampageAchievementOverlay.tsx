@@ -3,12 +3,14 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import type { PlayerAchievementPayload } from "@/types/player-achievement";
+import {
+  ACHIEVEMENT_HEADER_GRADIENT,
+  NAME_BAR_GRADIENT,
+  PLAYER_PANEL_GRADIENT,
+} from "../achievementGradients";
 
 const DEFAULT_PLAYER_IMAGE = "/default-player.png";
 const ELIMS_ICON = "/assets/head2head/target.svg";
-
-const BLUE_COLOR = "#0d47a1"; // Deep cobalt blue matching the mockup
-const RED_COLOR = "#9e1024";  // Deep crimson red matching the mockup
 
 type Props = {
   data: PlayerAchievementPayload;
@@ -21,7 +23,7 @@ export default function RampageAchievementOverlay({ data }: Props) {
 
   const bannerWidth = 483;
   const leftWidth = 210;
-  const rightWidth = bannerWidth - leftWidth; // 273
+  const rightWidth = bannerWidth - leftWidth;
   const topHeight = 160;
   const bottomHeight = 50;
   const shiftAmount = 37;
@@ -35,19 +37,14 @@ export default function RampageAchievementOverlay({ data }: Props) {
       className="pointer-events-none overflow-hidden shadow-2xl"
       style={{ width: `min(${bannerWidth}px, 92vw)` }}
     >
-      <div
-        className="flex"
-        style={{ height: topHeight + bottomHeight }}
-      >
-        {/* Left — player portrait */}
+      <div className="flex" style={{ height: topHeight + bottomHeight }}>
         <motion.div
           initial={{ x: -40, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.35, delay: 0.05, ease: "easeOut" }}
-          style={{ backgroundColor: BLUE_COLOR, width: leftWidth }}
+          style={{ background: PLAYER_PANEL_GRADIENT, width: leftWidth }}
           className="relative shrink-0 overflow-hidden"
         >
-
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -64,26 +61,19 @@ export default function RampageAchievementOverlay({ data }: Props) {
           </motion.div>
         </motion.div>
 
-        {/* Right column */}
-        <div
-          className="flex min-w-0 flex-col"
-          style={{ width: rightWidth }}
-        >
-          {/* Top — kills + RAMPAGE */}
+        <div className="flex min-w-0 flex-col" style={{ width: rightWidth }}>
           <motion.div
             initial={{ scaleX: 0.4, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
             style={{
               originX: 0,
-              backgroundColor: RED_COLOR,
+              background: ACHIEVEMENT_HEADER_GRADIENT,
               height: topHeight,
             }}
-            className="relative flex flex-col justify-center items-center gap-0 px-6 pt-1"
+            className="relative flex flex-col items-center justify-center gap-0 px-6 pt-1"
           >
-            {/* Row 1: Kills + Target/ELIMS Column */}
             <div className="flex items-center justify-center gap-4 select-none">
-              {/* Kills Number */}
               <motion.span
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -93,14 +83,13 @@ export default function RampageAchievementOverlay({ data }: Props) {
                   type: "spring",
                   stiffness: 280,
                 }}
-                className="shrink-0 text-[7.5rem] font-normal leading-[0.75] text-white"
+                className="font-primary shrink-0 text-[7.5rem] font-normal leading-[0.75] text-widget-text-3"
                 style={{ fontFamily: "var(--font-bebas-neue)" }}
               >
                 {kills}
               </motion.span>
 
-              {/* Target / ELIMS */}
-              <div className="flex shrink-0 flex-col items-center gap-1 mt-2">
+              <div className="mt-2 flex shrink-0 flex-col items-center gap-1">
                 <Image
                   src={ELIMS_ICON}
                   alt=""
@@ -110,7 +99,7 @@ export default function RampageAchievementOverlay({ data }: Props) {
                   unoptimized
                 />
                 <span
-                  className="text-[0.9rem] font-bold tracking-[0.25em] text-white uppercase leading-none -mr-[0.25em]"
+                  className="font-primary text-[0.9rem] font-bold tracking-[0.25em] text-widget-text-3 uppercase leading-none -mr-[0.25em]"
                   style={{ fontFamily: "var(--font-bebas-neue)" }}
                 >
                   Elims
@@ -118,24 +107,21 @@ export default function RampageAchievementOverlay({ data }: Props) {
               </div>
             </div>
 
-            {/* Row 2: RAMPAGE text */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: 0.35, ease: "easeOut" }}
-              className="w-full text-center text-[2.65rem] font-normal tracking-[0.05em] text-white uppercase leading-none mt-1"
+              className="font-primary mt-1 w-full text-center text-[2.65rem] font-normal tracking-[0.05em] text-widget-text-3 uppercase leading-none"
               style={{ fontFamily: "var(--font-american-captain)" }}
             >
               {data.achievement}
             </motion.div>
           </motion.div>
 
-          {/* Bottom — team logo + player name */}
           <div
-            className="flex relative z-10"
+            className="relative z-10 flex"
             style={{ height: bottomHeight, marginLeft: -shiftAmount }}
           >
-            {/* White box with PUBG MOBILE Logo */}
             <motion.div
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -150,32 +136,29 @@ export default function RampageAchievementOverlay({ data }: Props) {
                 >
                   PUBG
                 </span>
-                <span className="font-sans text-[0.55rem] font-extrabold tracking-[0.25em] leading-[0.95] uppercase -mr-[0.25em] mt-0.5">
+                <span className="mt-0.5 font-sans text-[0.55rem] font-extrabold tracking-[0.25em] leading-[0.95] uppercase -mr-[0.25em]">
                   MOBILE
                 </span>
               </div>
             </motion.div>
 
-            {/* Blue box with Player Name */}
             <motion.div
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.35, delay: 0.45, ease: "easeOut" }}
-              style={{ backgroundColor: BLUE_COLOR }}
+              style={{ background: NAME_BAR_GRADIENT }}
               className="flex min-w-0 flex-1 items-center justify-center px-4"
             >
               <span
-                className="truncate text-[2.1rem] font-normal tracking-wide text-white uppercase"
+                className="font-primary truncate text-[2.1rem] font-normal tracking-wide text-widget-text-3 uppercase"
                 style={{ fontFamily: "var(--font-american-captain)" }}
               >
                 {playerName}
               </span>
             </motion.div>
           </div>
-
         </div>
       </div>
     </motion.div>
   );
 }
-

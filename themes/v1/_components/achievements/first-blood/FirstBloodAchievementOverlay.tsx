@@ -3,12 +3,14 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import type { FirstBloodPayload } from "@/types/first-blood";
+import {
+  ACHIEVEMENT_HEADER_GRADIENT,
+  NAME_BAR_GRADIENT,
+  PLAYER_PANEL_GRADIENT,
+} from "../achievementGradients";
 
 const DEFAULT_PLAYER_IMAGE = "/default-player.png";
 const ELIMS_ICON = "/assets/head2head/target.svg";
-
-const BLUE_COLOR = "#0d47a1";
-const RED_COLOR = "#9e1024";
 
 type Props = {
   data: FirstBloodPayload;
@@ -36,12 +38,11 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
       style={{ width: `min(${bannerWidth}px, 92vw)` }}
     >
       <div className="flex" style={{ height: topHeight + bottomHeight }}>
-        {/* Left — causer portrait */}
         <motion.div
           initial={{ x: -40, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.35, delay: 0.05, ease: "easeOut" }}
-          style={{ backgroundColor: BLUE_COLOR, width: leftWidth }}
+          style={{ background: PLAYER_PANEL_GRADIENT, width: leftWidth }}
           className="relative shrink-0 overflow-hidden"
         >
           <motion.div
@@ -60,7 +61,6 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
           </motion.div>
         </motion.div>
 
-        {/* Right column */}
         <div className="flex min-w-0 flex-col" style={{ width: rightWidth }}>
           <motion.div
             initial={{ scaleX: 0.4, opacity: 0 }}
@@ -68,13 +68,12 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
             transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
             style={{
               originX: 0,
-              backgroundColor: RED_COLOR,
+              background: ACHIEVEMENT_HEADER_GRADIENT,
               height: topHeight,
             }}
             className="relative flex flex-col items-center justify-center gap-1 px-6 pt-1"
           >
             <div className="flex items-center justify-center gap-5 select-none">
-              {/* Larger target icon — no kill count */}
               <motion.div
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -96,7 +95,6 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
                 />
               </motion.div>
 
-              {/* FIRST / BLOOD — two lines */}
               <motion.div
                 initial={{ opacity: 0, x: 12 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -104,17 +102,16 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
                 className="flex flex-col items-center justify-center text-center leading-[0.9]"
                 style={{ fontFamily: "var(--font-american-captain)" }}
               >
-                <span className="text-[2.75rem] font-normal tracking-[0.06em] text-white uppercase">
+                <span className="font-primary text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-3 uppercase">
                   First
                 </span>
-                <span className="text-[2.75rem] font-normal tracking-[0.06em] text-white uppercase">
+                <span className="font-primary text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-3 uppercase">
                   Blood
                 </span>
               </motion.div>
             </div>
           </motion.div>
 
-          {/* Bottom — PUBG logo + causer name */}
           <div
             className="relative z-10 flex"
             style={{ height: bottomHeight, marginLeft: -shiftAmount }}
@@ -143,11 +140,11 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.35, delay: 0.45, ease: "easeOut" }}
-              style={{ backgroundColor: BLUE_COLOR }}
+              style={{ background: NAME_BAR_GRADIENT }}
               className="flex min-w-0 flex-1 items-center justify-center px-4"
             >
               <span
-                className="truncate text-[2.1rem] font-normal tracking-wide text-white uppercase"
+                className="font-primary truncate text-[2.1rem] font-normal tracking-wide text-widget-text-3 uppercase"
                 style={{ fontFamily: "var(--font-american-captain)" }}
               >
                 {playerName}
