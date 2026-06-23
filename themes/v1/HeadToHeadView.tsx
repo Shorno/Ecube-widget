@@ -92,7 +92,7 @@ export default function HeadToHeadView({ tournamentID }: Props) {
           ref={containerRef}
           className="mx-auto flex h-full w-full max-w-[1720px] flex-col gap-8"
         >
-          <div className="anim-title opacity-0">
+          <div className="anim-title flex justify-center opacity-0">
             <Title title="TEAM HEAD 2 HEAD" data={info} />
           </div>
 

@@ -1,25 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { PlayerAchievementPayload } from "@/types/player-achievement";
+import type { AchievementQueueItem } from "@/types/achievement-event";
 
 const HOLD_MS = 4500;
 
-type Options = {
-  preview?: boolean;
-  getMock?: () => PlayerAchievementPayload;
-};
-
-export function useAchievementQueue({
-  preview = false,
-  getMock,
-}: Options = {}) {
-  const [currentAchievement, setCurrentAchievement] =
-    useState<PlayerAchievementPayload | null>(null);
+export function useAchievementQueue() {
+  const [currentEvent, setCurrentEvent] = useState<AchievementQueueItem | null>(
+    null,
+  );
   const [isVisible, setIsVisible] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
 
-  const queueRef = useRef<PlayerAchievementPayload[]>([]);
+  const queueRef = useRef<AchievementQueueItem[]>([]);
   const playingRef = useRef(false);
   const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -41,7 +34,7 @@ export function useAchievementQueue({
     clearTimers();
     playingRef.current = true;
     setIsLocked(true);
-    setCurrentAchievement(next);
+    setCurrentEvent(next);
     setIsVisible(true);
 
     holdTimerRef.current = setTimeout(() => {
@@ -50,20 +43,15 @@ export function useAchievementQueue({
   }, [clearTimers]);
 
   const enqueue = useCallback(
-    (payload: PlayerAchievementPayload) => {
-      queueRef.current.push(payload);
+    (item: AchievementQueueItem) => {
+      queueRef.current.push(item);
       processNext();
     },
     [processNext],
   );
 
-  const triggerPreview = useCallback(() => {
-    if (!preview || isLocked || !getMock) return;
-    enqueue(getMock());
-  }, [preview, isLocked, enqueue, getMock]);
-
   const onExitComplete = useCallback(() => {
-    setCurrentAchievement(null);
+    setCurrentEvent(null);
     playingRef.current = false;
     processNext();
   }, [processNext]);
@@ -71,10 +59,9 @@ export function useAchievementQueue({
   useEffect(() => () => clearTimers(), [clearTimers]);
 
   return {
-    currentAchievement,
+    currentEvent,
     isVisible,
     isLocked,
-    triggerPreview,
     enqueue,
     onExitComplete,
   };

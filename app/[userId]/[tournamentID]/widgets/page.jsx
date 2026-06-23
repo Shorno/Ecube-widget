@@ -129,6 +129,10 @@ export default function WidgetsPage() {
             </span>
             <span className="h-px flex-1 bg-gray-700" />
           </div>
+          <p className="mb-3 text-xs text-gray-500">
+            Single OBS source for all achievement events. Preview page includes
+            trigger buttons for Rampage, Domination, and First Blood.
+          </p>
           <div className="mt-3 space-y-2">
             {ACHIEVEMENT_WIDGETS.map((w) => {
               const path = getWidgetPath(w, userId, tid);

@@ -158,7 +158,7 @@ export default function MatchSummaryView({ tournamentID }: Props) {
           ref={containerRef}
           className="mx-auto flex w-full max-w-[1398px] flex-col pb-10"
         >
-          <div className="anim-title opacity-0">
+          <div className="anim-title flex justify-center opacity-0">
             <Title title="MATCH SUMMARY" data={info} />
           </div>
 

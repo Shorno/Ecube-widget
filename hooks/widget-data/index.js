@@ -15,10 +15,6 @@ export { useWWC } from "./useWWC";
 export { useLiveOverallRanking } from "./useLiveOverallRanking";
 export { useTeamElimination } from "./useTeamElimination";
 export { useEliminationQueue } from "./useEliminationQueue";
-export { useRampageAchievement } from "./useRampageAchievement";
-export { useDominationAchievement } from "./useDominationAchievement";
-export { useFirstBloodAchievement } from "./useFirstBloodAchievement";
-export { useFirstBloodQueue } from "./useFirstBloodQueue";
-export { usePlayerAchievement } from "./usePlayerAchievement";
 export { useAchievementQueue } from "./useAchievementQueue";
+export { useAchievements } from "./useAchievements";
 // Note: WWCTwo and WWCStats both use useWWC — same data, different visuals
