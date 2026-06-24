@@ -9,6 +9,7 @@ import Layout from "@/components/common/Layout";
 import StatBox from "./_components/head-to-head/StatBox";
 import StatIcon from "./_components/head-to-head/StatIcon";
 import TeamNameplate from "./_components/head-to-head/TeamNameplate";
+import Title from "./_components/Title";
 import { useHeadToHead } from "@/hooks/widget-data";
 import type { H2HTeam } from "@/types/widgets";
 
@@ -16,6 +17,18 @@ type Props = {
   tournamentID: string;
   preview?: boolean;
 };
+
+// Pull layout up to remove excess space above the title and between header and body.
+const Y_OFFSET = -56;
+
+function y(value: number) {
+  return value + Y_OFFSET;
+}
+
+// Main content block — title row is centered to this width.
+const CONTENT_LEFT = 228;
+const CONTENT_WIDTH = 1464;
+const TITLE_TOP = y(103);
 
 const STATS_CONFIG = [
   {
@@ -128,7 +141,7 @@ export default function HeadToHeadView({ tournamentID, preview = false }: Props)
             className="absolute overflow-hidden"
             style={{
               left: "228px",
-              top: "256px",
+              top: `${y(256)}px`,
               width: "1464px",
               height: "682px",
               background: "linear-gradient(180deg, var(--widget-primary, #00473C) 0%, var(--widget-gradient-from, #009980) 100%)",
@@ -138,19 +151,19 @@ export default function HeadToHeadView({ tournamentID, preview = false }: Props)
           {/* Vector 9 (Left side gold accent border) */}
           <div
             className="absolute bg-gradient-to-b from-[var(--widget-secondary-dark,#C6A646)] to-[var(--widget-secondary-accent,#D4BC75)]"
-            style={{ left: "220px", top: "342px", width: "8px", height: "353px" }}
+            style={{ left: "220px", top: `${y(342)}px`, width: "8px", height: "353px" }}
           />
 
           {/* Vector 10 (Right side gold accent border - matrix flipped) */}
           <div
             className="absolute bg-gradient-to-b from-[var(--widget-secondary-dark,#C6A646)] to-[var(--widget-secondary-accent,#D4BC75)] scale-x-[-1]"
-            style={{ left: "1692px", top: "342px", width: "8px", height: "353px" }}
+            style={{ left: "1692px", top: `${y(342)}px`, width: "8px", height: "353px" }}
           />
 
           {/* Left Team Logo (LOGO) */}
           <div
             className="anim-team-left absolute z-15 flex items-center justify-center opacity-0"
-            style={{ left: "310px", top: "522px", width: "246px", height: "150px" }}
+            style={{ left: "310px", top: `${y(522)}px`, width: "246px", height: "150px" }}
           >
             {teamA.team_logoUrl ? (
               <Image
@@ -172,7 +185,7 @@ export default function HeadToHeadView({ tournamentID, preview = false }: Props)
           {/* Right Team Logo (LOGO) */}
           <div
             className="anim-team-right absolute z-15 flex items-center justify-center opacity-0"
-            style={{ left: "1364px", top: "522px", width: "246px", height: "150px" }}
+            style={{ left: "1364px", top: `${y(522)}px`, width: "246px", height: "150px" }}
           >
             {teamB.team_logoUrl ? (
               <Image
@@ -196,14 +209,14 @@ export default function HeadToHeadView({ tournamentID, preview = false }: Props)
             name={teamA.team_name}
             side="left"
             className="anim-team-left opacity-0"
-            style={{ left: "155px", top: "781px" }}
+            style={{ left: "155px", top: `${y(781)}px` }}
           />
 
           <TeamNameplate
             name={teamB.team_name}
             side="right"
             className="anim-team-right opacity-0"
-            style={{ left: "1330px", top: "781px" }}
+            style={{ left: "1330px", top: `${y(781)}px` }}
           />
 
           {/* Statistics Box Rows & Central Icons */}
@@ -214,7 +227,7 @@ export default function HeadToHeadView({ tournamentID, preview = false }: Props)
                 className="anim-stat-left absolute z-10 opacity-0"
                 style={{
                   left: "622px",
-                  top: `${stat.top}px`,
+                  top: `${y(stat.top)}px`,
                   width: "244px",
                   height: `${stat.height}px`,
                 }}
@@ -231,7 +244,7 @@ export default function HeadToHeadView({ tournamentID, preview = false }: Props)
                 className="anim-stat-right absolute z-10 opacity-0"
                 style={{
                   left: "1054px",
-                  top: `${stat.top}px`,
+                  top: `${y(stat.top)}px`,
                   width: "244px",
                   height: `${stat.height}px`,
                 }}
@@ -248,7 +261,7 @@ export default function HeadToHeadView({ tournamentID, preview = false }: Props)
                 className="anim-icons absolute z-15 flex items-center justify-center opacity-0"
                 style={{
                   left: "866px",
-                  top: `${stat.top}px`,
+                  top: `${y(stat.top)}px`,
                   width: "188px",
                   height: `${stat.height}px`,
                 }}
@@ -263,61 +276,16 @@ export default function HeadToHeadView({ tournamentID, preview = false }: Props)
             </div>
           ))}
 
-          {/* Title Area */}
+          {/* Title Area — centered over main content, uses shared Title for equal column heights */}
           <div
-            className="anim-title font-primary absolute text-widget-text-3 text-center uppercase tracking-[-0.01em] opacity-0"
+            className="anim-title pointer-events-none absolute flex justify-center opacity-0"
             style={{
-              left: "355px",
-              top: "103px",
-              width: "854px",
-              height: "162px",
-              fontSize: "120px",
-              lineHeight: "162px",
+              left: `${CONTENT_LEFT}px`,
+              top: `${TITLE_TOP}px`,
+              width: `${CONTENT_WIDTH}px`,
             }}
           >
-            TEAM HEAD 2 HEAD
-          </div>
-
-          <div
-            className="anim-title font-primary absolute text-widget-text-3 text-center uppercase opacity-0 whitespace-nowrap"
-            style={{
-              left: "1244px",
-              top: "109px",
-              minWidth: "322px",
-              height: "80px",
-              fontSize: "80px",
-              lineHeight: "80px",
-            }}
-          >
-            {info?.stage_name || info?.game_stage || "GRAND FINAL"}
-          </div>
-
-          <div
-            className="anim-title font-primary absolute text-widget-text-3 uppercase opacity-0 whitespace-nowrap"
-            style={{
-              left: "1244px",
-              top: "189px",
-              width: "112px",
-              height: "50px",
-              fontSize: "50px",
-              lineHeight: "50px",
-            }}
-          >
-            {info?.day || info?.game_day || "DAY 99"}
-          </div>
-
-          <div
-            className="anim-title font-primary absolute text-widget-text-3 text-right uppercase opacity-0 whitespace-nowrap"
-            style={{
-              left: "1414px",
-              top: "189px",
-              width: "152px",
-              height: "50px",
-              fontSize: "50px",
-              lineHeight: "50px",
-            }}
-          >
-            {info?.match_name || info?.game_name || "MATCH 99"}
+            <Title title="TEAM HEAD 2 HEAD" data={info} size="md" />
           </div>
 
         </div>
