@@ -10,12 +10,13 @@ import WinnerCard from "./_components/match-score/WinnerCard";
 import RankingColumn from "./_components/match-score/RankingColumn";
 import { useAfterMatchScore, useWWC } from "@/hooks/widget-data";
 
-type Props = { tournamentID: string };
+type Props = { tournamentID: string; preview?: boolean };
 
-export default function AfterMatchScoreView({ tournamentID }: Props) {
-  const { winner, col1, col2, info, ready } =
-    useAfterMatchScore(tournamentID);
-  const { players } = useWWC(tournamentID);
+export default function AfterMatchScoreView({ tournamentID, preview = false }: Props) {
+  const { winner, col1, col2, info, ready } = useAfterMatchScore(tournamentID, {
+    preview,
+  });
+  const { players } = useWWC(tournamentID, { preview });
   const [stageReady, setStageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -61,13 +62,16 @@ export default function AfterMatchScoreView({ tournamentID }: Props) {
 
   return (
     <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
-      <Layout top className="bg-transparent pl-16 pr-10">
-        <div ref={containerRef} className="mx-auto flex h-full w-full max-w-[1720px] flex-col justify-between pb-8">
-          <div className="anim-title opacity-0">
+      <Layout top className="bg-transparent px-16">
+        <div
+          ref={containerRef}
+          className="mx-auto flex w-full max-w-[1720px] flex-col pb-8"
+        >
+          <div className="anim-title flex justify-center opacity-0">
             <MatchRankingsTitle data={info} />
           </div>
 
-          <div className="grid w-full grid-cols-2 items-start gap-x-12">
+          <div className="mt-6 grid w-full grid-cols-2 items-start gap-x-12">
             <div className="flex w-full flex-col gap-[2px] pt-[31px]">
               <div className="anim-winner w-full opacity-0">
                 <WinnerCard team={winner} players={players} />

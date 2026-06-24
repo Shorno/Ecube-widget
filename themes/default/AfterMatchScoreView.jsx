@@ -6,23 +6,25 @@ import Layout from "@/components/common/Layout";
 import Tableheader from "@/components/widgets/Tableheader";
 import TableRow from "@/components/widgets/TableRow";
 import Title from "@/components/common/Title";
-import { useGetAfterMatchScoreQuery } from "@/lib/services/widget-api";
 import WidgetStage from "@/components/common/WidgetStage";
+import { useAfterMatchScore } from "@/hooks/widget-data";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
-export default function AfterMatchScoreView({ tournamentID }) {
-  const { data } = useGetAfterMatchScoreQuery({ tournamentID });
+export default function AfterMatchScoreView({ tournamentID, preview = false }) {
+  const { winner, col1, col2, info, ready } = useAfterMatchScore(tournamentID, {
+    preview,
+  });
   const containerRef = useRef(null);
   const [stageReady, setStageReady] = useState(false);
 
-  const teamOne = data?.data?.[0] || {};
-  const colOne = data?.data?.slice(1, 7) || [];
-  const colTwo = data?.data?.slice(7, 16) || [];
+  const teamOne = winner ?? {};
+  const colOne = col1;
+  const colTwo = col2;
 
   useGSAP(
     () => {
-      if (!data || !stageReady || !containerRef.current) return;
+      if (!ready || !stageReady || !containerRef.current) return;
       gsap.set(".anim-title", { opacity: 0, y: -40 });
       gsap.set(".anim-highlight", { opacity: 0, x: -100 });
       gsap.set(".anim-header-left", { opacity: 0, x: -100 });
@@ -55,17 +57,17 @@ export default function AfterMatchScoreView({ tournamentID }) {
           "<",
         );
     },
-    { scope: containerRef, dependencies: [data, stageReady] },
+    { scope: containerRef, dependencies: [ready, stageReady] },
   );
 
-  if (!data || !data.data) return null;
+  if (!ready || !winner) return null;
 
   return (
-    <WidgetStage dataReady={!!data} onReady={() => setStageReady(true)}>
+    <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
       <div ref={containerRef}>
         <Layout top>
           <div className="anim-title opacity-0">
-            <Title title="Match Standing" stageOnly data={data?.info} />
+            <Title title="Match Standing" stageOnly data={info} />
           </div>
           <div className="wrapper mx-auto grid h-auto! w-full! grid-cols-2 gap-4">
             <div className="mx-auto w-215 space-y-2">
