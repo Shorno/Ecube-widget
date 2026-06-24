@@ -1,6 +1,10 @@
 "use client";
 
 import { useGetAfterMatchScoreGroupQuery } from "@/lib/services/widget-api";
+import {
+  getMockOverallRankingsRows,
+  MOCK_MATCH_INFO,
+} from "./mockAfterMatchScore";
 
 /**
  * Overall Rankings (v1 Score Group) — tournament group standings.
@@ -12,8 +16,22 @@ import { useGetAfterMatchScoreGroupQuery } from "@/lib/services/widget-api";
  *   info  — tournament/match metadata
  *   ready — true when data has loaded
  */
-export function useOverallRankings(tournamentID) {
-  const { data, isLoading } = useGetAfterMatchScoreGroupQuery({ tournamentID });
+export function useOverallRankings(tournamentID, { preview = false } = {}) {
+  const { data, isLoading } = useGetAfterMatchScoreGroupQuery(
+    { tournamentID },
+    { skip: preview },
+  );
+
+  if (preview) {
+    const rows = getMockOverallRankingsRows();
+    return {
+      col1: rows.slice(0, 10),
+      col2: rows.slice(10, 20),
+      info: MOCK_MATCH_INFO,
+      ready: true,
+    };
+  }
+
   const rows = [...(data?.data ?? [])].sort(
     (a, b) => (a.position ?? 0) - (b.position ?? 0),
   );

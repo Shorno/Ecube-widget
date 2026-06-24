@@ -5,9 +5,10 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import WidgetStage from "@/components/common/WidgetStage";
 import Layout from "@/components/common/Layout";
-import MatchRankingsTitle from "./_components/match-score/MatchRankingsTitle";
+import Title from "./_components/Title";
 import WinnerCard from "./_components/match-score/WinnerCard";
 import RankingColumn from "./_components/match-score/RankingColumn";
+import { MATCH_COLUMN_GAP, MATCH_LISTING_WIDTH, MATCH_ROW_WIDTH } from "./_components/match-score/StatsHeader";
 import { useAfterMatchScore, useWWC } from "@/hooks/widget-data";
 
 type Props = { tournamentID: string; preview?: boolean };
@@ -65,20 +66,27 @@ export default function AfterMatchScoreView({ tournamentID, preview = false }: P
       <Layout top className="bg-transparent px-16">
         <div
           ref={containerRef}
-          className="mx-auto flex w-full max-w-[1720px] flex-col pb-8"
+          className="mx-auto flex flex-col pb-8"
+          style={{ width: MATCH_LISTING_WIDTH }}
         >
           <div className="anim-title flex justify-center opacity-0">
-            <MatchRankingsTitle data={info} />
+            <Title title="MATCH RANKINGS" data={info} size="rankings" />
           </div>
 
-          <div className="mt-6 grid w-full grid-cols-2 items-start gap-x-12">
-            <div className="flex w-full flex-col gap-[2px] pt-[31px]">
-              <div className="anim-winner w-full opacity-0">
+          <div
+            className="mt-6 grid items-start"
+            style={{
+              width: MATCH_LISTING_WIDTH,
+              gap: `${MATCH_COLUMN_GAP}px`,
+              gridTemplateColumns: `${MATCH_ROW_WIDTH}px ${MATCH_ROW_WIDTH}px`,
+            }}
+          >
+            <div className="flex flex-col gap-[2px] pt-[31px]">
+              <div className="anim-winner opacity-0" style={{ width: MATCH_ROW_WIDTH }}>
                 <WinnerCard team={winner} players={players} />
               </div>
               <RankingColumn
                 teams={col1}
-                className="w-full"
                 rowClassName="anim-row-left opacity-0"
               />
             </div>
@@ -86,7 +94,6 @@ export default function AfterMatchScoreView({ tournamentID, preview = false }: P
             <RankingColumn
               teams={col2}
               showHeader
-              className="w-full min-w-0"
               headerClassName="anim-header-right opacity-0"
               rowClassName="anim-row-right opacity-0"
             />

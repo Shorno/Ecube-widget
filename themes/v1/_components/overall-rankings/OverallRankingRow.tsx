@@ -1,7 +1,11 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import type { TeamRow } from "@/types/widgets";
-import { OverallStatsValues } from "./OverallStatsHeader";
+import {
+  OVERALL_RANK_COL_WIDTH,
+  OVERALL_TEAM_COL_WIDTH,
+  OverallStatsValues,
+} from "./OverallStatsHeader";
 
 type Props = {
   team: TeamRow;
@@ -17,8 +21,9 @@ export default function OverallRankingRow({
     <div className={cn("relative flex h-[58px] w-full items-stretch", className)}>
       {/* RANK cell */}
       <div
-        className="box-border flex h-[58px] w-[67px] shrink-0 items-center justify-center border border-widget-secondary bg-gradient-to-br from-widget-primary to-widget-primary-accent text-center text-widget-secondary"
+        className="box-border flex h-[58px] shrink-0 items-center justify-center border border-widget-secondary bg-gradient-to-br from-widget-primary to-widget-primary-accent text-center text-widget-secondary"
         style={{
+          width: OVERALL_RANK_COL_WIDTH,
           fontFamily: "var(--font-anton)",
           fontSize: "36px",
         }}
@@ -27,7 +32,10 @@ export default function OverallRankingRow({
       </div>
 
       {/* TEAM cell */}
-      <div className="box-border flex h-[58px] min-w-0 flex-1 items-center border-t border-b border-r border-widget-primary bg-gradient-to-r from-[#D9DCEB] to-[#FFFFFF] pl-[20px]">
+      <div
+        className="box-border flex h-[58px] shrink-0 items-center border-t border-b border-r border-widget-primary bg-gradient-to-r from-[#D9DCEB] to-[#FFFFFF] px-3"
+        style={{ width: OVERALL_TEAM_COL_WIDTH }}
+      >
         {team.team_logoUrl && (
           <Image
             src={team.team_logoUrl}

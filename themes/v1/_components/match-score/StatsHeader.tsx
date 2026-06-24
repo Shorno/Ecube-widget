@@ -8,8 +8,16 @@ type Props = {
 
 const COLUMNS = ["PLACE PTS", "ELIMS", "TOTAL PTS"] as const;
 
+export const MATCH_RANK_COL_WIDTH = 67;
+export const MATCH_TEAM_COL_WIDTH = 220;
 /** Figma stats block width — aligns header + row values */
-export const STATS_BLOCK_WIDTH = 430;
+export const STATS_BLOCK_WIDTH = 300;
+
+export const MATCH_ROW_WIDTH =
+  MATCH_RANK_COL_WIDTH + MATCH_TEAM_COL_WIDTH + STATS_BLOCK_WIDTH;
+
+export const MATCH_COLUMN_GAP = 48;
+export const MATCH_LISTING_WIDTH = MATCH_ROW_WIDTH * 2 + MATCH_COLUMN_GAP;
 
 const COL_WIDTH = "flex-1 min-w-0";
 

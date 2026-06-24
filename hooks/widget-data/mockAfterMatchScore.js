@@ -52,6 +52,37 @@ export function getMockAfterMatchScoreRows() {
   return PREVIEW_TEAM_NAMES.map((name, idx) => buildTeam(idx + 1, name));
 }
 
+/** Tournament overall standings — WWCD + cumulative points for score-group preview. */
+const OVERALL_WWCD = [2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+const OVERALL_POS = [
+  85, 72, 68, 61, 55, 48, 42, 38, 35, 32, 28, 25, 22, 19, 16, 14, 11, 8, 5, 2,
+];
+const OVERALL_KILLS = [
+  78, 65, 58, 52, 48, 44, 40, 36, 33, 30, 27, 24, 21, 18, 15, 12, 9, 6, 4, 2,
+];
+
+function buildOverallTeam(position, teamName) {
+  const idx = position - 1;
+  const positionPoints = OVERALL_POS[idx] ?? 0;
+  const killPoints = OVERALL_KILLS[idx] ?? 0;
+
+  return {
+    team_id: `preview-overall-${position}`,
+    position,
+    team_name: teamName,
+    team_logoUrl: null,
+    wwcd: OVERALL_WWCD[idx] ?? 0,
+    positionPoints,
+    killPoints,
+    totalPoints: positionPoints + killPoints,
+    match_played: 3,
+  };
+}
+
+export function getMockOverallRankingsRows() {
+  return PREVIEW_TEAM_NAMES.map((name, idx) => buildOverallTeam(idx + 1, name));
+}
+
 export const MOCK_WWC_PLAYERS = [
   {
     player_id: "preview-p1",

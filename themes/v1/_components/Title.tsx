@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
 import type { MatchInfo } from "@/types/widgets";
 
-type TitleSize = "lg" | "md";
+type TitleSize = "lg" | "md" | "rankings" | "overall";
+type DetailLayout = "inline" | "gap" | "justify-between";
 
 const TITLE_SIZES = {
   lg: {
@@ -10,6 +11,7 @@ const TITLE_SIZES = {
     meta: "h-[180px] py-[8px]",
     stage: "text-[80px] leading-[80px]",
     detail: "text-[50px] leading-[50px]",
+    detailLayout: "inline" as DetailLayout,
   },
   // Compact — meta fonts scaled to 2/3 of lg so both columns fit 120px equally.
   md: {
@@ -18,6 +20,25 @@ const TITLE_SIZES = {
     meta: "h-[120px] py-[5px]",
     stage: "text-[53px] leading-[53px]",
     detail: "text-[33px] leading-[33px]",
+    detailLayout: "inline" as DetailLayout,
+  },
+  // Match rankings table — long label at full 160px row.
+  rankings: {
+    row: "h-[160px]",
+    title: "text-[160px] leading-[160px] whitespace-nowrap",
+    meta: "h-[160px] py-2",
+    stage: "text-[60px] leading-[60px]",
+    detail: "text-[40px] leading-[40px]",
+    detailLayout: "gap" as DetailLayout,
+  },
+  // Overall rankings — 150px row; meta scaled from lg at 150/180.
+  overall: {
+    row: "h-[150px]",
+    title: "block overflow-hidden text-[150px] leading-[150px] whitespace-nowrap",
+    meta: "h-[150px] overflow-hidden py-[7px] items-end",
+    stage: "shrink-0 whitespace-nowrap text-right text-[67px] leading-[67px]",
+    detail: "w-full shrink-0 text-[42px] leading-[42px]",
+    detailLayout: "justify-between" as DetailLayout,
   },
 } as const;
 
@@ -47,6 +68,11 @@ export default function Title({
   const matchName = data?.match_name || data?.game_name;
   const sizes = TITLE_SIZES[size];
 
+  const detailText = cn(
+    "font-primary font-normal text-widget-text-3",
+    sizes.detail,
+  );
+
   return (
     <div
       className={cn(
@@ -66,7 +92,12 @@ export default function Title({
       </h1>
 
       {(data || subtitle) && (
-        <div className={cn("flex flex-col justify-between", sizes.meta)}>
+        <div
+          className={cn(
+            "flex flex-col justify-between self-stretch",
+            sizes.meta,
+          )}
+        >
           {data && stage && (
             <span
               className={cn(
@@ -78,26 +109,28 @@ export default function Title({
             </span>
           )}
           {data && !stageOnly && (day || matchName) && (
-            <span
-              className={cn(
-                "font-primary font-normal text-widget-text-3",
-                sizes.detail,
+            <>
+              {sizes.detailLayout === "justify-between" && (
+                <div className={cn("flex items-center justify-between", detailText)}>
+                  {matchName && <span>{matchName}</span>}
+                  {day && <span>{day}</span>}
+                </div>
               )}
-            >
-              {matchName && <span className="mr-14">{matchName}</span>}
-              {day && <span>{day}</span>}
-            </span>
-          )}
-          {subtitle && (
-            <span
-              className={cn(
-                "font-primary font-normal text-widget-text-3",
-                sizes.detail,
+              {sizes.detailLayout === "gap" && (
+                <div className={cn("flex items-center gap-8", detailText)}>
+                  {matchName && <span>{matchName}</span>}
+                  {day && <span>{day}</span>}
+                </div>
               )}
-            >
-              {subtitle}
-            </span>
+              {sizes.detailLayout === "inline" && (
+                <span className={detailText}>
+                  {matchName && <span className="mr-14">{matchName}</span>}
+                  {day && <span>{day}</span>}
+                </span>
+              )}
+            </>
           )}
+          {subtitle && <span className={detailText}>{subtitle}</span>}
         </div>
       )}
     </div>

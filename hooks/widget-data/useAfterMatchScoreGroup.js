@@ -1,5 +1,9 @@
 "use client";
 import { useGetAfterMatchScoreGroupQuery } from "@/lib/services/widget-api";
+import {
+  getMockOverallRankingsRows,
+  MOCK_MATCH_INFO,
+} from "./mockAfterMatchScore";
 
 /**
  * After-Match Score Group (overall/tournament standings).
@@ -10,8 +14,23 @@ import { useGetAfterMatchScoreGroupQuery } from "@/lib/services/widget-api";
  *   info    — tournament metadata
  *   ready
  */
-export function useAfterMatchScoreGroup(tournamentID) {
-  const { data, isLoading } = useGetAfterMatchScoreGroupQuery({ tournamentID });
+export function useAfterMatchScoreGroup(tournamentID, { preview = false } = {}) {
+  const { data, isLoading } = useGetAfterMatchScoreGroupQuery(
+    { tournamentID },
+    { skip: preview },
+  );
+
+  if (preview) {
+    const rows = getMockOverallRankingsRows().slice(0, 16);
+    return {
+      winner: rows[0] ?? null,
+      col1: rows.slice(1, 7),
+      col2: rows.slice(7, 16),
+      info: MOCK_MATCH_INFO,
+      ready: true,
+    };
+  }
+
   const rows = data?.data ?? [];
   const winner = rows[0] ?? null;
   const col1 = rows.slice(1, 7);
