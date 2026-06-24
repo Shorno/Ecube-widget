@@ -11,7 +11,10 @@ import LiveRankingRow from "./_components/live-ranking/LiveRankingRow";
 import LiveRankingLegend from "./_components/live-ranking/LiveRankingLegend";
 import LiveRankingPreviewControls from "./_components/live-ranking/LiveRankingPreviewControls";
 import TopFourLayer from "./_components/top-four/TopFourLayer";
-import { getLiveRankingLayout } from "./_components/live-ranking/layout";
+import {
+  getLiveRankingLayout,
+  LIVE_RANKING_PANEL_TOP,
+} from "./_components/live-ranking/layout";
 
 gsap.registerPlugin(Flip);
 
@@ -120,7 +123,7 @@ export default function LiveOverallRankingView({
 
   return (
     <WidgetStage dataReady={ready} onReady={() => {}}>
-      <div className="relative min-h-screen w-screen overflow-x-hidden">
+      <div className="relative h-screen w-screen overflow-hidden">
         {preview && (
           <>
             <div className="fixed top-2 left-2 z-50 rounded bg-black/70 px-2 py-1 font-mono text-[10px] text-yellow-300 uppercase">
@@ -147,7 +150,7 @@ export default function LiveOverallRankingView({
           <div
             ref={listPanelRef}
             className="absolute right-0 flex flex-col select-none"
-            style={{ top: "247px", width: rankingLayout.panelWidth }}
+            style={{ top: LIVE_RANKING_PANEL_TOP, width: rankingLayout.panelWidth }}
           >
             <LiveRankingHeader showFullTeamName={showFullTeamName} />
 
