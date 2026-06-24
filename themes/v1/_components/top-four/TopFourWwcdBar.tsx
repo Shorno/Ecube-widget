@@ -24,12 +24,12 @@ export default function TopFourWwcdBar({ winProbability, className }: Props) {
         {/* Left Section Background (WWCD) */}
         <path
           d="M9 0 H150.5 V26 H22 L9 13 Z"
-          fill="var(--widget-v1-wwcd-from, #4F63CE)"
+          fill="var(--widget-primary-accent, #00AD91)"
         />
         {/* Right Section Background (Win Probability %) */}
         <path
           d="M150.5 0 H292 V13 L279 26 H150.5 Z"
-          fill="var(--widget-v1-wwcd-to, #3C41B4)"
+          fill="var(--widget-primary-dark, #00332B)"
         />
         {/* Outer Border Frame */}
         <path
@@ -55,7 +55,7 @@ export default function TopFourWwcdBar({ winProbability, className }: Props) {
         WWCD
       </div>
       <div
-        className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-xs"
+        className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-base leading-none"
         style={{ left: 150.5, width: 141.5 }}
       >
         {Math.round(winProbability)}%
