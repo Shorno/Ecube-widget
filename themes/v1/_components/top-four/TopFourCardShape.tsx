@@ -8,6 +8,7 @@ type Props = {
   style?: React.CSSProperties;
   width?: number;
   height?: number;
+  primaryColor?: string;
   primaryDarkColor?: string;
   primaryAccentColor?: string;
   gradientStartColor?: string;
@@ -20,12 +21,14 @@ export default function TopFourCardShape({
   style,
   width = 301,
   height = 79,
+  primaryColor = "var(--widget-primary, #00473C)",
   primaryDarkColor = "var(--widget-primary-dark, #00332B)",
-  primaryAccentColor = "var(--widget-primary-accent, #00AD91)",
-  gradientStartColor = "var(--widget-secondary-dark, #C6A646)",
-  gradientStopColor = "var(--widget-secondary-accent, #D4BC75)",
+  primaryAccentColor = "var(--widget-primary-dark, #00332B)",
+  gradientStartColor,
+  gradientStopColor,
 }: Props) {
   const gradientId = useId().replace(/:/g, "");
+  const useGradient = gradientStartColor != null && gradientStopColor != null;
 
   const sy = height / 79;
   const sx = (x: number) => (x < 150.5 ? x * sy : width - (301 - x) * sy);
@@ -42,10 +45,19 @@ export default function TopFourCardShape({
       aria-hidden
     >
       <defs>
-        <linearGradient id={gradientId} x1={width / 2} y1={10 * sy} x2={width / 2} y2={71 * sy} gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor={gradientStartColor} />
-          <stop offset="1" stopColor={gradientStopColor} />
-        </linearGradient>
+        {useGradient && (
+          <linearGradient
+            id={gradientId}
+            x1={width / 2}
+            y1={10 * sy}
+            x2={width / 2}
+            y2={71 * sy}
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop offset="0" stopColor={gradientStartColor} />
+            <stop offset="1" stopColor={gradientStopColor} />
+          </linearGradient>
+        )}
       </defs>
       <path
         d={`M ${p(301, 57)} L ${p(284, 74)} H ${sx(301)} V ${syVal(57)} Z`}
@@ -61,7 +73,7 @@ export default function TopFourCardShape({
       />
       <path
         d={`M ${p(60, 71)} H ${sx(22.5)} L ${p(10.5, 60)} V ${syVal(10)} H ${sx(15)} L ${p(19.5, 14.5)} H ${sx(31.5)} L ${p(35, 10)} H ${sx(77)} H ${sx(173.997)} L ${p(176.808, 12.8372)} H ${sx(232.335)} L ${p(234.444, 10)} H ${sx(286.457)} L ${p(297, 21.3488)} V ${syVal(48.3023)} L ${p(275.211, 71)} H ${sx(60)} Z`}
-        fill={`url(#${gradientId})`}
+        fill={useGradient ? `url(#${gradientId})` : primaryColor}
       />
     </svg>
   );
