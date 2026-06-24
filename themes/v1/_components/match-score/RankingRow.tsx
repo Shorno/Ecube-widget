@@ -2,7 +2,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import type { TeamRow } from "@/types/widgets";
 import RankBadge from "./RankBadge";
-import { StatsValues, STATS_BLOCK_WIDTH } from "./StatsHeader";
+import { StatsValues, STATS_BLOCK_WIDTH, MATCH_TEAM_COL_WIDTH } from "./StatsHeader";
 
 type Props = {
   team: TeamRow;
@@ -25,7 +25,10 @@ export default function RankingRow({ team, isFirst = false, className }: Props) 
       <div className="relative flex h-full w-full items-stretch">
         <RankBadge rank={team.position} variant="row" isFirst={isFirst} className="relative z-10 origin-bottom-left" />
 
-        <div className="flex min-w-0 flex-1 items-center pl-[20px] pr-2">
+        <div
+          className="flex shrink-0 items-center pl-[20px] pr-2"
+          style={{ width: MATCH_TEAM_COL_WIDTH }}
+        >
           {team.team_logoUrl && (
             <Image
               src={team.team_logoUrl}

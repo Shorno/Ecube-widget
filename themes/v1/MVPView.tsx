@@ -10,9 +10,15 @@ import Image from "next/image";
 import Title from "./_components/Title";
 import MVPPlayerNameplate from "./_components/mvp-nameplate/MVPPlayerNameplate";
 
-export default function MVPView({ tournamentID }: { tournamentID: string }) {
+export default function MVPView({
+  tournamentID,
+  preview = false,
+}: {
+  tournamentID: string;
+  preview?: boolean;
+}) {
   const [stageReady, setStageReady] = useState(false);
-  const { mvp, ready, info } = useMVP(tournamentID);
+  const { mvp, ready, info } = useMVP(tournamentID, { preview });
   const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(

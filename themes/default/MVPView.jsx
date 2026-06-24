@@ -1,19 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useGetMvpMatchQuery } from "@/lib/services/widget-api";
+import { useMVP } from "@/hooks/widget-data";
 import MVPDisplay from "@/components/widgets/MVPDisplay";
 import WidgetStage from "@/components/common/WidgetStage";
 
-export default function MVPView({ tournamentID }) {
-  const { data } = useGetMvpMatchQuery({ tournamentID });
+export default function MVPView({ tournamentID, preview = false }) {
+  const { mvp, ready } = useMVP(tournamentID, { preview });
   const [stageReady, setStageReady] = useState(false);
-  const mvp = data?.data || [];
 
-  if (!data || !data.data) return null;
+  if (!ready) return null;
 
   return (
-    <WidgetStage dataReady={!!data} onReady={() => setStageReady(true)}>
+    <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
       <MVPDisplay mvp={mvp} stageReady={stageReady} />
     </WidgetStage>
   );

@@ -5,18 +5,30 @@ type Props = {
 };
 
 const STAT_COLS = ["WWCD", "POS", "ELIMS"] as const;
-const STAT_COL_WIDTH = 100;
-const TOTAL_COL_WIDTH = 126;
 
-export const OVERALL_STAT_COL_WIDTH = STAT_COL_WIDTH;
-export const OVERALL_TOTAL_COL_WIDTH = TOTAL_COL_WIDTH;
+export const OVERALL_RANK_COL_WIDTH = 67;
+export const OVERALL_TEAM_COL_WIDTH = 240;
+export const OVERALL_STAT_COL_WIDTH = 88;
+export const OVERALL_TOTAL_COL_WIDTH = 108;
+
+export const OVERALL_ROW_WIDTH =
+  OVERALL_RANK_COL_WIDTH +
+  OVERALL_TEAM_COL_WIDTH +
+  OVERALL_STAT_COL_WIDTH * STAT_COLS.length +
+  OVERALL_TOTAL_COL_WIDTH;
+
+/** Width of both ranking columns plus the gap between them. */
+export const OVERALL_COLUMN_GAP = 40;
+export const OVERALL_LISTING_WIDTH =
+  OVERALL_ROW_WIDTH * 2 + OVERALL_COLUMN_GAP;
 
 export default function OverallStatsHeader({ className }: Props) {
   return (
-    <div className={cn("flex min-w-0 flex-1 items-stretch", className)}>
+    <div className={cn("flex shrink-0 items-stretch", className)}>
       <div
-        className="box-border flex h-[34px] min-w-0 flex-1 items-center pl-[20px] font-bold text-white uppercase"
+        className="box-border flex h-[34px] shrink-0 items-center pl-4 font-bold text-white uppercase"
         style={{
+          width: OVERALL_TEAM_COL_WIDTH,
           fontFamily: "var(--font-secondary)",
           fontSize: "23px",
         }}
@@ -26,8 +38,9 @@ export default function OverallStatsHeader({ className }: Props) {
       {STAT_COLS.map((label) => (
         <div
           key={label}
-          className="box-border grid h-[34px] w-[100px] shrink-0 place-content-center font-bold text-white uppercase"
+          className="box-border grid h-[34px] shrink-0 place-content-center font-bold text-white uppercase"
           style={{
+            width: OVERALL_STAT_COL_WIDTH,
             fontFamily: "var(--font-secondary)",
             fontSize: "23px",
           }}
@@ -36,8 +49,9 @@ export default function OverallStatsHeader({ className }: Props) {
         </div>
       ))}
       <div
-        className="grid h-[34px] w-[126px] shrink-0 place-content-center font-bold text-white uppercase"
+        className="grid h-[34px] shrink-0 place-content-center font-bold text-white uppercase"
         style={{
+          width: OVERALL_TOTAL_COL_WIDTH,
           fontFamily: "var(--font-secondary)",
           fontSize: "23px",
         }}
@@ -67,8 +81,9 @@ export function OverallStatsValues({
       {stats.map((value, i) => (
         <div
           key={i}
-          className="box-border flex h-[58px] w-[100px] shrink-0 items-center justify-center border-t border-b border-r border-widget-primary bg-[#FFFFFF] font-bold text-center text-widget-text-2"
+          className="box-border flex h-[58px] shrink-0 items-center justify-center border-t border-b border-r border-widget-primary bg-[#FFFFFF] font-bold text-center text-widget-text-2"
           style={{
+            width: OVERALL_STAT_COL_WIDTH,
             fontFamily: "var(--font-secondary)",
             fontSize: "31px",
           }}
@@ -77,8 +92,9 @@ export function OverallStatsValues({
         </div>
       ))}
       <div
-        className="box-border flex h-[58px] w-[126px] shrink-0 items-center justify-center border border-widget-secondary bg-gradient-to-br from-widget-primary to-widget-primary-accent font-bold text-center text-widget-text-3"
+        className="box-border flex h-[58px] shrink-0 items-center justify-center border border-widget-secondary bg-gradient-to-br from-widget-primary to-widget-primary-accent font-bold text-center text-widget-text-3"
         style={{
+          width: OVERALL_TOTAL_COL_WIDTH,
           fontFamily: "var(--font-secondary)",
           fontSize: "33px",
         }}

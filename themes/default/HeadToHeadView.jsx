@@ -3,7 +3,7 @@
 import Layout from "@/components/common/Layout";
 import Title from "@/components/common/Title";
 import { useRef, useState } from "react";
-import { useGetHeadToHeadQuery } from "@/lib/services/widget-api";
+import { useHeadToHead } from "@/hooks/widget-data";
 import Image from "next/image";
 import WidgetStage from "@/components/common/WidgetStage";
 import { useGSAP } from "@gsap/react";
@@ -17,34 +17,14 @@ const statsConfig = [
   { label: "Total Points", key: "totalPoints" },
 ];
 
-export default function HeadToHeadView({ tournamentID }) {
-  const { data } = useGetHeadToHeadQuery({ tournamentID });
+export default function HeadToHeadView({ tournamentID, preview = false }) {
+  const { teamA, teamB, info, ready } = useHeadToHead(tournamentID, { preview });
   const containerRef = useRef(null);
   const [stageReady, setStageReady] = useState(false);
 
-  const getMaxSurvivalTime = (team) => {
-    const players = team?.players ?? [];
-    if (!players.length) return null;
-    return (
-      players.reduce((best, p) =>
-        (p?.survival_time_display?.minute ?? 0) >
-        (best?.survival_time_display?.minute ?? 0)
-          ? p
-          : best,
-      ).survival_time_display?.text ?? null
-    );
-  };
-
-  const teamA = data?.data?.[0]
-    ? { ...data.data[0], total_survival_time: getMaxSurvivalTime(data.data[0]) }
-    : null;
-  const teamB = data?.data?.[1]
-    ? { ...data.data[1], total_survival_time: getMaxSurvivalTime(data.data[1]) }
-    : null;
-
   useGSAP(
     () => {
-      if (!data || !stageReady || !containerRef.current) return;
+      if (!ready || !stageReady || !containerRef.current) return;
       gsap.set(".anim-title", { opacity: 0, y: -30 });
       gsap.set(".anim-team-left", { opacity: 0, x: -60 });
       gsap.set(".anim-team-right", { opacity: 0, x: 60 });
@@ -64,17 +44,17 @@ export default function HeadToHeadView({ tournamentID }) {
           "<0.2",
         );
     },
-    { scope: containerRef, dependencies: [data, stageReady] },
+    { scope: containerRef, dependencies: [ready, stageReady] },
   );
 
-  if (!data || !data.data) return null;
+  if (!ready || !teamA || !teamB) return null;
 
   return (
-    <WidgetStage dataReady={!!data} onReady={() => setStageReady(true)}>
+    <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
       <div ref={containerRef}>
         <Layout top>
           <div className="anim-title opacity-0">
-            <Title title="Team Head-to-Head" data={data?.info} />
+            <Title title="Team Head-to-Head" data={info} />
           </div>
           <div className="wrapper">
             <div className="grid grid-cols-4 gap-4">

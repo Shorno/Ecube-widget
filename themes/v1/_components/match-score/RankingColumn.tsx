@@ -1,7 +1,11 @@
 import { cn } from "@/lib/utils";
 import type { TeamRow } from "@/types/widgets";
 import RankingRow from "./RankingRow";
-import StatsHeader from "./StatsHeader";
+import StatsHeader, {
+  MATCH_RANK_COL_WIDTH,
+  MATCH_ROW_WIDTH,
+  MATCH_TEAM_COL_WIDTH,
+} from "./StatsHeader";
 
 type Props = {
   teams: TeamRow[];
@@ -19,10 +23,19 @@ export default function RankingColumn({
   className,
 }: Props) {
   return (
-    <div className={cn("flex w-full min-w-0 flex-col", className)}>
+    <div
+      className={cn("flex shrink-0 flex-col", className)}
+      style={{ width: MATCH_ROW_WIDTH }}
+    >
       {showHeader && (
-        <div className="z-10 flex w-full items-stretch">
-          <div className="min-w-0 flex-1" />
+        <div
+          className="z-10 flex items-stretch"
+          style={{ width: MATCH_ROW_WIDTH }}
+        >
+          <div
+            className="shrink-0"
+            style={{ width: MATCH_RANK_COL_WIDTH + MATCH_TEAM_COL_WIDTH }}
+          />
           <StatsHeader variant="column" className={headerClassName} />
         </div>
       )}

@@ -5,14 +5,15 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import WidgetStage from "@/components/common/WidgetStage";
 import Layout from "@/components/common/Layout";
-import OverallRankingsTitle from "./_components/overall-rankings/OverallRankingsTitle";
+import Title from "./_components/Title";
 import OverallRankingColumn from "./_components/overall-rankings/OverallRankingColumn";
+import { OVERALL_COLUMN_GAP } from "./_components/overall-rankings/OverallStatsHeader";
 import { useOverallRankings } from "@/hooks/widget-data";
 
-type Props = { tournamentID: string };
+type Props = { tournamentID: string; preview?: boolean };
 
-export default function AfterMatchScoreGroupView({ tournamentID }: Props) {
-  const { col1, col2, info, ready } = useOverallRankings(tournamentID);
+export default function AfterMatchScoreGroupView({ tournamentID, preview = false }: Props) {
+  const { col1, col2, info, ready } = useOverallRankings(tournamentID, { preview });
   const [stageReady, setStageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -58,25 +59,26 @@ export default function AfterMatchScoreGroupView({ tournamentID }: Props) {
 
   return (
     <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
-      <Layout top className="bg-transparent pl-16 pr-10">
+      <Layout top className="bg-transparent px-16">
         <div
           ref={containerRef}
-          className="mx-auto flex h-full w-full max-w-[1720px] flex-col justify-between pb-8"
+          className="mx-auto flex flex-col items-center pb-8"
         >
-          <div className="anim-title opacity-0">
-            <OverallRankingsTitle data={info} />
+          <div className="anim-title flex justify-center opacity-0">
+            <Title title="OVERALL RANKINGS" data={info} size="overall" />
           </div>
 
-          <div className="grid w-full grid-cols-2 items-start gap-x-12 pt-[31px]">
+          <div
+            className="mt-4 flex justify-center"
+            style={{ gap: OVERALL_COLUMN_GAP }}
+          >
             <OverallRankingColumn
               teams={col1}
-              className="w-full min-w-0"
               headerClassName="anim-header-left opacity-0"
               rowClassName="anim-row-left opacity-0"
             />
             <OverallRankingColumn
               teams={col2}
-              className="w-full min-w-0"
               headerClassName="anim-header-right opacity-0"
               rowClassName="anim-row-right opacity-0"
             />

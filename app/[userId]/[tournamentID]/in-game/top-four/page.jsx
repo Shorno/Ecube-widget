@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import TopFourPreview from "./TopFourPreview";
 
 const demoData = [
   {
@@ -36,7 +37,18 @@ const demoData = [
   },
 ];
 
-function TopFour() {
+export default async function TopFourPage({ searchParams }) {
+  const resolvedSearchParams = await searchParams;
+  const isPreview = resolvedSearchParams?.preview === "1";
+
+  if (isPreview) {
+    return <TopFourPreview />;
+  }
+
+  return <TopFourWidget />;
+}
+
+function TopFourWidget() {
   return (
     <div className="relative h-screen bg-transparent">
       <div className="absolute top-12 left-1/2 grid -translate-x-1/2 grid-cols-4 items-center gap-x-8 gap-y-4">
@@ -61,7 +73,7 @@ function TopFour() {
               <div className="flex h-full gap-2 bg-blue-200 p-2">
                 {team?.players?.map((player, idx) => (
                   <div key={idx} className="relative w-1.5 bg-gray-400">
-                    <div
+                     <div
                       className={cn(
                         "absolute bottom-0 w-full transition-all duration-300",
                         player?.is_alive ? "bg-green-500" : "bg-red-500",
@@ -82,5 +94,3 @@ function TopFour() {
     </div>
   );
 }
-
-export default TopFour;
