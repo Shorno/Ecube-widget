@@ -12,7 +12,10 @@ import StatIconColumn from "./_components/head-to-head/StatIconColumn";
 import { useHeadToHead } from "@/hooks/widget-data";
 import type { H2HTeam } from "@/types/widgets";
 
-type Props = { tournamentID: string };
+type Props = {
+  tournamentID: string;
+  preview?: boolean;
+};
 
 const STATS_CONFIG = [
   { label: "TOTAL ELIMS", key: "total_kills" as const },
@@ -26,8 +29,8 @@ function getStatValue(team: H2HTeam | null, key: (typeof STATS_CONFIG)[number]["
   return team[key] ?? 0;
 }
 
-export default function HeadToHeadView({ tournamentID }: Props) {
-  const { teamA, teamB, info, ready } = useHeadToHead(tournamentID);
+export default function HeadToHeadView({ tournamentID, preview = false }: Props) {
+  const { teamA, teamB, info, ready } = useHeadToHead(tournamentID, { preview });
   const [stageReady, setStageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
