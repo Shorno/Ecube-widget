@@ -3,6 +3,7 @@ export const LIVE_RANKING_STATS_WIDTH = 152;
 export const LIVE_RANKING_ROW_HEIGHT = 40.625;
 export const LIVE_RANKING_HEADER_HEIGHT = 40;
 export const LIVE_RANKING_LEGEND_HEIGHT = 19;
+export const LIVE_RANKING_PANEL_TOP = 0;
 
 export function getLiveRankingPanelHeight(teamCount: number) {
   return (
