@@ -49,9 +49,29 @@ const russoOne = Russo_One({
   weight: ["400"],
 });
 const americanCaptain = localFont({
-  src: "./fonts/american-captain.otf",
+  src: [
+    {
+      path: "./fonts/american-captain.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/american-captain.otf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "./fonts/american-captain.otf",
+      weight: "800",
+      style: "normal",
+    },
+    {
+      path: "./fonts/american-captain.otf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
   variable: "--font-american-captain",
-  weight: "400",
 });
 const anton = Anton({
   subsets: ["latin"],

@@ -10,9 +10,15 @@ import Image from "next/image";
 import Title from "./_components/Title";
 import MVPPlayerNameplate from "./_components/mvp-nameplate/MVPPlayerNameplate";
 
-export default function MVPGroupView({ tournamentID }: { tournamentID: string }) {
+export default function MVPGroupView({
+  tournamentID,
+  preview = false,
+}: {
+  tournamentID: string;
+  preview?: boolean;
+}) {
   const [stageReady, setStageReady] = useState(false);
-  const { mvp, ready, info } = useMVPGroup(tournamentID);
+  const { mvp, ready, info } = useMVPGroup(tournamentID, { preview });
   const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -73,7 +79,7 @@ export default function MVPGroupView({ tournamentID }: { tournamentID: string })
           <div
             className="anim-title pointer-events-none absolute left-[89px] top-[209px]"
           >
-            <Title title="TOURNAMENT MVP" data={info} />
+            <Title title="OVERALL MVP" data={info} />
           </div>
 
           {/* Player Card Area */}

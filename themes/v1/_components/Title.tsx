@@ -27,7 +27,7 @@ export default function Title({
   return (
     <div className={cn("flex shrink-0 items-start gap-8 uppercase", className)}>
       {/* left — main title, first word plain, rest in primary color */}
-      <h1 className="font-primary text-widget-text-3 text-[180px] leading-[180px] tracking-[-0.01em]">
+      <h1 className="font-primary font-normal text-widget-text-3 text-[180px] leading-[180px] tracking-[-0.01em]">
         {titleMain} {titleHighlight}
       </h1>
 
@@ -35,18 +35,18 @@ export default function Title({
       {(data || subtitle) && (
         <div className="flex flex-col justify-between h-[180px] py-[8px]">
           {data && stage && (
-            <span className="text-widget-text-3 font-primary text-[80px] leading-[80px]">
+            <span className="text-widget-text-3 font-primary font-normal text-[80px] leading-[80px]">
               {stage}
             </span>
           )}
           {data && !stageOnly && (day || matchName) && (
-            <span className="text-widget-text-3 font-primary text-[50px] leading-[50px]">
+            <span className="text-widget-text-3 font-primary font-normal text-[50px] leading-[50px]">
               {matchName && <span className="mr-14">{matchName}</span>}
               {day && <span>{day}</span>}
             </span>
           )}
           {subtitle && (
-            <span className="text-widget-text-3 font-primary text-[50px] leading-[50px]">
+            <span className="text-widget-text-3 font-primary font-normal text-[50px] leading-[50px]">
               {subtitle}
             </span>
           )}
