@@ -8,10 +8,14 @@ import Layout from "@/components/common/Layout";
 import Title from "./_components/Title";
 import PlayerCard from "./_components/PlayerCard";
 import { useTopPlayers } from "@/hooks/widget-data";
-type Props = { tournamentID: string };
 
-export default function TopPlayersView({ tournamentID }: Props) {
-  const { players, info, ready } = useTopPlayers(tournamentID);
+type Props = { tournamentID: string; preview?: boolean };
+
+export default function TopPlayersView({
+  tournamentID,
+  preview = false,
+}: Props) {
+  const { players, info, ready } = useTopPlayers(tournamentID, { preview });
   const [stageReady, setStageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -43,13 +47,13 @@ export default function TopPlayersView({ tournamentID }: Props) {
 
   return (
     <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
-      <Layout top className="bg-transparent">
-        <div ref={containerRef} className="h-full w-full">
+      <Layout top className="bg-transparent px-16">
+        <div ref={containerRef} className="flex flex-col pb-8">
           <div className="anim-title opacity-0">
-            <Title title="Top Players" data={info} />
+            <Title title="MATCH TOP PLAYERS" data={info} size="rankings" />
           </div>
 
-          <div className="mt-12 flex items-center gap-8 px-4">
+          <div className="mt-12 flex items-start gap-8">
             {players.map((player, idx: number) => (
               <PlayerCard
                 key={player.player_id ?? idx}

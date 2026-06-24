@@ -105,3 +105,43 @@ export const MOCK_WWC_PLAYERS = [
     player_imageUrl: "/default-player.png",
   },
 ];
+
+const PREVIEW_PLAYER_NAMES = [
+  "KZesMiSTAKE47z",
+  "TLB_ShadowX",
+  "GFOX_Viper",
+  "SECTOR_Nova",
+  "PHX_Blaze",
+];
+
+const PREVIEW_PLAYER_STATS = [
+  { kills: 12, damages: 2847, assists: 5, survival: "24:32" },
+  { kills: 9, damages: 2103, assists: 4, survival: "22:18" },
+  { kills: 8, damages: 1986, assists: 6, survival: "21:45" },
+  { kills: 7, damages: 1754, assists: 3, survival: "20:09" },
+  { kills: 6, damages: 1622, assists: 2, survival: "19:51" },
+];
+
+/** Top 5 match players for top-players preview. */
+export function getMockTopPlayers() {
+  return PREVIEW_PLAYER_NAMES.map((name, idx) => {
+    const stats = PREVIEW_PLAYER_STATS[idx];
+    const [minute, second] = stats.survival.split(":").map(Number);
+
+    return {
+      player_id: `preview-top-player-${idx + 1}`,
+      player_name: name,
+      player_imageUrl: "/default-player.png",
+      team_name: PREVIEW_TEAM_NAMES[idx],
+      team_logoUrl: null,
+      kills: stats.kills,
+      damages: stats.damages,
+      assists: stats.assists,
+      survival_time_display: {
+        minute,
+        second,
+        text: stats.survival,
+      },
+    };
+  });
+}
