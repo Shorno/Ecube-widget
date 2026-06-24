@@ -108,6 +108,7 @@ export default function MVPGroupView({
               playerIgn={mvp?.player_ign}
               teamLogoUrl={mvp?.team_logoUrl}
               teamName={mvp?.team_name}
+              isGroup={true}
             />
           </div>
 
