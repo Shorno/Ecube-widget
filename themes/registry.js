@@ -63,6 +63,7 @@ const ALL_SLOTS = [
   "AfterMatchScore",
   "AfterMatchScoreGroup",
   "MatchSummary",
+  "MapRotation",
   "MVP",
   "MVPGroup",
   "HeadToHead",

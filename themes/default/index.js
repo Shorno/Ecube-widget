@@ -1,6 +1,7 @@
 export { default as AfterMatchScore } from "./AfterMatchScoreView";
 export { default as AfterMatchScoreGroup } from "./AfterMatchScoreGroupView";
 export { default as MatchSummary } from "./MatchSummaryView";
+export { default as MapRotation } from "../v1/MapRotationView";
 export { default as MVP } from "./MVPView";
 export { default as MVPGroup } from "./MVPGroupView";
 export { default as HeadToHead } from "./HeadToHeadView";

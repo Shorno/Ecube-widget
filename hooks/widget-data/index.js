@@ -6,6 +6,7 @@ export { useAfterMatchScore } from "./useAfterMatchScore";
 export { useAfterMatchScoreGroup } from "./useAfterMatchScoreGroup";
 export { useOverallRankings } from "./useOverallRankings";
 export { useMatchSummary } from "./useMatchSummary";
+export { useMapRotation } from "./useMapRotation";
 export { useMVP } from "./useMVP";
 export { useMVPGroup } from "./useMVPGroup";
 export { useHeadToHead } from "./useHeadToHead";

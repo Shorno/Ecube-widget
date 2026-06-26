@@ -130,6 +130,34 @@ export interface MatchStats {
   total_vehicle_kills?: number;
 }
 
+export interface MapRotationWinnerTeam {
+  team?: {
+    id?: string;
+    name?: string;
+    clanTag?: string;
+    logo?: string;
+    index?: number;
+  };
+  placement?: number;
+  kills?: number;
+  points?: number;
+}
+
+export interface MapRotationMatch {
+  id: string;
+  name?: string;
+  map?: string;
+  day?: number | string;
+  index?: number;
+  banner_image_url?: string | null;
+  start_date?: string | null;
+  start_time?: string | null;
+  is_live?: boolean;
+  is_completed?: boolean;
+  is_next?: boolean;
+  winner_team?: MapRotationWinnerTeam | null;
+}
+
 // Hook return shapes — mirrors what widget-base/ hooks return
 export interface UseAfterMatchScoreResult {
   winner: TeamRow | null;
@@ -148,6 +176,12 @@ export interface UseOverallRankingsResult {
 
 export interface UseMatchSummaryResult {
   stats: MatchStats | null;
+  info: MatchInfo | null;
+  ready: boolean;
+}
+
+export interface UseMapRotationResult {
+  matches: MapRotationMatch[];
   info: MatchInfo | null;
   ready: boolean;
 }
