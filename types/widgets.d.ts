@@ -9,6 +9,10 @@ export interface MatchInfo {
   game_day?: string | number;
   match_name?: string;
   game_name?: string;
+  match_map?: string;
+  match_banner_image_url?: string | null;
+  group_name?: string;
+  round?: string;
 }
 
 export interface TeamRow {
@@ -158,6 +162,22 @@ export interface MapRotationMatch {
   winner_team?: MapRotationWinnerTeam | null;
 }
 
+export interface LiveMatchInfo {
+  id: string;
+  name?: string;
+  map?: string;
+  banner_image_url?: string | null;
+  round?: string;
+  day?: string;
+  start_date?: string | null;
+  start_time?: string | null;
+  group_name?: string;
+  stage_name?: string;
+  is_running?: boolean;
+  is_completed?: boolean;
+  winner_team?: MapRotationWinnerTeam | null;
+}
+
 // Hook return shapes — mirrors what widget-base/ hooks return
 export interface UseAfterMatchScoreResult {
   winner: TeamRow | null;
@@ -182,6 +202,12 @@ export interface UseMatchSummaryResult {
 
 export interface UseMapRotationResult {
   matches: MapRotationMatch[];
+  info: MatchInfo | null;
+  ready: boolean;
+}
+
+export interface UseLiveMatchInfoResult {
+  match: LiveMatchInfo | null;
   info: MatchInfo | null;
   ready: boolean;
 }

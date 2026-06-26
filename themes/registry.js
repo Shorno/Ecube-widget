@@ -72,6 +72,7 @@ const ALL_SLOTS = [
   "WWC",
   "WWCTwo",
   "WWCStats",
+  "MatchStart",
   "LiveOverallRanking",
   "TeamElimination",
   "Achievements",
