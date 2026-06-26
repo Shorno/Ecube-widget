@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+import TeamFlag from "@/components/common/TeamFlag";
 import TopFourPreview from "./TopFourPreview";
 
 const demoData = [
@@ -10,6 +10,7 @@ const demoData = [
     score: 14,
     image: "https://tournalink.com/storage/83087/014.png",
     clan_tag: "TSVO",
+    country_code: "BD",
     is_eliminated: false,
     win_chance: 95,
     players: [
@@ -26,6 +27,7 @@ const demoData = [
     score: 4,
     image: "https://tournalink.com/storage/71821/003.png",
     clan_tag: "TRX",
+    country_code: "PK",
     is_eliminated: false,
     win_chance: 5,
     players: [
@@ -61,12 +63,10 @@ function TopFourWidget() {
           >
             <div className="flex w-full items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <Image
-                  src={"/flag.png"}
-                  alt="logo"
-                  width={35}
-                  height={40}
-                  priority
+                <TeamFlag
+                  team={team}
+                  className="shrink-0"
+                  imageClassName="h-[24px] w-[32px] object-cover"
                 />
                 <p className="font-bold text-white">{team.clan_tag}</p>
               </div>

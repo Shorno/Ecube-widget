@@ -456,8 +456,34 @@ const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
   },
 ];
 
+const LOCAL_PREVIEW_COUNTRIES = [
+  { country_code: "BD", country_alpha3: "BGD", country_name: "Bangladesh" },
+  { country_code: "NP", country_alpha3: "NPL", country_name: "Nepal" },
+  { country_code: "PK", country_alpha3: "PAK", country_name: "Pakistan" },
+  { country_code: "LK", country_alpha3: "LKA", country_name: "Sri Lanka" },
+  { country_code: "AF", country_alpha3: "AFG", country_name: "Afghanistan" },
+  { country_code: "BT", country_alpha3: "BTN", country_name: "Bhutan" },
+];
+
+function withLocalPreviewCountry(
+  entry: Omit<LiveRankEntry, "rank">,
+  index: number,
+): Omit<LiveRankEntry, "rank"> {
+  const team = { ...entry.team };
+  delete team.country_flag_emoji;
+
+  return {
+    ...entry,
+    team: {
+      ...team,
+      ...LOCAL_PREVIEW_COUNTRIES[index % LOCAL_PREVIEW_COUNTRIES.length],
+    },
+  };
+}
+
 export function getMockLiveOverallRanking(): LiveRankEntry[] {
   return [...MOCK_TEAMS]
+    .map(withLocalPreviewCountry)
     .sort((a, b) => (b.overAllPoints ?? 0) - (a.overAllPoints ?? 0))
     .map((entry, index) => ({ ...entry, rank: index + 1 }));
 }
