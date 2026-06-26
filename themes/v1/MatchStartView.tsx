@@ -12,6 +12,15 @@ import type { LiveMatchInfo, MatchInfo } from "@/types/widgets";
 
 type Props = { tournamentID: string };
 
+const MAP_IMAGES: Record<string, string> = {
+  ERANGEL: "/assets/map-rotation/maps/erangel.webp",
+  MIRAMAR: "/assets/map-rotation/maps/miramar.webp",
+  RONDO: "/assets/map-rotation/maps/rondo.webp",
+  SANHOK: "/assets/map-rotation/maps/sanhok.webp",
+  TAEGO: "/assets/map-rotation/maps/taego.webp",
+  VIKENDI: "/assets/map-rotation/maps/vikendi.webp",
+};
+
 function displayMatchName(match: LiveMatchInfo, info: MatchInfo | null) {
   return match.name || info?.match_name || "MATCH";
 }
@@ -26,6 +35,10 @@ function displayStageName(match: LiveMatchInfo, info: MatchInfo | null) {
 
 function displayBanner(match: LiveMatchInfo, info: MatchInfo | null) {
   return match.banner_image_url || info?.match_banner_image_url || "";
+}
+
+function displayMapImage(mapName: string) {
+  return MAP_IMAGES[mapName.trim().toUpperCase()] ?? "";
 }
 
 export default function MatchStartView({ tournamentID }: Props) {
@@ -65,6 +78,8 @@ export default function MatchStartView({ tournamentID }: Props) {
   const mapName = displayMapName(liveMatch, matchInfo).toUpperCase();
   const stageName = displayStageName(liveMatch, matchInfo).toUpperCase();
   const bannerSrc = displayBanner(liveMatch, matchInfo);
+  const mapImageSrc = displayMapImage(mapName);
+  const panelImageSrc = mapImageSrc || bannerSrc;
 
   return (
     <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
@@ -108,22 +123,22 @@ export default function MatchStartView({ tournamentID }: Props) {
                 "anim-start-panel border-widget-text-1 absolute top-[176px] left-[214px] z-30 h-[362px] w-[872px] overflow-hidden rounded-[34px] border-2 bg-white opacity-0 shadow-[0_24px_42px_rgba(0,0,0,0.4)]",
               )}
             >
-              {bannerSrc && (
+              {panelImageSrc && (
                 <Image
-                  src={bannerSrc}
+                  src={panelImageSrc}
                   alt={`${matchName} ${mapName}`}
                   fill
                   priority
-                  className="object-cover opacity-35 grayscale-[0.15] saturate-[0.7]"
-                  unoptimized
+                  className="object-cover opacity-[0.58] grayscale-[0.06] saturate-[0.9]"
+                  unoptimized={!mapImageSrc}
                 />
               )}
-              <div className="absolute inset-0 bg-white/72" aria-hidden />
+              <div className="absolute inset-0 bg-white/38" aria-hidden />
               <div
                 className="absolute inset-0"
                 style={{
                   background:
-                    "radial-gradient(circle at 50% 42%, rgba(255,255,255,0.92), rgba(255,255,255,0.46) 58%, rgba(255,255,255,0.26))",
+                    "radial-gradient(circle at 50% 42%, rgba(255,255,255,0.62), rgba(255,255,255,0.28) 58%, rgba(255,255,255,0.14))",
                 }}
                 aria-hidden
               />
