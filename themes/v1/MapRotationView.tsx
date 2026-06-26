@@ -14,6 +14,15 @@ import type { MapRotationMatch } from "@/types/widgets";
 
 type Props = { tournamentID: string };
 
+const MAP_IMAGES: Record<string, string> = {
+  ERANGEL: "/assets/map-rotation/maps/erangel.webp",
+  MIRAMAR: "/assets/map-rotation/maps/miramar.webp",
+  RONDO: "/assets/map-rotation/maps/rondo.webp",
+  SANHOK: "/assets/map-rotation/maps/sanhok.webp",
+  TAEGO: "/assets/map-rotation/maps/taego.webp",
+  VIKENDI: "/assets/map-rotation/maps/vikendi.webp",
+};
+
 function formatMatchLabel(match: MapRotationMatch, index: number) {
   const matchNumber = match.index ?? index + 1;
   return `MATCH ${String(matchNumber).padStart(2, "0")}`;
@@ -24,12 +33,21 @@ function mapName(match: MapRotationMatch) {
   return match.map || "TBD";
 }
 
+function mapImage(match: MapRotationMatch) {
+  const key = mapName(match).trim().toUpperCase();
+  return MAP_IMAGES[key] ?? "";
+}
+
 function isCompleted(match: MapRotationMatch) {
   return match.winner_team !== null && match.winner_team !== undefined;
 }
 
 function winnerLogo(match: MapRotationMatch) {
   return match.winner_team?.team?.logo || "";
+}
+
+function winnerClanTag(match: MapRotationMatch) {
+  return match.winner_team?.team?.clanTag || "";
 }
 
 function winnerPoints(match: MapRotationMatch) {
@@ -47,7 +65,9 @@ function MapRotationCard({
 }) {
   const completed = isCompleted(match);
   const logo = winnerLogo(match);
+  const clanTag = winnerClanTag(match);
   const hasTime = Boolean(match.start_time);
+  const imageSrc = mapImage(match);
 
   // Position logic inside the centered relative grid container
   const col = index % 2;
@@ -59,6 +79,7 @@ function MapRotationCard({
     <article
       className={cn(
         "absolute z-10 box-border border-[4px] border-widget-secondary-dark select-none",
+        completed && "grayscale-[0.9] saturate-[0.3] brightness-[0.72] contrast-[0.92]",
         className,
       )}
       style={{
@@ -80,13 +101,13 @@ function MapRotationCard({
         }}
       >
         {/* Map Banner Image */}
-        {match.banner_image_url && (
+        {imageSrc && (
           <Image
-            src={match.banner_image_url}
+            src={imageSrc}
             alt={mapName(match)}
             fill
             className="object-cover opacity-90"
-            unoptimized
+            priority={index < 2}
           />
         )}
 
@@ -149,16 +170,23 @@ function MapRotationCard({
             width: "416px",
           }}
         >
-          {logo && (
-            <Image
-              src={logo}
-              alt={`${match.winner_team?.team?.name ?? "Winner"} logo`}
-              width={60}
-              height={60}
-              className="size-[60px] object-contain"
-              unoptimized
-            />
-          )}
+          <div className="flex min-w-[70px] flex-col items-center justify-center gap-1">
+            {logo && (
+              <Image
+                src={logo}
+                alt={`${match.winner_team?.team?.name ?? "Winner"} logo`}
+                width={60}
+                height={60}
+                className="size-[60px] object-contain"
+                unoptimized
+              />
+            )}
+            {clanTag && (
+              <span className="font-secondary max-w-[92px] truncate text-center text-[18px] leading-[18px] font-bold tracking-wider text-white uppercase">
+                {clanTag}
+              </span>
+            )}
+          </div>
           <div className="w-[2px] h-[55px] bg-widget-secondary-dark/60" />
           <div className="flex items-baseline gap-1 select-none">
             <span className="font-primary text-white text-[68px] leading-[68px] font-normal">
@@ -172,7 +200,7 @@ function MapRotationCard({
       )}
 
       {/* Bottom Right box panel (Stopwatch + start_time, conditionally rendered) */}
-      {hasTime && !completed && (
+      {hasTime && (
         <div
           className="absolute z-20 flex h-[48px] w-[156px] items-center justify-end px-3 gap-2 border-t border-l border-widget-secondary-dark bg-gradient-to-l from-widget-primary to-widget-primary-dark"
           style={{
@@ -270,4 +298,3 @@ export default function MapRotationView({ tournamentID }: Props) {
     </WidgetStage>
   );
 }
-
