@@ -129,8 +129,8 @@ export default function MatchStartView({ tournamentID }: Props) {
               />
 
               {stageName && (
-                <div className="anim-start-title absolute top-[56px] left-0 z-20 flex w-full justify-center opacity-0">
-                  <span className="font-secondary text-widget-secondary text-[30px] leading-[30px] font-bold tracking-[0.14em] uppercase">
+                <div className="anim-start-title absolute top-[44px] left-0 z-20 flex w-full justify-center opacity-0">
+                  <span className="font-secondary text-widget-secondary text-[48px] leading-[48px] font-bold tracking-[0.14em] uppercase">
                     {stageName}
                   </span>
                 </div>
