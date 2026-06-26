@@ -22,6 +22,7 @@ export type WidgetSlot =
   | "AfterMatchScore"
   | "AfterMatchScoreGroup"
   | "MatchSummary"
+  | "MapRotation"
   | "MVP"
   | "MVPGroup"
   | "HeadToHead"
@@ -30,6 +31,7 @@ export type WidgetSlot =
   | "WWC"
   | "WWCTwo"
   | "WWCStats"
+  | "MatchStart"
   | "LiveOverallRanking"
   | "TeamElimination"
   | "Achievements";
@@ -37,6 +39,7 @@ export type WidgetSlot =
 // ── Built ─────────────────────────────────────────────────────────────────────
 export { default as AfterMatchScore } from "./AfterMatchScoreView";
 export { default as MatchSummary } from "./MatchSummaryView";
+export { default as MapRotation } from "./MapRotationView";
 export { default as WWC } from "./WWCDView";
 export { default as WWCTwo } from "./WWCDView";
 
@@ -48,6 +51,7 @@ export { default as HeadToHead } from "./HeadToHeadView";
 export { default as TopPlayers } from "./TopPlayersView";
 export { default as TopPlayersGroup } from "./TopPlayersGroupView";
 export { default as WWCStats } from "./WWCStatsView";
+export { default as MatchStart } from "./MatchStartView";
 export { default as LiveOverallRanking } from "./LiveOverallRankingView";
 export { default as TeamElimination } from "./TeamEliminationView";
 export { default as Achievements } from "./AchievementsView";

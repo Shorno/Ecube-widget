@@ -1,6 +1,7 @@
 export { default as AfterMatchScore } from "./AfterMatchScoreView";
 export { default as AfterMatchScoreGroup } from "./AfterMatchScoreGroupView";
 export { default as MatchSummary } from "./MatchSummaryView";
+export { default as MapRotation } from "../v1/MapRotationView";
 export { default as MVP } from "./MVPView";
 export { default as MVPGroup } from "./MVPGroupView";
 export { default as HeadToHead } from "./HeadToHeadView";
@@ -9,5 +10,6 @@ export { default as TopPlayersGroup } from "./TopPlayersGroupView";
 export { default as WWC } from "./WWCView";
 export { default as WWCTwo } from "./WWCTwoView";
 export { default as WWCStats } from "./WWCStatsView";
+export { default as MatchStart } from "../v1/MatchStartView";
 export { default as LiveOverallRanking } from "./LiveOverallRankingView";
 export { default as TeamElimination } from "./TeamEliminationView";

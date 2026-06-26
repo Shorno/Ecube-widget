@@ -7,6 +7,7 @@ import {
   Bebas_Neue,
   Exo_2,
   Russo_One,
+  Aldrich,
 } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -78,6 +79,11 @@ const anton = Anton({
   variable: "--font-anton",
   weight: ["400"],
 });
+const aldrich = Aldrich({
+  subsets: ["latin"],
+  variable: "--font-aldrich",
+  weight: ["400"],
+});
 
 export const metadata = {
   title: "PUBG WIDGET",
@@ -95,6 +101,7 @@ export default function RootLayout({ children }) {
     russoOne.variable,
     americanCaptain.variable,
     anton.variable,
+    aldrich.variable,
   ].join(" ");
 
   return (

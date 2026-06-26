@@ -10,7 +10,6 @@ type Props = {
   team: TeamFlagFields;
   showTeamFlags?: boolean;
   className?: string;
-  emojiClassName?: string;
   imageClassName?: string;
 };
 
@@ -18,24 +17,12 @@ export default function TeamFlag({
   team,
   showTeamFlags = true,
   className,
-  emojiClassName,
   imageClassName,
 }: Props) {
   if (!showTeamFlags) return null;
 
   const flag = getTeamFlagDisplay(team);
   if (flag.kind === "none") return null;
-
-  if (flag.kind === "emoji") {
-    return (
-      <span
-        className={cn("leading-none", emojiClassName ?? "text-[18px]", className)}
-        aria-hidden
-      >
-        {flag.value}
-      </span>
-    );
-  }
 
   return (
     <Image

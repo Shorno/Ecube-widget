@@ -88,7 +88,6 @@ export default function TeamEliminationOverlay({
                 team={data.victimTeam}
                 showTeamFlags={showTeamFlags}
                 className="shrink-0"
-                emojiClassName="text-[18px]"
                 imageClassName="h-[14px] w-[20px] rounded-[1px] shadow-sm"
               />
             )}
