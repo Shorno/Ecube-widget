@@ -101,13 +101,7 @@ export default function MatchStartView({ tournamentID }: Props) {
               }}
             />
 
-            {stageName && (
-              <div className="anim-start-title absolute top-[86px] left-[246px] z-20 flex h-[66px] max-w-[720px] items-center opacity-0">
-                <span className="font-secondary text-widget-secondary text-[38px] leading-[38px] font-bold tracking-[0.14em] uppercase drop-shadow-[0_3px_8px_rgba(0,0,0,0.65)]">
-                  {stageName}
-                </span>
-              </div>
-            )}
+
 
             <section
               className={cn(
@@ -133,6 +127,14 @@ export default function MatchStartView({ tournamentID }: Props) {
                 }}
                 aria-hidden
               />
+
+              {stageName && (
+                <div className="anim-start-title absolute top-[56px] left-0 z-20 flex w-full justify-center opacity-0">
+                  <span className="font-secondary text-widget-secondary text-[30px] leading-[30px] font-bold tracking-[0.14em] uppercase">
+                    {stageName}
+                  </span>
+                </div>
+              )}
 
               <div className="relative z-10 flex h-full items-center justify-center px-12 pt-20">
                 <h1 className="font-primary text-widget-primary-dark flex max-w-full items-center gap-9 text-center text-[82px] leading-[82px] font-normal uppercase">
