@@ -17,8 +17,11 @@ import {
  *
  * Note: data.data is a single object (not an array).
  * Field names from API: team_logoUrl, total_damages, totalPoints, player_imageUrl
+ *
+ * @param {string} tournamentID
+ * @param {import("@/types/widgets").UseWWCOptions} [options]
+ * @returns {import("@/types/widgets").UseWWCResult}
  */
-/** @returns {import("@/types/widgets").UseWWCResult} */
 export function useWWC(tournamentID, { preview = false, previewPlayerCount } = {}) {
   const { data, isLoading } = useGetWwcdTeamStatsQuery(
     { tournamentID },
