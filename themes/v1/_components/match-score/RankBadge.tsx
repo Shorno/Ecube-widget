@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { MATCH_RANK_COL_WIDTH } from "./StatsHeader";
 
 type Props = {
   rank: number;
@@ -27,11 +28,11 @@ export default function RankBadge({
   return (
     <div
       className={cn(
-        "box-border grid h-12 w-[67px] shrink-0 place-content-center border-b border-r border-l border-widget-secondary bg-gradient-to-br from-widget-primary to-widget-primary-accent text-[30px] leading-[45px] text-widget-text-3 skew-x-[-17deg]",
+        "box-border grid h-12 shrink-0 place-content-center border-b border-r border-l border-widget-secondary bg-gradient-to-br from-widget-primary to-widget-primary-accent text-[30px] leading-[45px] text-widget-text-3 skew-x-[-17deg]",
         isFirst && "border-t",
         className,
       )}
-      style={{ fontFamily: "var(--font-anton)" }}
+      style={{ fontFamily: "var(--font-anton)", width: `${MATCH_RANK_COL_WIDTH}px` }}
     >
       <span className="skew-x-[17deg] inline-block">{rank}</span>
     </div>
