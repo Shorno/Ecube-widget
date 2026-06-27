@@ -27,7 +27,6 @@ const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
       [0, 100],
       [0, 85],
       [0, 72],
-      [0, 90],
     ]),
   },
   {
@@ -44,9 +43,7 @@ const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
     kills: 6,
     players: players([
       [0, 100],
-      [0, 100],
       [4, 30],
-      [0, 55],
     ]),
   },
   {
@@ -64,7 +61,6 @@ const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
       [0, 60],
       [0, 45],
       [4, 20, true],
-      [5, 0],
     ]),
   },
   {
@@ -82,8 +78,6 @@ const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
     players: players([
       [5, 0],
       [5, 0],
-      [5, 0],
-      [5, 0],
     ]),
   },
   {
@@ -98,12 +92,7 @@ const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
     points: 7,
     overAllPoints: 55,
     kills: 3,
-    players: players([
-      [0, 100],
-      [0, 100],
-      [0, 100],
-      [0, 100],
-    ]),
+    players: players([[0, 100]]),
   },
   {
     team: {

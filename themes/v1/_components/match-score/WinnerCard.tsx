@@ -27,6 +27,10 @@ const TEAM_SECTION_WIDTH = MATCH_RANK_COL_WIDTH + MATCH_TEAM_COL_WIDTH;
 
 export default function WinnerCard({ team, players = [], className }: Props) {
   const portraits = players.slice(0, 4);
+  const centerPortraits = portraits.length > 0 && portraits.length < 4;
+  const portraitImageClassName = centerPortraits
+    ? "h-[246px] w-[164px] shrink-0 object-cover object-top"
+    : "h-[246px] w-full max-w-[164px] object-cover object-top";
 
   return (
     <div className={cn("relative", className)} style={{ width: MATCH_ROW_WIDTH }}>
@@ -50,7 +54,14 @@ export default function WinnerCard({ team, players = [], className }: Props) {
               <GiChickenOven className="text-widget-primary text-5xl" />
             </div>
 
-            <div className="grid h-full grid-cols-4 items-end justify-items-center gap-1 px-2 pt-14">
+            <div
+              className={cn(
+                "h-full gap-1 px-2 pt-14",
+                centerPortraits
+                  ? "flex items-end justify-center"
+                  : "grid grid-cols-4 items-end justify-items-center",
+              )}
+            >
               {portraits.length > 0
                 ? portraits.map((player, idx) => (
                     <Image
@@ -60,7 +71,7 @@ export default function WinnerCard({ team, players = [], className }: Props) {
                       width={164}
                       height={246}
                       priority
-                      className="h-[246px] w-full max-w-[164px] object-cover object-top"
+                      className={portraitImageClassName}
                     />
                   ))
                 : Array.from({ length: 4 }).map((_, idx) => (

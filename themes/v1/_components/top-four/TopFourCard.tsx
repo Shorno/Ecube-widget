@@ -66,12 +66,18 @@ export default function TopFourCard({
         className="relative overflow-hidden"
         style={{ width: TOP_FOUR_CARD_WIDTH, height: TOP_FOUR_CARD_HEIGHT }}
       >
-        <TopFourCardShape />
+        <TopFourCardShape
+          primaryColor="var(--widget-primary)"
+          primaryDarkColor="var(--widget-primary-dark)"
+          primaryAccentColor="var(--widget-secondary-dark)"
+          gradientStartColor="var(--widget-gradient-from)"
+          gradientStopColor="var(--widget-primary)"
+        />
 
-        <div className="relative z-10 flex h-full items-center pl-6 pr-8">
+        <div className="relative z-10 flex h-full items-center pl-5 pr-6">
           <div
             className={cn(
-              "flex min-w-0 flex-1 items-center gap-2",
+              "flex min-w-0 flex-1 items-center justify-center gap-2.5",
               isObserved && "rounded-sm px-1",
             )}
             style={
@@ -84,16 +90,16 @@ export default function TopFourCard({
               <TeamFlag
                 team={entry.team}
                 showTeamFlags={showTeamFlags}
-                className="h-[22px] w-[30px] shrink-0"
+                className="h-[26px] w-[34px] shrink-0"
               />
             )}
             {logo && (
               <Image
                 src={logo}
                 alt={entry.team.name}
-                width={40}
-                height={40}
-                className="shrink-0 object-contain"
+                width={44}
+                height={44}
+                className="size-[44px] shrink-0 object-contain"
                 unoptimized
               />
             )}
@@ -102,7 +108,7 @@ export default function TopFourCard({
                 "min-w-0 truncate font-primary font-bold uppercase",
                 !isObserved && "text-widget-text-3",
               )}
-              style={{ fontSize: 22, lineHeight: "26px" }}
+              style={{ fontSize: 24, lineHeight: "28px" }}
             >
               {teamLabel}
             </span>

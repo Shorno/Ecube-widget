@@ -15,7 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AFTER_MATCH_WIDGETS, getWidgetPath } from "@/lib/widget-catalog";
+import {
+  AFTER_MATCH_WIDGETS,
+  PRE_GAME_WIDGETS,
+  getWidgetPath,
+} from "@/lib/widget-catalog";
 
 export default function ControllerClient({
   userId,
@@ -286,13 +290,30 @@ export default function ControllerClient({
         </div>
 
         <section>
-          <div className="mb-3 flex items-center gap-3">
-            <span className="block h-4 w-1 shrink-0 rounded-sm bg-orange-500" />
-            <span className="text-xs font-bold tracking-widest text-orange-400 uppercase">
-              After-Match Widgets
-            </span>
-            <span className="h-px flex-1 bg-gray-700" />
+          <WidgetSectionHeader color="blue" title="Pre-Game Widgets" />
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            {PRE_GAME_WIDGETS.map((w) => {
+              const url = getWidgetUrl(w);
+              return (
+                <WidgetBtn
+                  key={w.id}
+                  label={w.label}
+                  color="blue"
+                  isActive={activeUrl === url}
+                  disabled={!url}
+                  onClick={url ? () => sendCommand(url, w.label) : undefined}
+                />
+              );
+            })}
           </div>
+        </section>
+
+        <section>
+          <WidgetSectionHeader color="green" title="In-Game Widgets" />
+        </section>
+
+        <section>
+          <WidgetSectionHeader color="orange" title="After-Match Widgets" />
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {AFTER_MATCH_WIDGETS.map((w) => {
               const url = getWidgetUrl(w);
@@ -314,10 +335,35 @@ export default function ControllerClient({
   );
 }
 
+function WidgetSectionHeader({ color, title }) {
+  const accents = {
+    blue: { bar: "bg-blue-500", text: "text-blue-400" },
+    green: { bar: "bg-green-500", text: "text-green-400" },
+    orange: { bar: "bg-orange-500", text: "text-orange-400" },
+  };
+  const { bar, text } = accents[color] ?? accents.orange;
+
+  return (
+    <div className="mb-3 flex items-center gap-3">
+      <span className={`block h-4 w-1 shrink-0 rounded-sm ${bar}`} />
+      <span className={`text-xs font-bold tracking-widest uppercase ${text}`}>
+        {title}
+      </span>
+      <span className="h-px flex-1 bg-gray-700" />
+    </div>
+  );
+}
+
 function WidgetBtn({ label, color, isActive, disabled, onClick }) {
   const base =
     "h-14 w-full px-2 text-center text-xs font-bold uppercase tracking-wide leading-tight border-2 transition-colors";
   const styles = {
+    blue: {
+      inactive:
+        "bg-blue-950 border-blue-800 text-blue-400 hover:bg-blue-900 hover:border-blue-600",
+      active:
+        "bg-blue-700 border-blue-400 text-white ring-2 ring-blue-400 ring-offset-1 ring-offset-gray-900",
+    },
     green: {
       inactive:
         "bg-green-950 border-green-800 text-green-400 hover:bg-green-900 hover:border-green-600",

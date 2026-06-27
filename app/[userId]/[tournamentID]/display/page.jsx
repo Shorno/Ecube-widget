@@ -5,11 +5,12 @@ import { useParams } from "next/navigation";
 import {
   AFTER_MATCH_WIDGETS,
   IN_GAME_WIDGETS,
+  PRE_GAME_WIDGETS,
   getWidgetPath,
 } from "@/lib/widget-catalog";
 
 function buildPreloadUrls(userId, tournamentID) {
-  return [...AFTER_MATCH_WIDGETS, ...IN_GAME_WIDGETS]
+  return [...PRE_GAME_WIDGETS, ...AFTER_MATCH_WIDGETS, ...IN_GAME_WIDGETS]
     .map((w) => getWidgetPath(w, userId, tournamentID))
     .filter((url) => url && !url.startsWith("http")); // local paths only
 }

@@ -12,8 +12,10 @@ import LiveRankingLegend from "./_components/live-ranking/LiveRankingLegend";
 import LiveRankingPreviewControls from "./_components/live-ranking/LiveRankingPreviewControls";
 import TopFourLayer from "./_components/top-four/TopFourLayer";
 import {
+  getLiveRankingBroadcastLayout,
   getLiveRankingLayout,
-  LIVE_RANKING_PANEL_TOP,
+  LIVE_RANKING_MAP_SAFE_TOP,
+  LIVE_RANKING_MAP_SAFE_WIDTH,
 } from "./_components/live-ranking/layout";
 
 gsap.registerPlugin(Flip);
@@ -49,14 +51,24 @@ export default function LiveOverallRankingView({
   } = useLiveOverallRanking(tournamentID, { preview });
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const listPanelRef = useRef<HTMLDivElement>(null);
+  const slidePanelRef = useRef<HTMLDivElement>(null);
   const flipStateRef = useRef<ReturnType<typeof Flip.getState> | null>(null);
   const isFirstRenderRef = useRef(true);
   const isAnimatingRef = useRef(false);
   const pendingDataRef = useRef<LiveRankEntry[] | null>(null);
   const sidebarHiddenRef = useRef(false);
   const [displayTeams, setDisplayTeams] = useState<LiveRankEntry[]>([]);
+  const [viewportHeight, setViewportHeight] = useState(1080);
   const applyTeamsRef = useRef<(data: LiveRankEntry[]) => void>(() => {});
+
+  useEffect(() => {
+    function syncViewport() {
+      setViewportHeight(window.innerHeight);
+    }
+    syncViewport();
+    window.addEventListener("resize", syncViewport);
+    return () => window.removeEventListener("resize", syncViewport);
+  }, []);
 
   applyTeamsRef.current = (newData) => {
     if (isAnimatingRef.current) {
@@ -98,9 +110,9 @@ export default function LiveOverallRankingView({
   useEffect(() => {
     if (!showTopFour || sidebarHiddenRef.current) return;
 
-    if (listPanelRef.current) {
+    if (slidePanelRef.current) {
       sidebarHiddenRef.current = true;
-      gsap.to(listPanelRef.current, {
+      gsap.to(slidePanelRef.current, {
         x: "110%",
         opacity: 0,
         duration: 0.4,
@@ -113,11 +125,19 @@ export default function LiveOverallRankingView({
 
   useEffect(() => {
     return () => {
-      if (listPanelRef.current) gsap.killTweensOf(listPanelRef.current);
+      if (slidePanelRef.current) gsap.killTweensOf(slidePanelRef.current);
     };
   }, []);
 
   const activeObservingTeamId = showObserverHighlight ? observingTeamId : null;
+  const broadcastLayout =
+    displayTeams.length > 0
+      ? getLiveRankingBroadcastLayout(
+          displayTeams.length,
+          rankingLayout.panelWidth,
+          viewportHeight,
+        )
+      : null;
 
   if (!ready) return null;
 
@@ -128,6 +148,18 @@ export default function LiveOverallRankingView({
           <>
             <div className="fixed top-2 left-2 z-50 rounded bg-black/70 px-2 py-1 font-mono text-[10px] text-yellow-300 uppercase">
               Preview mode
+            </div>
+            <div
+              className="pointer-events-none absolute top-0 right-0 z-40 border border-dashed border-yellow-400/50 bg-yellow-400/5"
+              style={{
+                width: LIVE_RANKING_MAP_SAFE_WIDTH,
+                height: LIVE_RANKING_MAP_SAFE_TOP,
+              }}
+              aria-hidden
+            >
+              <span className="absolute bottom-1 left-2 font-mono text-[9px] text-yellow-400/80 uppercase">
+                Map safe zone
+              </span>
             </div>
             <LiveRankingPreviewControls
               onTriggerObserver={triggerObservingPreview}
@@ -146,28 +178,36 @@ export default function LiveOverallRankingView({
           />
         )}
 
-        {!showTopFour && displayTeams.length > 0 && (
-          <div
-            ref={listPanelRef}
-            className="absolute right-0 flex flex-col select-none"
-            style={{ top: LIVE_RANKING_PANEL_TOP, width: rankingLayout.panelWidth }}
-          >
-            <LiveRankingHeader showFullTeamName={showFullTeamName} />
+        {!showTopFour && displayTeams.length > 0 && broadcastLayout && (
+          <div className="select-none" style={broadcastLayout.outer}>
+            <div
+              ref={slidePanelRef}
+              className="flex flex-col"
+              style={{
+                width: broadcastLayout.inner.width,
+                height: broadcastLayout.inner.height,
+              }}
+            >
+              <LiveRankingHeader showFullTeamName={showFullTeamName} />
 
-            <div ref={containerRef} className="flex w-full flex-col">
-              {displayTeams.map((entry, index) => (
-                <LiveRankingRow
-                  key={teamId(entry)}
-                  entry={entry}
-                  rank={index + 1}
-                  isObserved={activeObservingTeamId === teamId(entry)}
-                  showTeamFlags={showTeamFlags}
-                  showFullTeamName={showFullTeamName}
-                />
-              ))}
+              <div
+                ref={containerRef}
+                className="flex w-full flex-col"
+              >
+                {displayTeams.map((entry, index) => (
+                  <LiveRankingRow
+                    key={teamId(entry)}
+                    entry={entry}
+                    rank={index + 1}
+                    isObserved={activeObservingTeamId === teamId(entry)}
+                    showTeamFlags={showTeamFlags}
+                    showFullTeamName={showFullTeamName}
+                  />
+                ))}
+              </div>
+
+              <LiveRankingLegend showFullTeamName={showFullTeamName} />
             </div>
-
-            <LiveRankingLegend showFullTeamName={showFullTeamName} />
           </div>
         )}
       </div>

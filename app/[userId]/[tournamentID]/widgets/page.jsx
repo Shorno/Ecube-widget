@@ -14,6 +14,7 @@ import {
   AFTER_MATCH_WIDGETS,
   ACHIEVEMENT_WIDGETS,
   IN_GAME_WIDGETS,
+  PRE_GAME_WIDGETS,
   getWidgetPath,
   getWidgetPlaceholder,
 } from "@/lib/widget-catalog";
@@ -119,6 +120,70 @@ export default function WidgetsPage() {
             Observer highlight shows which team the camera is on. Refresh the
             OBS browser source after changing.
           </p>
+        </section>
+
+        <section>
+          <div className="mb-3 flex items-center gap-3">
+            <span className="block h-4 w-1 shrink-0 rounded-sm bg-cyan-500" />
+            <span className="text-xs font-bold tracking-widest text-cyan-400 uppercase">
+              Pre-Game Widgets
+            </span>
+            <span className="h-px flex-1 bg-gray-700" />
+          </div>
+          <div className="mt-3 space-y-2">
+            {PRE_GAME_WIDGETS.map((w) => {
+              const path = getWidgetPath(w, userId, tid);
+              const url = toDisplayUrl(path, origin);
+              const previewUrl = path
+                ? toDisplayUrl(`${path}?preview=1`, origin)
+                : null;
+
+              if (w.id === "match-start") {
+                return (
+                  <div key={w.id} className="space-y-2">
+                    <UrlRow
+                      label={`${w.label} (Live)`}
+                      url={url}
+                      placeholder={toDisplayUrl(getWidgetPlaceholder(w), origin)}
+                      copiedUrl={copiedUrl}
+                      onCopy={copy}
+                      origin={origin}
+                      disabled={!path}
+                    />
+                    <UrlRow
+                      label={`${w.label} (Preview)`}
+                      url={previewUrl}
+                      placeholder={
+                        path
+                          ? toDisplayUrl(
+                              `${getWidgetPlaceholder(w)}?preview=1`,
+                              origin,
+                            )
+                          : null
+                      }
+                      copiedUrl={copiedUrl}
+                      onCopy={copy}
+                      origin={origin}
+                      disabled={!path}
+                    />
+                  </div>
+                );
+              }
+
+              return (
+                <UrlRow
+                  key={w.id}
+                  label={w.label}
+                  url={url}
+                  placeholder={toDisplayUrl(getWidgetPlaceholder(w), origin)}
+                  copiedUrl={copiedUrl}
+                  onCopy={copy}
+                  origin={origin}
+                  disabled={!path}
+                />
+              );
+            })}
+          </div>
         </section>
 
         <section>

@@ -1,6 +1,6 @@
 export const TOP_FOUR_CARD_WIDTH = 301;
 export const TOP_FOUR_CARD_HEIGHT = 79;
-export const TOP_FOUR_WWCD_HEIGHT = 28;
+export const TOP_FOUR_WWCD_HEIGHT = 40;
 export const TOP_FOUR_WWCD_GAP = 8;
 export const TOP_FOUR_GAP = 16;
 export const TOP_FOUR_TOP_OFFSET = 48;

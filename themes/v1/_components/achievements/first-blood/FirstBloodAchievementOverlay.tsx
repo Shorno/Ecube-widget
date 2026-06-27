@@ -26,7 +26,7 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
   const rightWidth = bannerWidth - leftWidth;
   const topHeight = 160;
   const bottomHeight = 50;
-  const shiftAmount = 37;
+  const shiftAmount = 80;
 
   return (
     <motion.div
@@ -90,7 +90,7 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
                   alt=""
                   width={96}
                   height={96}
-                  className="h-[6.25rem] w-[6.25rem] object-contain brightness-0 invert"
+                  className="h-[6.25rem] w-[6.25rem] object-contain brightness-0"
                   unoptimized
                 />
               </motion.div>
@@ -102,10 +102,10 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
                 className="flex flex-col items-center justify-center text-center leading-[0.9]"
                 style={{ fontFamily: "var(--font-american-captain)" }}
               >
-                <span className="font-primary text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-3 uppercase">
+                <span className="font-primary text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-2 uppercase">
                   First
                 </span>
-                <span className="font-primary text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-3 uppercase">
+                <span className="font-primary text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-2 uppercase">
                   Blood
                 </span>
               </motion.div>
@@ -113,17 +113,17 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
           </motion.div>
 
           <div
-            className="relative z-10 flex"
+            className="relative z-10 flex -mt-px"
             style={{ height: bottomHeight, marginLeft: -shiftAmount }}
           >
             <motion.div
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.35, delay: 0.4, ease: "easeOut" }}
-              className="flex items-center justify-center bg-white"
+              className="flex items-center justify-center bg-widget-secondary"
               style={{ width: 110 }}
             >
-              <div className="flex flex-col items-center justify-center leading-none text-black select-none">
+              <div className="flex flex-col items-center justify-center leading-none text-widget-text-2 select-none">
                 <span
                   className="text-[1.9rem] font-normal leading-[0.85] uppercase"
                   style={{ fontFamily: "var(--font-american-captain)" }}
@@ -143,10 +143,7 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
               style={{ background: NAME_BAR_GRADIENT }}
               className="flex min-w-0 flex-1 items-center justify-center px-4"
             >
-              <span
-                className="font-primary truncate text-[2.1rem] font-normal tracking-wide text-widget-text-3 uppercase"
-                style={{ fontFamily: "var(--font-american-captain)" }}
-              >
+              <span className="font-secondary truncate text-[2.1rem] font-normal tracking-wide text-widget-text-3 uppercase">
                 {playerName}
               </span>
             </motion.div>

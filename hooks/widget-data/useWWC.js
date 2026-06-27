@@ -19,13 +19,17 @@ import {
  * Field names from API: team_logoUrl, total_damages, totalPoints, player_imageUrl
  */
 /** @returns {import("@/types/widgets").UseWWCResult} */
-export function useWWC(tournamentID, { preview = false } = {}) {
+export function useWWC(tournamentID, { preview = false, previewPlayerCount } = {}) {
   const { data, isLoading } = useGetWwcdTeamStatsQuery(
     { tournamentID },
     { skip: preview },
   );
 
   if (preview) {
+    const players =
+      previewPlayerCount != null
+        ? MOCK_WWC_PLAYERS.slice(0, previewPlayerCount)
+        : MOCK_WWC_PLAYERS;
     const winner = getMockAfterMatchScoreRows()[0];
     return {
       team: winner
@@ -36,10 +40,10 @@ export function useWWC(tournamentID, { preview = false } = {}) {
             totalPoints: winner.totalPoints,
             positionPoints: winner.positionPoints,
             killPoints: winner.killPoints,
-            players: MOCK_WWC_PLAYERS,
+            players,
           }
         : null,
-      players: MOCK_WWC_PLAYERS,
+      players,
       info: MOCK_MATCH_INFO,
       ready: true,
     };

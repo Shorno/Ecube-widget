@@ -26,24 +26,26 @@ export default function AchievementsLayer({
 }: Props) {
   return (
     <div className={ACHIEVEMENT_OVERLAY_POSITION_CLASS}>
-      <AnimatePresence onExitComplete={onExitComplete}>
-        {isVisible && currentEvent && (
-          <>
-            {currentEvent.kind === "player-achievement" && (
-              <RampageAchievementOverlay
-                key={queueItemKey(currentEvent)}
-                data={currentEvent.data}
-              />
-            )}
-            {currentEvent.kind === "first-blood" && (
-              <FirstBloodAchievementOverlay
-                key={queueItemKey(currentEvent)}
-                data={currentEvent.data}
-              />
-            )}
-          </>
-        )}
-      </AnimatePresence>
+      <div style={{ transform: "scale(0.7)", transformOrigin: "left center" }}>
+        <AnimatePresence onExitComplete={onExitComplete}>
+          {isVisible && currentEvent && (
+            <>
+              {currentEvent.kind === "player-achievement" && (
+                <RampageAchievementOverlay
+                  key={queueItemKey(currentEvent)}
+                  data={currentEvent.data}
+                />
+              )}
+              {currentEvent.kind === "first-blood" && (
+                <FirstBloodAchievementOverlay
+                  key={queueItemKey(currentEvent)}
+                  data={currentEvent.data}
+                />
+              )}
+            </>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

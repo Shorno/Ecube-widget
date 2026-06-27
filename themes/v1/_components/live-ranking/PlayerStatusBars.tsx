@@ -7,34 +7,42 @@ type Props = {
   size?: "default" | "large";
 };
 
+function barGroupWidth(count: number, barWidth: number, gap: number) {
+  if (count <= 0) return 0;
+  return count * barWidth + (count - 1) * gap;
+}
+
 export default function PlayerStatusBars({
   players = [],
   className,
   size = "default",
 }: Props) {
-  const slots = Array.from({ length: 4 }, (_, i) => players[i] ?? null);
   const isLarge = size === "large";
+  const barWidth = isLarge ? 10 : 9;
+  const gap = 2;
+  const height = isLarge ? 38 : 32;
+  const width = barGroupWidth(players.length, barWidth, gap);
+
+  if (players.length === 0) return null;
 
   return (
     <div
-      className={cn(
-        "flex items-center justify-start gap-[2px]",
-        isLarge ? "h-[38px] w-[50px]" : "h-[32px] w-[42px]",
-        className,
-      )}
+      className={cn("flex items-center justify-start gap-[2px]", className)}
+      style={{ height: `${height}px`, width: `${width}px` }}
     >
-      {slots.map((player, idx) => {
-        const isEliminated = !player || player.liveState === 5;
-        const isKnocked = player && player.liveState === 4;
+      {players.map((player, idx) => {
+        const isEliminated = player.liveState === 5;
+        const isKnocked = player.liveState === 4;
 
         return (
           <div
             key={idx}
-            className={cn(
-              "flex flex-col justify-end overflow-hidden",
-              isLarge ? "h-[38px] w-[10px]" : "h-[32px] w-[9px]",
-            )}
-            style={{ backgroundColor: "var(--widget-status-dead, #4E4E4E)" }}
+            className="flex flex-col justify-end overflow-hidden"
+            style={{
+              height: `${height}px`,
+              width: `${barWidth}px`,
+              backgroundColor: "var(--widget-status-dead, #4E4E4E)",
+            }}
           >
             {!isEliminated && (
               <div
