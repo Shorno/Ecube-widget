@@ -237,3 +237,8 @@ export interface UseWWCResult {
   info: MatchInfo | null;
   ready: boolean;
 }
+
+export interface UseWWCOptions {
+  preview?: boolean;
+  previewPlayerCount?: number;
+}
