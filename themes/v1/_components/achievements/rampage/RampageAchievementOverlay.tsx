@@ -126,10 +126,10 @@ export default function RampageAchievementOverlay({ data }: Props) {
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.35, delay: 0.4, ease: "easeOut" }}
-              className="flex items-center justify-center bg-white"
+              className="flex items-center justify-center bg-widget-bg"
               style={{ width: 110 }}
             >
-              <div className="flex flex-col items-center justify-center leading-none text-black select-none">
+              <div className="flex flex-col items-center justify-center leading-none text-widget-text-1 select-none">
                 <span
                   className="text-[1.9rem] font-normal leading-[0.85] uppercase"
                   style={{ fontFamily: "var(--font-american-captain)" }}
