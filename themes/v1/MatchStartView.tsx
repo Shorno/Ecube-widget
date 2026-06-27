@@ -88,7 +88,22 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
           ref={containerRef}
           className="relative flex h-screen w-screen items-center justify-center overflow-hidden"
         >
-          <div className="relative h-[760px] w-[1220px]">
+          <div
+            className="relative flex items-center justify-center overflow-hidden"
+            style={{
+              width: "552.53px",
+              height: "495.78px",
+            }}
+          >
+            <div
+              className="relative shrink-0"
+              style={{
+                width: "1220px",
+                height: "760px",
+                transform: "scale(0.45289)",
+                transformOrigin: "center center",
+              }}
+            >
             <div
               className="anim-start-shape border-widget-secondary-dark bg-widget-primary-dark absolute top-[96px] left-[126px] h-[360px] w-[520px] opacity-0"
               style={{
@@ -120,7 +135,7 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
 
             <section
               className={cn(
-                "anim-start-panel border-widget-text-1 absolute top-[176px] left-[214px] z-30 h-[362px] w-[872px] overflow-hidden rounded-[34px] border-2 bg-white opacity-0 shadow-[0_24px_42px_rgba(0,0,0,0.4)]",
+                "anim-start-panel border-widget-text-1 absolute top-[176px] left-[214px] z-30 h-[362px] w-[872px] overflow-hidden rounded-[34px] border-2 bg-widget-bg opacity-0 shadow-[0_24px_42px_rgba(0,0,0,0.4)]",
               )}
             >
               {panelImageSrc && (
@@ -133,7 +148,7 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
                   unoptimized={!mapImageSrc}
                 />
               )}
-              <div className="absolute inset-0 bg-white/38" aria-hidden />
+              <div className="absolute inset-0 bg-widget-bg/38" aria-hidden />
               <div
                 className="absolute inset-0"
                 style={{
@@ -144,17 +159,17 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
               />
 
               {stageName && (
-                <div className="anim-start-title absolute top-[44px] left-0 z-20 flex w-full justify-center opacity-0">
-                  <span className="font-secondary text-widget-secondary text-[48px] leading-[48px] font-bold tracking-[0.14em] uppercase">
+                <div className="anim-start-title absolute top-[56px] left-0 z-20 flex w-full justify-center opacity-0">
+                  <span className="font-secondary text-widget-secondary text-[72px] leading-[72px] font-bold tracking-[0.14em] uppercase">
                     {stageName}
                   </span>
                 </div>
               )}
 
               <div className="relative z-10 flex h-full items-center justify-center px-12 pt-20">
-                <h1 className="font-primary text-widget-primary-dark flex max-w-full items-center gap-9 text-center text-[82px] leading-[82px] font-normal uppercase">
+                <h1 className="font-primary text-widget-text-1 flex max-w-full items-center gap-9 text-center text-[82px] leading-[82px] font-normal uppercase">
                   <span className="truncate">{matchName}</span>
-                  <span className="bg-widget-primary-dark block h-[96px] w-[5px] shrink-0" />
+                  <span className="bg-widget-text-1 block h-[96px] w-[5px] shrink-0" />
                   <span className="truncate">{mapName}</span>
                 </h1>
               </div>
@@ -172,6 +187,7 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
             </div>
           </div>
         </div>
+      </div>
       </Layout>
     </WidgetStage>
   );
