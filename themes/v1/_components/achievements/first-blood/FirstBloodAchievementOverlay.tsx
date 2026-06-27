@@ -90,7 +90,7 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
                   alt=""
                   width={96}
                   height={96}
-                  className="h-[6.25rem] w-[6.25rem] object-contain brightness-0 invert"
+                  className="h-[6.25rem] w-[6.25rem] object-contain brightness-0"
                   unoptimized
                 />
               </motion.div>
@@ -102,10 +102,10 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
                 className="flex flex-col items-center justify-center text-center leading-[0.9]"
                 style={{ fontFamily: "var(--font-american-captain)" }}
               >
-                <span className="font-primary text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-3 uppercase">
+                <span className="font-primary text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-2 uppercase">
                   First
                 </span>
-                <span className="font-primary text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-3 uppercase">
+                <span className="font-primary text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-2 uppercase">
                   Blood
                 </span>
               </motion.div>
@@ -120,10 +120,10 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.35, delay: 0.4, ease: "easeOut" }}
-              className="flex items-center justify-center bg-widget-bg"
+              className="flex items-center justify-center bg-widget-secondary"
               style={{ width: 110 }}
             >
-              <div className="flex flex-col items-center justify-center leading-none text-widget-text-1 select-none">
+              <div className="flex flex-col items-center justify-center leading-none text-widget-text-2 select-none">
                 <span
                   className="text-[1.9rem] font-normal leading-[0.85] uppercase"
                   style={{ fontFamily: "var(--font-american-captain)" }}

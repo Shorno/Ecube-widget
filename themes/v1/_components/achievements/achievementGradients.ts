@@ -6,7 +6,7 @@ export const PLAYER_PANEL_GRADIENT =
 
 /** Right achievement header (kills / first blood) */
 export const ACHIEVEMENT_HEADER_GRADIENT =
-  "linear-gradient(180deg, color-mix(in srgb, var(--widget-status-knocked) 86%, white) 0%, var(--widget-status-knocked) 40%, color-mix(in srgb, var(--widget-status-knocked) 82%, black) 100%)";
+  "linear-gradient(180deg, color-mi1111x(in srgb, var(--widget-secondary) 86%, white) 0%, var(--widget-secondary) 40%, color-mix(in srgb, var(--widget-secondary-dark) 82%, black) 100%)";
 
 /** Bottom player name bar */
 export const NAME_BAR_GRADIENT =
