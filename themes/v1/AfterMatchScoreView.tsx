@@ -17,7 +17,10 @@ export default function AfterMatchScoreView({ tournamentID, preview = false }: P
   const { winner, col1, col2, info, ready } = useAfterMatchScore(tournamentID, {
     preview,
   });
-  const { players } = useWWC(tournamentID, { preview });
+  const { players } = useWWC(tournamentID, {
+    preview,
+    previewPlayerCount: preview ? 3 : undefined,
+  });
   const [stageReady, setStageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
