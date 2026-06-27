@@ -23,14 +23,60 @@ const MAP_IMAGES: Record<string, string> = {
   VIKENDI: "/assets/map-rotation/maps/vikendi.webp",
 };
 
+const CARD_WIDTH = 728;
+const CARD_HEIGHT = 198;
+const COL_GAP = 27;
+const COL_2_LEFT = CARD_WIDTH + COL_GAP;
+const GRID_WIDTH = CARD_WIDTH * 2 + COL_GAP;
+const ROW_STEP = 208;
+const SINGLE_CARD_LEFT = (GRID_WIDTH - CARD_WIDTH) / 2;
+
+function getMapRotationGridHeight(totalCount: number) {
+  const rowCount = Math.max(1, Math.ceil(totalCount / 2));
+  return (rowCount - 1) * ROW_STEP + CARD_HEIGHT;
+}
+
+function getMapRotationCardPosition(
+  index: number,
+  totalCount: number,
+): { left: number; top: number } {
+  const row = Math.floor(index / 2);
+  const col = index % 2;
+  const top = row * ROW_STEP;
+  const isLastCard = index === totalCount - 1;
+  const hasOddLastRow = totalCount % 2 === 1;
+
+  if (isLastCard && hasOddLastRow) {
+    return { left: SINGLE_CARD_LEFT, top };
+  }
+
+  return { left: col === 0 ? 0 : COL_2_LEFT, top };
+}
+
 function formatMatchLabel(match: MapRotationMatch, index: number) {
   const matchNumber = match.index ?? index + 1;
   return `MATCH ${String(matchNumber).padStart(2, "0")}`;
 }
 
+function isPlaceholderMap(map?: string | null) {
+  if (!map) return true;
+  const normalized = map.trim().toLowerCase();
+  return (
+    normalized === "" ||
+    normalized === "tbd" ||
+    normalized === "to be determined" ||
+    normalized === "to be defined"
+  );
+}
+
+function hasDisplayableMatchInfo(match: MapRotationMatch) {
+  if (isCompleted(match)) return true;
+  return !isPlaceholderMap(match.map);
+}
+
 // Ensure first word of map name is uppercase, rest is handled as standard
 function mapName(match: MapRotationMatch) {
-  return match.map || "TBD";
+  return match.map?.trim() || "";
 }
 
 function mapImage(match: MapRotationMatch) {
@@ -57,10 +103,12 @@ function winnerPoints(match: MapRotationMatch) {
 function MapRotationCard({
   match,
   index,
+  position,
   className,
 }: {
   match: MapRotationMatch;
   index: number;
+  position: { left: number; top: number };
   className?: string;
 }) {
   const completed = isCompleted(match);
@@ -69,30 +117,27 @@ function MapRotationCard({
   const hasTime = Boolean(match.start_time);
   const imageSrc = mapImage(match);
 
-  // Position logic inside the centered relative grid container
-  const col = index % 2;
-  const row = Math.floor(index / 2);
-  const left = col === 0 ? 0 : 755;
-  const top = row === 0 ? 0 : row === 1 ? 208 : 416;
-
   return (
     <article
       className={cn(
         "absolute z-10 box-border border-[4px] border-widget-secondary-dark select-none",
-        completed && "grayscale-[0.9] saturate-[0.3] brightness-[0.72] contrast-[0.92]",
         className,
       )}
       style={{
-        left: `${left}px`,
-        top: `${top}px`,
-        width: "728px",
-        height: "198px",
+        left: `${position.left}px`,
+        top: `${position.top}px`,
+        width: `${CARD_WIDTH}px`,
+        height: `${CARD_HEIGHT}px`,
         background: "linear-gradient(90deg, var(--widget-gradient-from) 0%, var(--widget-primary) 100%)",
       }}
     >
       {/* Inner Image Container (Rectangle 39) */}
       <div
-        className="absolute border border-widget-secondary-dark shadow-[-3px_0px_8.3px_rgba(0,0,0,0.76)] overflow-hidden bg-[#061d1a]"
+        className={cn(
+          "absolute border border-widget-secondary-dark shadow-[-3px_0px_8.3px_rgba(0,0,0,0.76)] overflow-hidden bg-[#061d1a]",
+          completed &&
+            "grayscale-[0.9] saturate-[0.3] brightness-[0.72] contrast-[0.92]",
+        )}
         style={{
           left: "22px",
           top: "21px",
@@ -147,18 +192,20 @@ function MapRotationCard({
       </div>
 
       {/* Map Name text (ERANGEL/MIRAMAR/etc.) */}
-      <div
-        className="absolute z-20 flex h-[36px] items-center justify-end"
-        style={{
-          left: "608px",
-          top: "28px",
-          width: "91px",
-        }}
-      >
-        <span className="font-secondary text-[30px] font-bold text-white uppercase text-right tracking-wider">
-          {mapName(match)}
-        </span>
-      </div>
+      {mapName(match) && (
+        <div
+          className="absolute z-20 flex h-[36px] items-center justify-end"
+          style={{
+            left: "608px",
+            top: "28px",
+            width: "91px",
+          }}
+        >
+          <span className="font-secondary text-[30px] font-bold text-white uppercase text-right tracking-wider">
+            {mapName(match)}
+          </span>
+        </div>
+      )}
 
       {/* Centered Winner metrics layout inside the card middle area */}
       {completed && (
@@ -170,24 +217,24 @@ function MapRotationCard({
             width: "416px",
           }}
         >
-          <div className="flex min-w-[70px] flex-col items-center justify-center gap-1">
+          <div className="flex min-w-[91px] flex-col items-center justify-center gap-1.5">
             {logo && (
               <Image
                 src={logo}
                 alt={`${match.winner_team?.team?.name ?? "Winner"} logo`}
-                width={60}
-                height={60}
-                className="size-[60px] object-contain"
+                width={78}
+                height={78}
+                className="size-[78px] object-contain"
                 unoptimized
               />
             )}
             {clanTag && (
-              <span className="font-secondary max-w-[92px] truncate text-center text-[18px] leading-[18px] font-bold tracking-wider text-white uppercase">
+              <span className="font-secondary max-w-[120px] truncate text-center text-[24px] leading-[24px] font-bold tracking-wider text-white uppercase">
                 {clanTag}
               </span>
             )}
           </div>
-          <div className="w-[2px] h-[55px] bg-widget-secondary-dark/60" />
+          <div className="h-[72px] w-[2px] bg-widget-secondary-dark/60" />
           <div className="flex items-baseline gap-1 select-none">
             <span className="font-primary text-white text-[68px] leading-[68px] font-normal">
               {String(winnerPoints(match))}
@@ -224,25 +271,7 @@ export default function MapRotationView({ tournamentID }: Props) {
   const [stageReady, setStageReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Pad matches list to exactly 6 items so all cards are displayed on screen (FBD placeholders style)
-  const displayMatches = Array.from({ length: 6 }, (_, i) => {
-    return (
-      rotationMatches[i] ?? {
-        id: `placeholder-${i}`,
-        name: `Match ${i + 1}`,
-        map: "TBD",
-        day: 1,
-        index: i + 1,
-        banner_image_url: null,
-        start_date: null,
-        start_time: null,
-        is_live: false,
-        is_completed: false,
-        is_next: false,
-        winner_team: null,
-      }
-    );
-  });
+  const displayMatches = rotationMatches.filter(hasDisplayableMatchInfo);
 
   useGSAP(
     () => {
@@ -269,13 +298,15 @@ export default function MapRotationView({ tournamentID }: Props) {
 
   if (!ready || displayMatches.length === 0) return null;
 
+  const gridHeight = getMapRotationGridHeight(displayMatches.length);
+
   return (
     <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
-      <Layout top className="bg-transparent px-14">
+      <Layout top className="flex flex-col justify-center bg-transparent px-14">
         <div
           ref={containerRef}
-          className="mx-auto flex flex-col pb-8"
-          style={{ width: "1483px" }}
+          className="mx-auto flex flex-col"
+          style={{ width: `${GRID_WIDTH}px` }}
         >
           {/* Centered Main Title (Re-used Title Component) */}
           <div className="anim-title flex justify-center opacity-0">
@@ -283,12 +314,19 @@ export default function MapRotationView({ tournamentID }: Props) {
           </div>
 
           {/* Cards grid list */}
-          <div className="relative mt-[46px] w-[1483px] h-[614px]">
+          <div
+            className="relative mt-[46px]"
+            style={{ width: `${GRID_WIDTH}px`, height: `${gridHeight}px` }}
+          >
             {displayMatches.map((match, index) => (
               <MapRotationCard
                 key={match.id ?? index}
                 match={match}
                 index={index}
+                position={getMapRotationCardPosition(
+                  index,
+                  displayMatches.length,
+                )}
                 className="anim-map-card opacity-0"
               />
             ))}
