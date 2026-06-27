@@ -68,11 +68,10 @@ Use `getLiveRankingPanelHeight(teamCount)` in [`layout.ts`](themes/v1/_component
 | `LIVE_RANKING_HEADER_HEIGHT` | 40px | `LiveRankingHeader` |
 | `LIVE_RANKING_ROW_HEIGHT` | 40.625px | `LiveRankingRow` |
 | `LIVE_RANKING_LEGEND_HEIGHT` | 19px | `LiveRankingLegend` |
-| `LIVE_RANKING_MAP_SAFE_TOP` | 300px | Reserved top-right minimap zone |
-| `LIVE_RANKING_PANEL_RIGHT` | 16px | Panel margin from right edge |
-| `LIVE_RANKING_PANEL_BOTTOM` | 16px | Panel margin from bottom edge |
-| `LIVE_RANKING_PANEL_SCALE` | 0.82 (max) | Default broadcast scale cap |
-| `LIVE_RANKING_PANEL_SCALE_MIN` | 0.65 | Minimum scale for large brackets |
+| `LIVE_RANKING_MAP_SAFE_TOP` | 220px | Reserved top-right minimap zone |
+| `LIVE_RANKING_MAP_SAFE_WIDTH` | 280px | Minimap width for preview overlay |
+| `LIVE_RANKING_PANEL_BOTTOM` | 16px | Margin above bottom HUD sector |
+| `LIVE_RANKING_PANEL_SCALE` | 0.92 (max) | Broadcast scale cap — shrinks to fit when needed |
 
 **Examples**
 
@@ -83,10 +82,10 @@ Use `getLiveRankingPanelHeight(teamCount)` in [`layout.ts`](themes/v1/_component
 
 **OBS / broadcast positioning**
 
-- Panel is anchored **bottom-right** (`right: 16px`, `bottom: 16px`) so it does not cover the **top-right minimap**.
-- A **300px** top-right strip is treated as map-safe; the panel scales down (`transform: scale()`, origin bottom-right) to fit the remaining vertical space.
-- Scale is computed dynamically via `getLiveRankingBroadcastLayout()` — capped at **0.82**, floored at **0.65** for large team counts.
-- If rows exceed visible space at the computed scale, the team list clips between header and legend (`overflow: hidden`); header and legend stay visible.
+- Minimap occupies a **220×280px** top-right zone in preview.
+- Ranking panel is flush to the **right edge** (`right: 0`), starts below the minimap (`top: 220px`), and grows downward.
+- Scale is computed via `getLiveRankingBroadcastLayout()` — capped at **0.92**, shrinks dynamically to fit all teams within the viewport (no scrollbars).
+- Scale uses `transform-origin: top right`.
 - Preview mode (`?preview=1`) shows a dashed **Map safe zone** overlay in the top-right for alignment checks before OBS.
 
 **Historical note:** v1 previously anchored the panel at `top: 0` on the full right edge, which overlapped the minimap. Older docs referenced `top: 247px`; broadcast layout now uses bottom-right anchor + scale.

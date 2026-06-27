@@ -15,6 +15,7 @@ import {
   getLiveRankingBroadcastLayout,
   getLiveRankingLayout,
   LIVE_RANKING_MAP_SAFE_TOP,
+  LIVE_RANKING_MAP_SAFE_WIDTH,
 } from "./_components/live-ranking/layout";
 
 gsap.registerPlugin(Flip);
@@ -151,7 +152,7 @@ export default function LiveOverallRankingView({
             <div
               className="pointer-events-none absolute top-0 right-0 z-40 border border-dashed border-yellow-400/50 bg-yellow-400/5"
               style={{
-                width: rankingLayout.panelWidth + 32,
+                width: LIVE_RANKING_MAP_SAFE_WIDTH,
                 height: LIVE_RANKING_MAP_SAFE_TOP,
               }}
               aria-hidden
@@ -181,17 +182,17 @@ export default function LiveOverallRankingView({
           <div className="select-none" style={broadcastLayout.outer}>
             <div
               ref={slidePanelRef}
-              className="flex flex-col overflow-hidden"
+              className="flex flex-col"
               style={{
                 width: broadcastLayout.inner.width,
-                maxHeight: broadcastLayout.inner.maxHeight,
+                height: broadcastLayout.inner.height,
               }}
             >
               <LiveRankingHeader showFullTeamName={showFullTeamName} />
 
               <div
                 ref={containerRef}
-                className="flex min-h-0 w-full flex-1 flex-col overflow-hidden"
+                className="flex w-full flex-col"
               >
                 {displayTeams.map((entry, index) => (
                   <LiveRankingRow
