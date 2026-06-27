@@ -26,7 +26,7 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
   const rightWidth = bannerWidth - leftWidth;
   const topHeight = 160;
   const bottomHeight = 50;
-  const shiftAmount = 37;
+  const shiftAmount = 80;
 
   return (
     <motion.div
@@ -113,7 +113,7 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
           </motion.div>
 
           <div
-            className="relative z-10 flex"
+            className="relative z-10 flex -mt-px"
             style={{ height: bottomHeight, marginLeft: -shiftAmount }}
           >
             <motion.div
@@ -143,10 +143,7 @@ export default function FirstBloodAchievementOverlay({ data }: Props) {
               style={{ background: NAME_BAR_GRADIENT }}
               className="flex min-w-0 flex-1 items-center justify-center px-4"
             >
-              <span
-                className="font-primary truncate text-[2.1rem] font-normal tracking-wide text-widget-text-3 uppercase"
-                style={{ fontFamily: "var(--font-american-captain)" }}
-              >
+              <span className="font-secondary truncate text-[2.1rem] font-normal tracking-wide text-widget-text-3 uppercase">
                 {playerName}
               </span>
             </motion.div>
