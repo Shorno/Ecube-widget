@@ -42,7 +42,7 @@ Right-side panel with columns:
 |--------|---------|
 | **#** | Rank |
 | **TEAM** | Flag → logo → clan tag *(or full name)* |
-| **ALIVE** | 4 vertical health bars per player |
+| **ALIVE** | Vertical health bars per squad member (only actual players; no empty slots) |
 | **PTS** | Overall tournament points |
 | **ELIMS** | Match kills |
 
@@ -68,22 +68,28 @@ Use `getLiveRankingPanelHeight(teamCount)` in [`layout.ts`](themes/v1/_component
 | `LIVE_RANKING_HEADER_HEIGHT` | 40px | `LiveRankingHeader` |
 | `LIVE_RANKING_ROW_HEIGHT` | 40.625px | `LiveRankingRow` |
 | `LIVE_RANKING_LEGEND_HEIGHT` | 19px | `LiveRankingLegend` |
-| Panel `top` offset | 247px | `LiveOverallRankingView` |
+| `LIVE_RANKING_MAP_SAFE_TOP` | 300px | Reserved top-right minimap zone |
+| `LIVE_RANKING_PANEL_RIGHT` | 16px | Panel margin from right edge |
+| `LIVE_RANKING_PANEL_BOTTOM` | 16px | Panel margin from bottom edge |
+| `LIVE_RANKING_PANEL_SCALE` | 0.82 (max) | Default broadcast scale cap |
+| `LIVE_RANKING_PANEL_SCALE_MIN` | 0.65 | Minimum scale for large brackets |
 
 **Examples**
 
-| Teams | Panel height |
-|-------|----------------|
+| Teams | Natural panel height |
+|-------|----------------------|
 | 16 (official) | 709px |
 | 24 (local preview mock) | 1034px |
 
-**OBS / canvas**
+**OBS / broadcast positioning**
 
-- Stage wrapper: `min-h-screen overflow-x-hidden` — vertical overflow is allowed so extra rows are not clipped.
-- Panel starts at `top: 247px`. On a 1080p browser source, rows below ~833px from the panel top sit outside the default fold.
-- For local brackets with 20+ teams, **increase the OBS browser source height** if lower rows must appear on stream.
+- Panel is anchored **bottom-right** (`right: 16px`, `bottom: 16px`) so it does not cover the **top-right minimap**.
+- A **300px** top-right strip is treated as map-safe; the panel scales down (`transform: scale()`, origin bottom-right) to fit the remaining vertical space.
+- Scale is computed dynamically via `getLiveRankingBroadcastLayout()` — capped at **0.82**, floored at **0.65** for large team counts.
+- If rows exceed visible space at the computed scale, the team list clips between header and legend (`overflow: hidden`); header and legend stay visible.
+- Preview mode (`?preview=1`) shows a dashed **Map safe zone** overlay in the top-right for alignment checks before OBS.
 
-**Historical note:** v1 previously used fixed `h-[709px]` / `h-[650px]` with `overflow-hidden` on the list, which clipped at exactly 16 rows (`650 ÷ 40.625 = 16`). That was a UI constraint only — data always included all teams.
+**Historical note:** v1 previously anchored the panel at `top: 0` on the full right edge, which overlapped the minimap. Older docs referenced `top: 247px`; broadcast layout now uses bottom-right anchor + scale.
 
 ---
 
