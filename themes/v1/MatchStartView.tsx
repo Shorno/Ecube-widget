@@ -10,7 +10,7 @@ import { useLiveMatchInfo } from "@/hooks/widget-data";
 import { cn } from "@/lib/utils";
 import type { LiveMatchInfo, MatchInfo } from "@/types/widgets";
 
-type Props = { tournamentID: string };
+type Props = { tournamentID: string; preview?: boolean };
 
 const MAP_IMAGES: Record<string, string> = {
   ERANGEL: "/assets/map-rotation/maps/erangel.webp",
@@ -41,8 +41,8 @@ function displayMapImage(mapName: string) {
   return MAP_IMAGES[mapName.trim().toUpperCase()] ?? "";
 }
 
-export default function MatchStartView({ tournamentID }: Props) {
-  const { match, info, ready } = useLiveMatchInfo(tournamentID);
+export default function MatchStartView({ tournamentID, preview = false }: Props) {
+  const { match, info, ready } = useLiveMatchInfo(tournamentID, { preview });
   const liveMatch = match as LiveMatchInfo | null;
   const matchInfo = info as MatchInfo | null;
   const [stageReady, setStageReady] = useState(false);
