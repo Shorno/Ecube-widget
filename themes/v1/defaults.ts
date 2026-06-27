@@ -38,7 +38,7 @@ export const defaults = {
   statusDead: h("#4E4E4E"),
   // bg/text/border-widget-v1-forest
   v1Forest: h("#00332B"),
-  // Top-four WWCD bar fills
-  v1WwcdFrom: h("#4F63CE"),
-  v1WwcdTo: h("#3C41B4"),
+  // Top-four WWCD bar — aligned with v1 gradient / primary palette (not legacy purple)
+  v1WwcdFrom: h("#009980"),
+  v1WwcdTo: h("#00332B"),
 };

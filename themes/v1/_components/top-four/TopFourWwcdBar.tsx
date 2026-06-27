@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { cn } from "@/lib/utils";
 import { TOP_FOUR_CARD_WIDTH, TOP_FOUR_WWCD_HEIGHT } from "./layout";
 
@@ -7,55 +8,101 @@ type Props = {
 };
 
 export default function TopFourWwcdBar({ winProbability, className }: Props) {
+  const leftGradId = useId().replace(/:/g, "");
+  const rightGradId = useId().replace(/:/g, "");
+  const rightSheenId = useId().replace(/:/g, "");
+
   return (
     <div
       className={cn("relative font-bold text-widget-text-3", className)}
       style={{ width: TOP_FOUR_CARD_WIDTH, height: TOP_FOUR_WWCD_HEIGHT }}
     >
-      {/* Background SVG Shape and Borders */}
       <svg
         width={TOP_FOUR_CARD_WIDTH}
         height={TOP_FOUR_WWCD_HEIGHT}
-        viewBox="0 0 301 28"
+        viewBox="0 0 301 40"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="absolute inset-0 h-full w-full"
+        aria-hidden
       >
-        {/* Left Section Background (WWCD) */}
+        <defs>
+          <linearGradient
+            id={leftGradId}
+            x1="9"
+            y1="0"
+            x2="150.5"
+            y2="38"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop offset="0" stopColor="var(--widget-v1-wwcd-from, var(--widget-gradient-from))" />
+            <stop offset="1" stopColor="var(--widget-primary-accent)" />
+          </linearGradient>
+          <linearGradient
+            id={rightGradId}
+            x1="158"
+            y1="0"
+            x2="286"
+            y2="38"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop
+              offset="0%"
+              stopColor="var(--widget-gradient-from, var(--widget-primary-accent))"
+            />
+            <stop offset="42%" stopColor="var(--widget-primary)" />
+            <stop
+              offset="100%"
+              stopColor="var(--widget-v1-wwcd-to, var(--widget-gradient-to))"
+            />
+          </linearGradient>
+          <linearGradient
+            id={rightSheenId}
+            x1="221"
+            y1="0"
+            x2="221"
+            y2="28"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.14" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+
         <path
-          d="M9 0 H150.5 V26 H22 L9 13 Z"
-          fill="var(--widget-primary-accent, #00AD91)"
+          d="M9 0 H150.5 V37 H22 L9 19 Z"
+          fill={`url(#${leftGradId})`}
         />
-        {/* Right Section Background (Win Probability %) */}
         <path
-          d="M150.5 0 H292 V13 L279 26 H150.5 Z"
-          fill="var(--widget-primary-dark, #00332B)"
+          d="M150.5 0 H292 V19 L279 37 H150.5 Z"
+          fill={`url(#${rightGradId})`}
         />
-        {/* Outer Border Frame */}
         <path
-          d="M7 0 H294 V14 L280 28 H21 L7 14 Z"
-          stroke="var(--widget-primary-dark, #00332B)"
+          d="M150.5 0 H292 V19 L279 37 H150.5 Z"
+          fill={`url(#${rightSheenId})`}
+        />
+        <path
+          d="M7 0 H294 V20 L280 40 H21 L7 20 Z"
+          stroke="var(--widget-secondary-dark)"
           strokeWidth="2"
           fill="none"
         />
-        {/* Inner Border Accent */}
         <path
-          d="M8.5 0 H292.5 V13.5 L279 27 H22 L8.5 13.5 Z"
-          stroke="var(--widget-primary-accent, #00AD91)"
+          d="M8.5 0 H292.5 V19.5 L279 39 H22 L8.5 19.5 Z"
+          stroke="var(--widget-primary-accent)"
           strokeWidth="1"
           fill="none"
         />
       </svg>
 
-      {/* Overlay Text Content */}
       <div
-        className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-xs uppercase tracking-wide"
-        style={{ left: 9, width: 141.5 }}
+        className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-[28px] leading-none uppercase tracking-[0.08em]"
+        style={{ left: 9, width: 148 }}
       >
         WWCD
       </div>
       <div
-        className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-base leading-none"
+        className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-[26px] leading-none tracking-wide"
         style={{ left: 150.5, width: 141.5 }}
       >
         {Math.round(winProbability)}%
