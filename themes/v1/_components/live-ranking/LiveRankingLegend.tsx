@@ -15,21 +15,17 @@ export default function LiveRankingLegend({
   return (
     <div
       className={cn(
-        "flex h-[19px] shrink-0 select-none items-center justify-start bg-white pl-[5px]",
+        "bg-widget-bg flex h-[19px] shrink-0 items-center justify-start pl-[5px] select-none",
         className,
       )}
       style={{ width: panelWidth }}
     >
       {/* ALIVE */}
-      <div className="flex items-center gap-[4px] mr-[20px] shrink-0">
-        <div
-          className="size-[12px]"
-          style={{ backgroundColor: "#00FFD5" }}
-        />
+      <div className="mr-[20px] flex shrink-0 items-center gap-[4px]">
+        <div className="bg-widget-status-alive size-[12px]" />
         <span
-          className="font-bold text-black uppercase leading-none"
+          className="font-primary text-widget-text-1 leading-none font-bold uppercase"
           style={{
-            fontFamily: "var(--widget-font-primary), 'American Captain', sans-serif",
             fontSize: "18px",
             lineHeight: "1",
           }}
@@ -39,15 +35,11 @@ export default function LiveRankingLegend({
       </div>
 
       {/* KNOCKED */}
-      <div className="flex items-center gap-[4px] mr-[20px] shrink-0">
-        <div
-          className="size-[12px]"
-          style={{ backgroundColor: "#FF0000" }}
-        />
+      <div className="mr-[20px] flex shrink-0 items-center gap-[4px]">
+        <div className="bg-widget-status-knocked size-[12px]" />
         <span
-          className="font-bold text-black uppercase leading-none"
+          className="font-primary text-widget-text-1 leading-none font-bold uppercase"
           style={{
-            fontFamily: "var(--widget-font-primary), 'American Captain', sans-serif",
             fontSize: "18px",
             lineHeight: "1",
           }}
@@ -57,15 +49,11 @@ export default function LiveRankingLegend({
       </div>
 
       {/* ELIMINATED */}
-      <div className="flex items-center gap-[4px] shrink-0">
-        <div
-          className="size-[12px]"
-          style={{ backgroundColor: "#4E4E4E" }}
-        />
+      <div className="flex shrink-0 items-center gap-[4px]">
+        <div className="bg-widget-status-dead size-[12px]" />
         <span
-          className="font-bold text-black uppercase leading-none"
+          className="font-primary text-widget-text-1 leading-none font-bold uppercase"
           style={{
-            fontFamily: "var(--widget-font-primary), 'American Captain', sans-serif",
             fontSize: "18px",
             lineHeight: "1",
           }}

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { getLiveRankingLayout } from "./layout";
 
@@ -16,7 +15,7 @@ export default function LiveRankingHeader({
   return (
     <div
       className={cn(
-        "relative h-[40px] shrink-0 select-none overflow-hidden",
+        "relative h-[40px] shrink-0 overflow-hidden select-none",
         className,
       )}
       style={{
@@ -26,7 +25,7 @@ export default function LiveRankingHeader({
       }}
     >
       <div
-        className="absolute left-0 top-0 flex h-[40px] w-[48px] items-center justify-center"
+        className="absolute top-0 left-0 flex h-[40px] w-[48px] items-center justify-center"
         style={{ backgroundColor: "var(--widget-primary, #00473C)" }}
       >
         <div
@@ -37,21 +36,28 @@ export default function LiveRankingHeader({
             transform: "rotate(17.51deg)",
           }}
         >
-          <Image
-            src="/assets/head2head/helmet.svg"
-            alt=""
-            width={32}
-            height={32}
-            className="h-full w-full object-contain brightness-0 invert"
+          <span
+            className="block h-full w-full"
+            aria-hidden
+            style={{
+              backgroundColor: "var(--widget-text-3)",
+              maskImage: "url('/assets/head2head/helmet.svg')",
+              maskPosition: "center",
+              maskRepeat: "no-repeat",
+              maskSize: "contain",
+              WebkitMaskImage: "url('/assets/head2head/helmet.svg')",
+              WebkitMaskPosition: "center",
+              WebkitMaskRepeat: "no-repeat",
+              WebkitMaskSize: "contain",
+            }}
           />
         </div>
       </div>
 
       <span
-        className="absolute top-[14px] h-[18px] font-bold text-white uppercase"
+        className="font-primary text-widget-text-3 absolute top-[14px] h-[18px] font-bold uppercase"
         style={{
           left: layout.headerLabels.team,
-          fontFamily: "var(--widget-font-primary), 'American Captain', sans-serif",
           fontSize: "18px",
           lineHeight: "18px",
         }}
@@ -60,10 +66,9 @@ export default function LiveRankingHeader({
       </span>
 
       <span
-        className="absolute top-[14px] h-[18px] w-[50px] text-center font-bold text-white uppercase"
+        className="font-primary text-widget-text-3 absolute top-[14px] h-[18px] w-[50px] text-center font-bold uppercase"
         style={{
           left: layout.headerLabels.alive,
-          fontFamily: "var(--widget-font-primary), 'American Captain', sans-serif",
           fontSize: "18px",
           lineHeight: "18px",
         }}
@@ -72,10 +77,9 @@ export default function LiveRankingHeader({
       </span>
 
       <span
-        className="absolute top-[14px] h-[18px] w-[40px] text-center font-bold text-white uppercase"
+        className="font-primary text-widget-text-3 absolute top-[14px] h-[18px] w-[40px] text-center font-bold uppercase"
         style={{
           left: layout.headerLabels.pts,
-          fontFamily: "var(--widget-font-primary), 'American Captain', sans-serif",
           fontSize: "18px",
           lineHeight: "18px",
         }}
@@ -84,10 +88,9 @@ export default function LiveRankingHeader({
       </span>
 
       <span
-        className="absolute top-[14px] h-[18px] w-[40px] text-center font-bold text-white uppercase"
+        className="font-primary text-widget-text-3 absolute top-[14px] h-[18px] w-[40px] text-center font-bold uppercase"
         style={{
           left: layout.headerLabels.elims,
-          fontFamily: "var(--widget-font-primary), 'American Captain', sans-serif",
           fontSize: "18px",
           lineHeight: "18px",
         }}
