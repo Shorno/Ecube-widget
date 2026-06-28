@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import WidgetStage from "@/components/common/WidgetStage";
@@ -59,7 +65,6 @@ export default function LiveOverallRankingView({
   const sidebarHiddenRef = useRef(false);
   const [displayTeams, setDisplayTeams] = useState<LiveRankEntry[]>([]);
   const [viewportHeight, setViewportHeight] = useState(1080);
-  const applyTeamsRef = useRef<(data: LiveRankEntry[]) => void>(() => {});
 
   useEffect(() => {
     function syncViewport() {
@@ -70,7 +75,7 @@ export default function LiveOverallRankingView({
     return () => window.removeEventListener("resize", syncViewport);
   }, []);
 
-  applyTeamsRef.current = (newData) => {
+  const applyDisplayTeams = useCallback((newData: LiveRankEntry[]) => {
     if (isAnimatingRef.current) {
       pendingDataRef.current = newData;
       return;
@@ -82,12 +87,12 @@ export default function LiveOverallRankingView({
     }
     isFirstRenderRef.current = false;
     setDisplayTeams(newData);
-  };
+  }, []);
 
   useEffect(() => {
     if (teams.length === 0) return;
-    applyTeamsRef.current(teams);
-  }, [teams]);
+    applyDisplayTeams(teams);
+  }, [teams, applyDisplayTeams]);
 
   useLayoutEffect(() => {
     if (!flipStateRef.current) return;
@@ -100,12 +105,12 @@ export default function LiveOverallRankingView({
         if (pendingDataRef.current) {
           const next = pendingDataRef.current;
           pendingDataRef.current = null;
-          applyTeamsRef.current(next);
+          applyDisplayTeams(next);
         }
       },
     });
     flipStateRef.current = null;
-  }, [displayTeams]);
+  }, [displayTeams, applyDisplayTeams]);
 
   useEffect(() => {
     if (!showTopFour || sidebarHiddenRef.current) return;
@@ -124,10 +129,13 @@ export default function LiveOverallRankingView({
   }, [showTopFour]);
 
   useEffect(() => {
+    const slidePanel = slidePanelRef.current;
+    if (!slidePanel) return;
+
     return () => {
-      if (slidePanelRef.current) gsap.killTweensOf(slidePanelRef.current);
+      gsap.killTweensOf(slidePanel);
     };
-  }, []);
+  }, [displayTeams.length, showTopFour]);
 
   const activeObservingTeamId = showObserverHighlight ? observingTeamId : null;
   const broadcastLayout =
@@ -182,31 +190,27 @@ export default function LiveOverallRankingView({
           <div className="select-none" style={broadcastLayout.outer}>
             <div
               ref={slidePanelRef}
-              className="flex flex-col"
-              style={{
-                width: broadcastLayout.inner.width,
-                height: broadcastLayout.inner.height,
-              }}
+              className="relative"
+              style={broadcastLayout.slide}
             >
-              <LiveRankingHeader showFullTeamName={showFullTeamName} />
+              <div className="flex flex-col" style={broadcastLayout.inner}>
+                <LiveRankingHeader showFullTeamName={showFullTeamName} />
 
-              <div
-                ref={containerRef}
-                className="flex w-full flex-col"
-              >
-                {displayTeams.map((entry, index) => (
-                  <LiveRankingRow
-                    key={teamId(entry)}
-                    entry={entry}
-                    rank={index + 1}
-                    isObserved={activeObservingTeamId === teamId(entry)}
-                    showTeamFlags={showTeamFlags}
-                    showFullTeamName={showFullTeamName}
-                  />
-                ))}
+                <div ref={containerRef} className="flex w-full flex-col">
+                  {displayTeams.map((entry, index) => (
+                    <LiveRankingRow
+                      key={teamId(entry)}
+                      entry={entry}
+                      rank={index + 1}
+                      isObserved={activeObservingTeamId === teamId(entry)}
+                      showTeamFlags={showTeamFlags}
+                      showFullTeamName={showFullTeamName}
+                    />
+                  ))}
+                </div>
+
+                <LiveRankingLegend showFullTeamName={showFullTeamName} />
               </div>
-
-              <LiveRankingLegend showFullTeamName={showFullTeamName} />
             </div>
           </div>
         )}

@@ -12,6 +12,11 @@ function barGroupWidth(count: number, barWidth: number, gap: number) {
   return count * barWidth + (count - 1) * gap;
 }
 
+function healthScale(health?: number) {
+  const value = Math.max(0, Math.min(100, health ?? 100));
+  return value / 100;
+}
+
 export default function PlayerStatusBars({
   players = [],
   className,
@@ -28,7 +33,11 @@ export default function PlayerStatusBars({
   return (
     <div
       className={cn("flex items-center justify-start gap-[2px]", className)}
-      style={{ height: `${height}px`, width: `${width}px` }}
+      style={{
+        height: `${height}px`,
+        width: `${width}px`,
+        contain: "layout paint style",
+      }}
     >
       {players.map((player, idx) => {
         const isEliminated = player.liveState === 5;
@@ -46,12 +55,13 @@ export default function PlayerStatusBars({
           >
             {!isEliminated && (
               <div
-                className="w-full transition-all duration-300"
+                className="h-full w-full origin-bottom transition-transform duration-300 ease-out"
                 style={{
-                  height: `${player.healths ?? 100}%`,
                   backgroundColor: isKnocked
                     ? "var(--widget-status-knocked, #FF0000)"
                     : "var(--widget-status-alive, #00FFD5)",
+                  transform: `scaleY(${healthScale(player.healths)})`,
+                  willChange: "transform",
                 }}
               />
             )}

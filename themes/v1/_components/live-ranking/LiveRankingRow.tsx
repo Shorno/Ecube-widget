@@ -5,7 +5,11 @@ import { getTeamDisplayLabel } from "@/lib/utils/teamDisplay";
 import { getTeamFlagDisplay } from "@/lib/utils/teamFlag";
 import type { LiveRankEntry } from "@/types/live-rank";
 import PlayerStatusBars from "./PlayerStatusBars";
-import { getLiveRankingLayout, LIVE_RANKING_RANK_WIDTH, LIVE_RANKING_ROW_HEIGHT } from "./layout";
+import {
+  getLiveRankingLayout,
+  LIVE_RANKING_RANK_WIDTH,
+  LIVE_RANKING_ROW_HEIGHT,
+} from "./layout";
 
 function teamId(entry: LiveRankEntry) {
   return entry.team.id ?? entry.team._id ?? String(entry.rank);
@@ -52,18 +56,18 @@ export default function LiveRankingRow({
   const flagDisplay = getTeamFlagDisplay(entry.team);
   const hasFlag = showTeamFlags && flagDisplay.kind !== "none";
   const observedBg = "var(--widget-secondary, #FFDD75)";
-  const observedText = "var(--widget-primary, #00473C)";
+  const observedText = "var(--widget-text-2, var(--widget-primary, #00473C))";
 
   const identityWidth = LIVE_RANKING_RANK_WIDTH + layout.teamColWidth;
   const statsWidth = layout.panelWidth - identityWidth;
   const statsFontSize = 25;
   const statsLineHeight = 30;
+  const identityCellHeight = LIVE_RANKING_ROW_HEIGHT;
 
   return (
     <div
       className={cn(
-        "relative flex items-stretch select-none overflow-visible",
-        eliminated && "opacity-75",
+        "relative flex items-stretch overflow-hidden select-none",
         className,
       )}
       style={{ width: layout.panelWidth, height: LIVE_RANKING_ROW_HEIGHT }}
@@ -74,21 +78,31 @@ export default function LiveRankingRow({
         style={{ width: identityWidth }}
       >
         <div
-          className="flex shrink-0 items-center justify-center font-bold"
+          className="font-secondary relative flex shrink-0 items-center justify-center overflow-hidden font-bold"
           style={{
             width: LIVE_RANKING_RANK_WIDTH,
+            height: identityCellHeight,
             backgroundColor: isObserved
               ? observedBg
               : "var(--widget-primary, #00473C)",
             color: isObserved
               ? observedText
-              : "var(--widget-secondary, #FFDD75)",
-            fontFamily: "var(--widget-font-secondary), 'Agency FB', sans-serif",
+              : "var(--widget-text-3, #FFFFFF)",
             fontSize: `${statsFontSize}px`,
             lineHeight: `${statsLineHeight}px`,
           }}
         >
-          {rank}
+          {eliminated && (
+            <div className="pointer-events-none absolute inset-0 z-0 bg-black/25" />
+          )}
+          <span className="relative z-10">{rank}</span>
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-px"
+            style={{
+              backgroundColor: "var(--widget-secondary-dark, #C6A646)",
+              opacity: 0.55,
+            }}
+          />
         </div>
 
         <div
@@ -102,15 +116,13 @@ export default function LiveRankingRow({
               ? observedBg
               : "linear-gradient(90deg, var(--widget-gradient-from, #009980) 0%, var(--widget-primary, #00473C) 100%)",
             borderColor: "var(--widget-secondary-dark, #C6A646)",
-            ...(isObserved ? {} : { marginTop: "-1.5px", height: "42px" }),
+            height: identityCellHeight,
           }}
         >
           {missing ? (
             <span
-              className="w-full text-center font-bold text-widget-status-knocked uppercase"
+              className="font-secondary text-widget-status-knocked w-full text-center font-bold uppercase"
               style={{
-                fontFamily:
-                  "var(--widget-font-secondary), 'Agency FB', sans-serif",
                 fontSize: "16px",
               }}
             >
@@ -134,11 +146,11 @@ export default function LiveRankingRow({
                 />
               )}
               <span
-                className="min-w-0 flex-1 truncate font-bold uppercase"
+                className="font-secondary min-w-0 flex-1 truncate font-bold uppercase"
                 style={{
-                  color: isObserved ? observedText : "#FFFFFF",
-                  fontFamily:
-                    "var(--widget-font-secondary), 'Agency FB', sans-serif",
+                  color: isObserved
+                    ? observedText
+                    : "var(--widget-text-3, #FFFFFF)",
                   fontSize: `${statsFontSize}px`,
                   lineHeight: `${statsLineHeight}px`,
                 }}
@@ -159,6 +171,12 @@ export default function LiveRankingRow({
             style={{
               background:
                 "radial-gradient(ellipse at center, rgba(147,197,253,0.5) 50%, rgba(59,130,246,0.5) 100%, transparent 100%)",
+              animationDuration: "3s",
+              animationTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+              backfaceVisibility: "hidden",
+              contain: "paint",
+              transform: "translate3d(0, 0, 0)",
+              willChange: "opacity",
             }}
           />
         )}
@@ -181,11 +199,9 @@ export default function LiveRankingRow({
             </div>
 
             <div
-              className="absolute top-[6px] w-[32px] text-center font-bold text-white"
+              className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"
               style={{
                 left: layout.statsValues.ptsLeft,
-                fontFamily:
-                  "var(--widget-font-secondary), 'Agency FB', sans-serif",
                 fontSize: `${statsFontSize}px`,
                 lineHeight: `${statsLineHeight}px`,
               }}
@@ -194,11 +210,9 @@ export default function LiveRankingRow({
             </div>
 
             <div
-              className="absolute top-[6px] w-[32px] text-center font-bold text-white"
+              className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"
               style={{
                 left: layout.statsValues.elimsLeft,
-                fontFamily:
-                  "var(--widget-font-secondary), 'Agency FB', sans-serif",
                 fontSize: `${statsFontSize}px`,
                 lineHeight: `${statsLineHeight}px`,
               }}
