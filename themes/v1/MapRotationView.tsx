@@ -92,10 +92,6 @@ function winnerLogo(match: MapRotationMatch) {
   return match.winner_team?.team?.logo || "";
 }
 
-function winnerClanTag(match: MapRotationMatch) {
-  return match.winner_team?.team?.clanTag || "";
-}
-
 function winnerPoints(match: MapRotationMatch) {
   return match.winner_team?.points ?? 0;
 }
@@ -113,7 +109,6 @@ function MapRotationCard({
 }) {
   const completed = isCompleted(match);
   const logo = winnerLogo(match);
-  const clanTag = winnerClanTag(match);
   const hasTime = Boolean(match.start_time);
   const imageSrc = mapImage(match);
 
@@ -153,6 +148,7 @@ function MapRotationCard({
             fill
             className="object-cover opacity-90"
             priority={index < 2}
+            sizes="684px"
           />
         )}
 
@@ -210,36 +206,31 @@ function MapRotationCard({
       {/* Centered Winner metrics layout inside the card middle area */}
       {completed && (
         <div
-          className="absolute z-20 flex h-[164px] items-center justify-center gap-5"
+          className="absolute z-20 flex h-[164px] items-center justify-center gap-6"
           style={{
             left: "192px",
             top: "21px",
             width: "416px",
           }}
         >
-          <div className="flex min-w-[91px] flex-col items-center justify-center gap-1.5">
+          <div className="flex min-w-[128px] items-center justify-center">
             {logo && (
               <Image
                 src={logo}
                 alt={`${match.winner_team?.team?.name ?? "Winner"} logo`}
-                width={78}
-                height={78}
-                className="size-[78px] object-contain"
+                width={112}
+                height={112}
+                className="size-[112px] object-contain"
                 unoptimized
               />
             )}
-            {clanTag && (
-              <span className="font-secondary max-w-[120px] truncate text-center text-[24px] leading-[24px] font-bold tracking-wider text-white uppercase">
-                {clanTag}
-              </span>
-            )}
           </div>
-          <div className="h-[72px] w-[2px] bg-widget-secondary-dark/60" />
-          <div className="flex items-baseline gap-1 select-none">
-            <span className="font-primary text-white text-[68px] leading-[68px] font-normal">
+          <div className="h-[96px] w-[2px] bg-widget-secondary-dark/60" />
+          <div className="flex items-baseline gap-1.5 select-none">
+            <span className="font-primary text-white text-[86px] leading-[86px] font-normal">
               {String(winnerPoints(match))}
             </span>
-            <span className="font-secondary text-white text-[22px] font-bold uppercase">
+            <span className="font-secondary text-white text-[28px] leading-[28px] font-bold uppercase">
               PTS
             </span>
           </div>

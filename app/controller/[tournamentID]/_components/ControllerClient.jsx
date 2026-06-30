@@ -58,18 +58,20 @@ export default function ControllerClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function sendCommand(url, label) {
+  async function sendCommand(url, label, target = "display") {
     setSendStatus("sending");
     try {
       const res = await fetch("/api/sse/command", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, label, tournamentId }),
+        body: JSON.stringify({ url, label, tournamentId, target }),
       });
       if (res.ok) {
-        setActiveUrl(url);
-        setActiveLabel(label);
-        setLoadError(null);
+        if (target === "display") {
+          setActiveUrl(url);
+          setActiveLabel(label);
+          setLoadError(null);
+        }
         setSendStatus("sent");
         setTimeout(() => setSendStatus("idle"), 1200);
       } else {
@@ -104,6 +106,10 @@ export default function ControllerClient({
         ? `?view=${scoreGroupView}`
         : "";
     return `${url}${extra}`;
+  }
+
+  function getWidgetTarget(widget) {
+    return widget.id === "match-start" ? "match-start" : "display";
   }
 
   const hasMultipleTournaments = allTournaments.length > 1;
@@ -294,14 +300,17 @@ export default function ControllerClient({
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {PRE_GAME_WIDGETS.map((w) => {
               const url = getWidgetUrl(w);
+              const target = getWidgetTarget(w);
               return (
                 <WidgetBtn
                   key={w.id}
                   label={w.label}
                   color="blue"
-                  isActive={activeUrl === url}
+                  isActive={target === "display" && activeUrl === url}
                   disabled={!url}
-                  onClick={url ? () => sendCommand(url, w.label) : undefined}
+                  onClick={
+                    url ? () => sendCommand(url, w.label, target) : undefined
+                  }
                 />
               );
             })}

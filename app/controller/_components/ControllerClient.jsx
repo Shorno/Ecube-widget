@@ -69,18 +69,25 @@ export default function ControllerClient({ userId, allowedTournamentIds }) {
     setLoadError(null);
   }
 
-  async function sendCommand(url, label) {
+  async function sendCommand(url, label, target = "display") {
     setSendStatus("sending");
     try {
       const res = await fetch("/api/sse/command", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, label, tournamentId: tournamentId.trim() }),
+        body: JSON.stringify({
+          url,
+          label,
+          tournamentId: tournamentId.trim(),
+          target,
+        }),
       });
       if (res.ok) {
-        setActiveUrl(url);
-        setActiveLabel(label);
-        setLoadError(null);
+        if (target === "display") {
+          setActiveUrl(url);
+          setActiveLabel(label);
+          setLoadError(null);
+        }
         setSendStatus("sent");
         setTimeout(() => setSendStatus("idle"), 1200);
       } else {

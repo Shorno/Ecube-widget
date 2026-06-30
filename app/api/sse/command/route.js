@@ -1,12 +1,32 @@
 import { NextResponse } from "next/server";
 import { after } from "next/server";
-import { broadcast } from "@/lib/sse/store";
+import { broadcast, broadcastMatchStart } from "@/lib/sse/store";
 import { requireSession } from "@/lib/auth/session";
 import { getUserTournaments } from "@/lib/db/queries";
 import { str, validate } from "@/lib/validation";
 import { logSSECommand, flushLogs } from "@/lib/metrics/logger";
 
 export const dynamic = "force-dynamic";
+
+function isLocalMatchStartUrl(url, tournamentId) {
+  if (typeof url !== "string" || !url.startsWith("/")) return false;
+  if (!tournamentId) return false;
+
+  let pathname;
+  try {
+    pathname = new URL(url, "http://ecube.local").pathname;
+  } catch {
+    return false;
+  }
+
+  const parts = pathname.split("/").filter(Boolean);
+  return (
+    parts.length === 4 &&
+    parts[1] === tournamentId &&
+    parts[2] === "pre-game" &&
+    parts[3] === "match-start"
+  );
+}
 
 export async function POST(request) {
   const start =
@@ -49,10 +69,26 @@ export async function POST(request) {
       { status: 400 },
     );
 
+  const normalizedTournamentId =
+    typeof tournamentId === "string" ? tournamentId.trim() : "";
+  const isMatchStartUrl = isLocalMatchStartUrl(url, normalizedTournamentId);
+  const target = isMatchStartUrl ? "match-start" : (body.target ?? "display");
+
+  if (target !== "display" && target !== "match-start") {
+    return NextResponse.json({ error: "Invalid target" }, { status: 400 });
+  }
+
+  if (target === "match-start" && !isMatchStartUrl) {
+    return NextResponse.json(
+      { error: "Match Start target requires the local match-start URL" },
+      { status: 400 },
+    );
+  }
+
   // Admins can command any tournament; regular users are restricted to their own.
-  if (session.role !== "admin" && tournamentId) {
+  if (session.role !== "admin" && normalizedTournamentId) {
     const allowed = await getUserTournaments(session.userId);
-    if (!allowed.includes(tournamentId)) {
+    if (!allowed.includes(normalizedTournamentId)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
   }
@@ -61,7 +97,11 @@ export async function POST(request) {
 
   // Measure only the broadcast itself to isolate SSE delivery time
   const broadcastStart = Date.now();
-  broadcast(tournamentId ?? "", url, resolvedLabel);
+  if (target === "match-start") {
+    broadcastMatchStart(normalizedTournamentId, url, resolvedLabel);
+  } else {
+    broadcast(tournamentId ?? "", url, resolvedLabel);
+  }
   const broadcastMs = Date.now() - broadcastStart;
 
   const totalMs = Date.now() - start;
@@ -71,11 +111,12 @@ export async function POST(request) {
       tournamentId,
       url,
       label: resolvedLabel,
+      target,
       durationMs: totalMs,
       broadcastMs,
     });
     await flushLogs();
   });
 
-  return NextResponse.json({ ok: true, url, durationMs: totalMs });
+  return NextResponse.json({ ok: true, url, target, durationMs: totalMs });
 }
