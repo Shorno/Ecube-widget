@@ -46,30 +46,27 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
   const {
     isVisible,
     isLocked,
+    shouldRender,
+    show,
     triggerPreview,
-    armAutoShow,
     onExitComplete,
   } = useMatchStartOverlay({ preview });
   const liveMatch = match as LiveMatchInfo | null;
   const matchInfo = info as MatchInfo | null;
   const [stageReady, setStageReady] = useState(false);
-  const [renderOverlay, setRenderOverlay] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const wasVisibleRef = useRef(false);
 
   useEffect(() => {
-    if (isVisible) setRenderOverlay(true);
-  }, [isVisible]);
+    if (preview || !tournamentID || !ready || !liveMatch) return;
 
-  useEffect(() => {
-    if (!preview && ready && liveMatch) {
-      armAutoShow();
-    }
-  }, [preview, ready, liveMatch, armAutoShow]);
+    const es = new EventSource(`/api/sse?tournamentId=${tournamentID}`);
+    es.addEventListener("match-start-trigger", show);
+
+    return () => es.close();
+  }, [preview, tournamentID, ready, liveMatch, show]);
 
   const handleExitComplete = useCallback(() => {
-    setRenderOverlay(false);
-    setStageReady(false);
     onExitComplete();
   }, [onExitComplete]);
 
@@ -173,7 +170,7 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
           </>
         )}
 
-        {renderOverlay && (
+        {shouldRender && (
           <div
             ref={containerRef}
             className="relative flex h-screen w-screen items-center justify-center overflow-hidden"

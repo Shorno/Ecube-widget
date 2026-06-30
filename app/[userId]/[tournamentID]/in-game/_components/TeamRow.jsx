@@ -8,7 +8,6 @@ function getPlayerBarColor(liveState) {
 }
 
 function isEliminated(players) {
-  // Empty array → team is MISSING, not eliminated — no overlay
   return players.length > 0 && players.every((p) => p.liveState === 5);
 }
 
@@ -18,16 +17,18 @@ export function TeamRow({
   isOverall = false,
   rank,
 }) {
-  const eliminated = isEliminated(entry.players);
-  const hasBlueZone = entry.players.some(
-    (p) => p.isOutsideZone && p.liveState !== 5,
-  );
+  const players = entry.players ?? [];
+  const eliminated = isEliminated(players);
+  const missing = entry.isMissing === true;
+  const inactive = eliminated || missing;
+  const hasBlueZone =
+    !inactive && players.some((p) => p.isOutsideZone && p.liveState !== 5);
 
   return (
     <div
       className={cn(
         "team-row relative grid grid-cols-7 items-center border-b border-blue-900/30 bg-blue-100 text-sm text-white",
-        eliminated && "opacity-90",
+        inactive && "opacity-90",
       )}
       data-flip-id={entry.team.id}
     >
@@ -59,37 +60,34 @@ export function TeamRow({
         </span>
       </div>
 
-      {!entry.isMissing || entry.players?.length > 0 ? (
-        <>
-          <div className="flex items-center justify-center gap-0.75 bg-blue-100">
-            {entry.players.map((player, idx) => (
-              <div key={idx} className="relative">
-                <div className="flex h-7 w-1.25 flex-col justify-end overflow-hidden rounded-[1px] bg-gray-800/15">
-                  <div
-                    className={cn(
-                      "w-full",
-                      getPlayerBarColor(player.liveState),
-                    )}
-                    style={{ height: `${player.healths}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex items-center justify-center bg-blue-100 p-2 font-bold text-black/70">
-            {isOverall ? entry?.overAllPoints : entry?.points}
-          </div>
-
-          <div className="flex items-center justify-center bg-blue-100 p-2 font-bold text-black/70">
-            {entry?.kills}
-          </div>
-        </>
+      {missing ? (
+        <div className="flex items-center justify-center bg-blue-100 p-2 text-lg leading-none font-bold text-black/70 uppercase">
+          MISS
+        </div>
       ) : (
-        <div className="col-span-3 text-center text-red-500">MISSING</div>
+        <div className="flex items-center justify-center gap-0.75 bg-blue-100">
+          {players.map((player, idx) => (
+            <div key={idx} className="relative">
+              <div className="flex h-7 w-1.25 flex-col justify-end overflow-hidden rounded-[1px] bg-gray-800/15">
+                <div
+                  className={cn("w-full", getPlayerBarColor(player.liveState))}
+                  style={{ height: `${player.healths}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
-      {eliminated && (
+      <div className="flex items-center justify-center bg-blue-100 p-2 font-bold text-black/70">
+        {isOverall ? entry?.overAllPoints : entry?.points}
+      </div>
+
+      <div className="flex items-center justify-center bg-blue-100 p-2 font-bold text-black/70">
+        {entry?.kills}
+      </div>
+
+      {inactive && (
         <div className="pointer-events-none absolute inset-0 bg-black/60" />
       )}
 

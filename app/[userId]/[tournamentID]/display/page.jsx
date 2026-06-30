@@ -11,8 +11,22 @@ import {
 
 function buildPreloadUrls(userId, tournamentID) {
   return [...PRE_GAME_WIDGETS, ...AFTER_MATCH_WIDGETS, ...IN_GAME_WIDGETS]
+    .filter((w) => w.id !== "match-start")
     .map((w) => getWidgetPath(w, userId, tournamentID))
     .filter((url) => url && !url.startsWith("http")); // local paths only
+}
+
+function isMatchStartWidgetUrl(url) {
+  if (typeof url !== "string") return false;
+
+  let pathname;
+  try {
+    pathname = new URL(url, window.location.origin).pathname;
+  } catch {
+    return false;
+  }
+
+  return /\/pre-game\/match-start\/?$/i.test(pathname);
 }
 
 export default function DisplayPage() {
@@ -21,12 +35,14 @@ export default function DisplayPage() {
   const [pendingFrame, setPendingFrame] = useState(null);
   const [preloadUrls, setPreloadUrls] = useState([]);
   const esRef = useRef(null);
+  const activeFrameRef = useRef(null);
   const pendingFrameRef = useRef(null);
   const fallbackTimerRef = useRef(null);
   const frameIdRef = useRef(0);
 
   const promote = useCallback((frame) => {
     pendingFrameRef.current = null;
+    activeFrameRef.current = frame;
     clearTimeout(fallbackTimerRef.current);
     setActiveFrame(frame);
     setPendingFrame(null);
@@ -70,7 +86,7 @@ export default function DisplayPage() {
       es.addEventListener("widget-change", (e) => {
         const { url } = JSON.parse(e.data);
         // Clear screen — no pending phase, take effect immediately
-        if (!url) {
+        if (!url || isMatchStartWidgetUrl(url)) {
           promote(null);
           return;
         }
@@ -80,6 +96,15 @@ export default function DisplayPage() {
         // Fallback: promote after 4s for widgets that don't use WidgetStage (e.g. live-ranking)
         clearTimeout(fallbackTimerRef.current);
         fallbackTimerRef.current = setTimeout(() => promote(frame), 4000);
+      });
+
+      es.addEventListener("match-start-trigger", () => {
+        if (
+          isMatchStartWidgetUrl(activeFrameRef.current?.url) ||
+          isMatchStartWidgetUrl(pendingFrameRef.current?.url)
+        ) {
+          promote(null);
+        }
       });
 
       es.onerror = () => {

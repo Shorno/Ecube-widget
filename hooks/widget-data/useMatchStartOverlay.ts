@@ -9,6 +9,7 @@ type Options = { preview?: boolean };
 export function useMatchStartOverlay({ preview = false }: Options = {}) {
   const [isVisible, setIsVisible] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
   const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasAutoPlayedRef = useRef(false);
@@ -22,6 +23,7 @@ export function useMatchStartOverlay({ preview = false }: Options = {}) {
 
   const show = useCallback(() => {
     clearTimers();
+    setShouldRender(true);
     setIsLocked(true);
     setIsVisible(true);
 
@@ -42,12 +44,14 @@ export function useMatchStartOverlay({ preview = false }: Options = {}) {
   }, [preview, show]);
 
   const onExitComplete = useCallback(() => {
+    setShouldRender(false);
     setIsLocked(false);
   }, []);
 
   const reset = useCallback(() => {
     clearTimers();
     hasAutoPlayedRef.current = false;
+    setShouldRender(false);
     setIsVisible(false);
     setIsLocked(false);
   }, [clearTimers]);
@@ -57,6 +61,7 @@ export function useMatchStartOverlay({ preview = false }: Options = {}) {
   return {
     isVisible,
     isLocked,
+    shouldRender,
     show,
     triggerPreview,
     armAutoShow,

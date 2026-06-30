@@ -44,12 +44,14 @@ export default function LiveRankingRow({
   className,
 }: Props) {
   const eliminated = isEliminated(entry.players);
-  const missing =
-    entry.isMissing && (!entry.players || entry.players.length === 0);
+  const missing = entry.isMissing === true;
+  const inactive = eliminated || missing;
   const hasBlueZone =
-    entry.players?.some(
+    !inactive &&
+    (entry.players?.some(
       (player) => player.isOutsideZone && player.liveState !== 5,
-    ) ?? false;
+    ) ??
+      false);
   const logo = teamLogo(entry);
   const layout = getLiveRankingLayout(showFullTeamName);
   const teamLabel = getTeamDisplayLabel(entry.team, showFullTeamName);
@@ -85,14 +87,12 @@ export default function LiveRankingRow({
             backgroundColor: isObserved
               ? observedBg
               : "var(--widget-primary, #00473C)",
-            color: isObserved
-              ? observedText
-              : "var(--widget-text-3, #FFFFFF)",
+            color: isObserved ? observedText : "var(--widget-text-3, #FFFFFF)",
             fontSize: `${statsFontSize}px`,
             lineHeight: `${statsLineHeight}px`,
           }}
         >
-          {eliminated && (
+          {inactive && (
             <div className="pointer-events-none absolute inset-0 z-0 bg-black/25" />
           )}
           <span className="relative z-10">{rank}</span>
@@ -119,48 +119,35 @@ export default function LiveRankingRow({
             height: identityCellHeight,
           }}
         >
-          {missing ? (
-            <span
-              className="font-secondary text-widget-status-knocked w-full text-center font-bold uppercase"
-              style={{
-                fontSize: "16px",
-              }}
-            >
-              MISSING
+          {hasFlag && (
+            <span className="mr-1.5 flex w-[24px] shrink-0 items-center justify-center">
+              <TeamFlag team={entry.team} showTeamFlags={showTeamFlags} />
             </span>
-          ) : (
-            <>
-              {hasFlag && (
-                <span className="mr-1.5 flex w-[24px] shrink-0 items-center justify-center">
-                  <TeamFlag team={entry.team} showTeamFlags={showTeamFlags} />
-                </span>
-              )}
-              {logo && (
-                <Image
-                  src={logo}
-                  alt={entry.team.name}
-                  width={22}
-                  height={22}
-                  className="mr-2 size-[22px] shrink-0 object-contain"
-                  unoptimized
-                />
-              )}
-              <span
-                className="font-secondary min-w-0 flex-1 truncate font-bold uppercase"
-                style={{
-                  color: isObserved
-                    ? observedText
-                    : "var(--widget-text-3, #FFFFFF)",
-                  fontSize: `${statsFontSize}px`,
-                  lineHeight: `${statsLineHeight}px`,
-                }}
-              >
-                {teamLabel}
-              </span>
-            </>
           )}
+          {logo && (
+            <Image
+              src={logo}
+              alt={entry.team.name}
+              width={22}
+              height={22}
+              className="mr-2 size-[22px] shrink-0 object-contain"
+              unoptimized
+            />
+          )}
+          <span
+            className="font-secondary min-w-0 flex-1 truncate font-bold uppercase"
+            style={{
+              color: isObserved
+                ? observedText
+                : "var(--widget-text-3, #FFFFFF)",
+              fontSize: `${statsFontSize}px`,
+              lineHeight: `${statsLineHeight}px`,
+            }}
+          >
+            {teamLabel}
+          </span>
 
-          {eliminated && (
+          {inactive && (
             <div className="pointer-events-none absolute inset-0 bg-black/45" />
           )}
         </div>
@@ -189,40 +176,49 @@ export default function LiveRankingRow({
           backgroundColor: "var(--widget-v1-forest, #003129)",
         }}
       >
-        {!missing && (
-          <>
-            <div
-              className="absolute top-[5px]"
-              style={{ left: layout.statsValues.barsLeft }}
-            >
-              <PlayerStatusBars players={entry.players} />
-            </div>
-
-            <div
-              className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"
-              style={{
-                left: layout.statsValues.ptsLeft,
-                fontSize: `${statsFontSize}px`,
-                lineHeight: `${statsLineHeight}px`,
-              }}
-            >
-              {String(entry.overAllPoints ?? 0).padStart(2, "0")}
-            </div>
-
-            <div
-              className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"
-              style={{
-                left: layout.statsValues.elimsLeft,
-                fontSize: `${statsFontSize}px`,
-                lineHeight: `${statsLineHeight}px`,
-              }}
-            >
-              {String(entry.kills ?? 0).padStart(2, "0")}
-            </div>
-          </>
+        {missing ? (
+          <div
+            className="font-secondary text-widget-text-3 absolute top-[6px] w-[42px] text-center font-bold uppercase"
+            style={{
+              left: layout.statsValues.barsLeft,
+              fontSize: `${statsFontSize}px`,
+              lineHeight: `${statsLineHeight}px`,
+            }}
+          >
+            MISS
+          </div>
+        ) : (
+          <div
+            className="absolute top-[5px]"
+            style={{ left: layout.statsValues.barsLeft }}
+          >
+            <PlayerStatusBars players={entry.players} />
+          </div>
         )}
 
-        {eliminated && (
+        <div
+          className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"
+          style={{
+            left: layout.statsValues.ptsLeft,
+            fontSize: `${statsFontSize}px`,
+            lineHeight: `${statsLineHeight}px`,
+          }}
+        >
+          {String(entry.overAllPoints ?? 0).padStart(2, "0")}
+        </div>
+
+        <div
+          className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"
+          style={{
+            left: layout.statsValues.elimsLeft,
+            fontSize: `${statsFontSize}px`,
+            lineHeight: `${statsLineHeight}px`,
+          }}
+        >
+          {String(entry.kills ?? 0).padStart(2, "0")}
+        </div>
+
+        {inactive && (
           <div className="pointer-events-none absolute inset-0 bg-black/45" />
         )}
       </div>
