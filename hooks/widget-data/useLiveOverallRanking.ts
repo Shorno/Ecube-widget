@@ -194,6 +194,33 @@ export function useLiveOverallRanking(
     applyTopFour(getMockTopFour());
   }, [preview, showTopFour, applyTopFour]);
 
+  // Flip one alive team to fully eliminated — same data shape a live update
+  // produces, so the row's transition detector plays its flash naturally.
+  const triggerEliminationPreview = useCallback(() => {
+    if (!preview) return;
+    setTeams((current) => {
+      const target = current.find(
+        (entry) =>
+          !entry.isMissing &&
+          (entry.players?.length ?? 0) > 0 &&
+          !isTeamEliminated(entry.players),
+      );
+      if (!target) return current;
+      return current.map((entry) =>
+        entry === target
+          ? {
+              ...entry,
+              players: (entry.players ?? []).map((player) => ({
+                ...player,
+                liveState: 5,
+                healths: 0,
+              })),
+            }
+          : entry,
+      );
+    });
+  }, [preview]);
+
   return {
     teams,
     showTopFour,
@@ -203,5 +230,6 @@ export function useLiveOverallRanking(
     preview,
     triggerObservingPreview,
     triggerTopFourPreview,
+    triggerEliminationPreview,
   };
 }

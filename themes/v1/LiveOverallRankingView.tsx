@@ -54,6 +54,7 @@ export default function LiveOverallRankingView({
     ready,
     triggerObservingPreview,
     triggerTopFourPreview,
+    triggerEliminationPreview,
   } = useLiveOverallRanking(tournamentID, { preview });
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -172,6 +173,7 @@ export default function LiveOverallRankingView({
             <LiveRankingPreviewControls
               onTriggerObserver={triggerObservingPreview}
               onTriggerTopFour={triggerTopFourPreview}
+              onTriggerElimination={triggerEliminationPreview}
               topFourActive={showTopFour}
             />
           </>

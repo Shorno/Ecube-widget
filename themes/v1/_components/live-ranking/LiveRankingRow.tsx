@@ -1,9 +1,13 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import TeamFlag from "@/components/common/TeamFlag";
 import { getTeamDisplayLabel } from "@/lib/utils/teamDisplay";
 import { getTeamFlagDisplay } from "@/lib/utils/teamFlag";
 import type { LiveRankEntry } from "@/types/live-rank";
+import EliminationFlash from "./EliminationFlash";
 import PlayerStatusBars from "./PlayerStatusBars";
 import {
   getLiveRankingLayout,
@@ -46,6 +50,18 @@ export default function LiveRankingRow({
   const eliminated = isEliminated(entry.players);
   const missing = entry.isMissing === true;
   const inactive = eliminated || missing;
+
+  // Play the one-shot flash only when a team transitions alive -> eliminated.
+  // Teams already eliminated on mount start in the resting grayed state.
+  const wasEliminatedRef = useRef(eliminated);
+  const [showEliminationFlash, setShowEliminationFlash] = useState(false);
+  useEffect(() => {
+    if (eliminated && !wasEliminatedRef.current) {
+      setShowEliminationFlash(true);
+    }
+    wasEliminatedRef.current = eliminated;
+  }, [eliminated]);
+
   const hasBlueZone =
     !inactive &&
     (entry.players?.some(
@@ -222,6 +238,10 @@ export default function LiveRankingRow({
           <div className="pointer-events-none absolute inset-0 bg-black/45" />
         )}
       </div>
+
+      {showEliminationFlash && (
+        <EliminationFlash onDone={() => setShowEliminationFlash(false)} />
+      )}
     </div>
   );
 }

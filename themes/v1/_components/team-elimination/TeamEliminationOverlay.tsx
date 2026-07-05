@@ -49,11 +49,10 @@ export default function TeamEliminationOverlay({
   const kills = data.victimTeam.kills ?? 0;
   const logoSrc = data.victimTeam.logo || DEFAULT_PLAYER_IMAGE;
   const [pubgLogoFailed, setPubgLogoFailed] = useState(false);
-  const centerLogo = pubgLogoFailed ? logoSrc : PUBG_LOGO;
   const flagVisible =
     showTeamFlags && getTeamFlagDisplay(data.victimTeam).kind !== "none";
-  const leftPanelWidth = 120;
-  const bannerWidth = 544;
+  const sidePanelWidth = 140;
+  const bannerWidth = 620;
 
   return (
     <motion.div
@@ -62,56 +61,42 @@ export default function TeamEliminationOverlay({
       exit={{ y: -40, opacity: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="pointer-events-none"
-      style={{ width: `min(${bannerWidth}px, 92vw)` }}
+      style={{ width: `min(${bannerWidth}px, 94vw)` }}
     >
-      <div className="flex h-[115px] overflow-hidden shadow-2xl">
-        {/* Left accent panel */}
+      <div className="flex h-[128px] overflow-hidden shadow-2xl">
+        {/* Left panel — team identity */}
         <motion.div
           initial={{ x: -60, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.35, delay: 0.05, ease: "easeOut" }}
-          style={{ background: SIDE_PANEL_GRADIENT, width: leftPanelWidth }}
-          className="relative flex shrink-0 flex-col items-center justify-between px-2 py-2"
+          style={{ background: SIDE_PANEL_GRADIENT, width: sidePanelWidth }}
+          className="relative flex shrink-0 flex-col items-center justify-center gap-1.5 px-2 py-2.5"
         >
-          <div className="flex flex-col items-center justify-center gap-1 w-full min-h-[32px] px-1">
-            <p
-              className="font-primary min-w-0 font-bold leading-tight tracking-wide text-widget-text-3 uppercase text-center line-clamp-2 w-full"
-              style={{
-                fontSize: showFullTeamName ? "11px" : "13px",
-                lineHeight: showFullTeamName ? "12px" : "14px",
-              }}
-            >
-              {teamLabel}
-            </p>
-            {flagVisible && (
-              <TeamFlag
-                team={data.victimTeam}
-                showTeamFlags={showTeamFlags}
-                className="shrink-0"
-                imageClassName="h-[14px] w-[20px] rounded-[1px] shadow-sm"
-              />
-            )}
-          </div>
-          <div className="relative h-8 w-full">
-            <Image
-              src={centerLogo}
-              alt="PUBG Mobile"
-              width={64}
-              height={32}
-              className="mx-auto h-8 w-auto object-contain"
-              onError={() => setPubgLogoFailed(true)}
-              unoptimized
-            />
-          </div>
+          <Image
+            src={logoSrc}
+            alt={data.victimTeam.name}
+            width={44}
+            height={44}
+            className="h-11 w-11 shrink-0 object-contain drop-shadow"
+            unoptimized
+          />
           <p
-            className="text-sm font-black tracking-tight text-widget-secondary uppercase italic"
+            className="font-primary min-w-0 w-full text-center font-bold leading-tight tracking-wide text-widget-text-3 uppercase line-clamp-2"
             style={{
-              fontFamily:
-                "var(--widget-font-secondary), 'Agency FB', sans-serif",
+              fontSize: showFullTeamName ? "13px" : "15px",
+              lineHeight: showFullTeamName ? "14px" : "16px",
             }}
           >
-            {kills} ELIM
+            {teamLabel}
           </p>
+          {flagVisible && (
+            <TeamFlag
+              team={data.victimTeam}
+              showTeamFlags={showTeamFlags}
+              className="shrink-0"
+              imageClassName="h-[15px] w-[22px] rounded-[1px] shadow-sm"
+            />
+          )}
         </motion.div>
 
         {/* Center panel */}
@@ -125,6 +110,19 @@ export default function TeamEliminationOverlay({
           }}
           className="relative flex min-w-0 flex-1 flex-col"
         >
+          {!pubgLogoFailed && (
+            <div className="pointer-events-none absolute inset-x-0 top-1 z-10 flex justify-center">
+              <Image
+                src={PUBG_LOGO}
+                alt="PUBG Mobile"
+                width={72}
+                height={20}
+                className="h-[18px] w-auto object-contain opacity-90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]"
+                onError={() => setPubgLogoFailed(true)}
+                unoptimized
+              />
+            </div>
+          )}
           <div className="flex flex-1 items-end justify-center gap-0.5 pb-0.5 pt-1">
             {playerImages.map((src, i) => (
               <motion.div
@@ -136,7 +134,7 @@ export default function TeamEliminationOverlay({
                   delay: 0.25 + i * 0.08,
                   ease: "easeOut",
                 }}
-                className="relative h-[80px] flex-1 overflow-hidden"
+                className="relative h-[92px] flex-1 overflow-hidden"
               >
                 <Image
                   src={src}
@@ -153,11 +151,11 @@ export default function TeamEliminationOverlay({
             animate={{ y: 0 }}
             transition={{ duration: 0.35, delay: 0.45, ease: "easeOut" }}
             style={{ background: ELIMINATED_BAR_GRADIENT }}
-            className="flex h-7 items-center justify-center"
+            className="flex h-8 items-center justify-center"
           >
             <span
               className={cn(
-                "font-primary text-lg font-black tracking-[0.2em] text-widget-text-3 uppercase",
+                "font-primary text-xl font-black tracking-[0.2em] text-widget-text-3 uppercase",
               )}
             >
               ELIMINATED
@@ -165,13 +163,13 @@ export default function TeamEliminationOverlay({
           </motion.div>
         </motion.div>
 
-        {/* Right accent panel */}
+        {/* Right panel — result (placement + elims) */}
         <motion.div
           initial={{ x: 60, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.35, delay: 0.05, ease: "easeOut" }}
-          style={{ background: SIDE_PANEL_GRADIENT, width: leftPanelWidth }}
-          className="flex shrink-0 items-center justify-center"
+          style={{ background: SIDE_PANEL_GRADIENT, width: sidePanelWidth }}
+          className="flex shrink-0 flex-col items-center justify-center gap-1 px-2"
         >
           <motion.span
             initial={{ scale: 0.5, opacity: 0 }}
@@ -182,10 +180,23 @@ export default function TeamEliminationOverlay({
               type: "spring",
               stiffness: 260,
             }}
-            className="font-primary text-4xl font-black text-widget-text-3 italic"
+            className="font-primary text-5xl font-black leading-none text-widget-text-3 italic"
           >
             #{placement}
           </motion.span>
+          <div className="h-px w-10 bg-white/30" />
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.5, ease: "easeOut" }}
+            className="text-base font-black tracking-tight text-widget-secondary uppercase italic"
+            style={{
+              fontFamily:
+                "var(--widget-font-secondary), 'Agency FB', sans-serif",
+            }}
+          >
+            {kills} ELIMS
+          </motion.p>
         </motion.div>
       </div>
     </motion.div>
