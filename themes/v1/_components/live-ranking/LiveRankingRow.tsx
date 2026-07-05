@@ -1,9 +1,13 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import TeamFlag from "@/components/common/TeamFlag";
 import { getTeamDisplayLabel } from "@/lib/utils/teamDisplay";
 import { getTeamFlagDisplay } from "@/lib/utils/teamFlag";
 import type { LiveRankEntry } from "@/types/live-rank";
+import EliminationFlash from "./EliminationFlash";
 import PlayerStatusBars from "./PlayerStatusBars";
 import {
   getLiveRankingLayout,
@@ -32,6 +36,7 @@ type Props = {
   isObserved?: boolean;
   showTeamFlags?: boolean;
   showFullTeamName?: boolean;
+  showPoints?: boolean;
   className?: string;
 };
 
@@ -41,11 +46,24 @@ export default function LiveRankingRow({
   isObserved = false,
   showTeamFlags = true,
   showFullTeamName = false,
+  showPoints = true,
   className,
 }: Props) {
   const eliminated = isEliminated(entry.players);
   const missing = entry.isMissing === true;
   const inactive = eliminated || missing;
+
+  // Play the one-shot flash only when a team transitions alive -> eliminated.
+  // Teams already eliminated on mount start in the resting grayed state.
+  const wasEliminatedRef = useRef(eliminated);
+  const [showEliminationFlash, setShowEliminationFlash] = useState(false);
+  useEffect(() => {
+    if (eliminated && !wasEliminatedRef.current) {
+      setShowEliminationFlash(true);
+    }
+    wasEliminatedRef.current = eliminated;
+  }, [eliminated]);
+
   const hasBlueZone =
     !inactive &&
     (entry.players?.some(
@@ -53,7 +71,7 @@ export default function LiveRankingRow({
     ) ??
       false);
   const logo = teamLogo(entry);
-  const layout = getLiveRankingLayout(showFullTeamName);
+  const layout = getLiveRankingLayout(showFullTeamName, showPoints);
   const teamLabel = getTeamDisplayLabel(entry.team, showFullTeamName);
   const flagDisplay = getTeamFlagDisplay(entry.team);
   const hasFlag = showTeamFlags && flagDisplay.kind !== "none";
@@ -196,16 +214,18 @@ export default function LiveRankingRow({
           </div>
         )}
 
-        <div
-          className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"
-          style={{
-            left: layout.statsValues.ptsLeft,
-            fontSize: `${statsFontSize}px`,
-            lineHeight: `${statsLineHeight}px`,
-          }}
-        >
-          {String(entry.overAllPoints ?? 0).padStart(2, "0")}
-        </div>
+        {showPoints && (
+          <div
+            className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"
+            style={{
+              left: layout.statsValues.ptsLeft,
+              fontSize: `${statsFontSize}px`,
+              lineHeight: `${statsLineHeight}px`,
+            }}
+          >
+            {String(entry.overAllPoints ?? 0).padStart(2, "0")}
+          </div>
+        )}
 
         <div
           className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"
@@ -222,6 +242,10 @@ export default function LiveRankingRow({
           <div className="pointer-events-none absolute inset-0 bg-black/45" />
         )}
       </div>
+
+      {showEliminationFlash && (
+        <EliminationFlash onDone={() => setShowEliminationFlash(false)} />
+      )}
     </div>
   );
 }

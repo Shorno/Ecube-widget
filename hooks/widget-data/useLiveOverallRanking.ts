@@ -16,14 +16,17 @@ import {
   type TournamentSocketMeta,
 } from "./useTournamentSocket";
 
-function sortByOverallPoints(data: LiveRankEntry[]) {
-  return [...data].sort(
-    (a, b) => (b.overAllPoints ?? 0) - (a.overAllPoints ?? 0),
-  );
+type SortKey = "overAllPoints" | "points";
+
+function sortByKey(data: LiveRankEntry[], key: SortKey) {
+  return [...data].sort((a, b) => (b[key] ?? 0) - (a[key] ?? 0));
 }
 
-function withRankPositions(data: LiveRankEntry[]): LiveRankEntry[] {
-  return sortByOverallPoints(data).map((entry, index) => ({
+function withRankPositions(
+  data: LiveRankEntry[],
+  sortKey: SortKey = "overAllPoints",
+): LiveRankEntry[] {
+  return sortByKey(data, sortKey).map((entry, index) => ({
     ...entry,
     rank: index + 1,
   }));
@@ -57,15 +60,16 @@ function mergeTopFourTeams(
   });
 }
 
-type Options = { preview?: boolean };
+type Options = { preview?: boolean; sortBy?: SortKey };
 
 /**
  * Live overall ranking — HTTP snapshot + WebSocket updates.
  * Pass preview: true (via ?preview=1) to render static mock data without a live match.
+ * sortBy selects the ranking basis: "overAllPoints" (overall) or "points" (per-match live).
  */
 export function useLiveOverallRanking(
   tournamentID: string,
-  { preview = false }: Options = {},
+  { preview = false, sortBy = "overAllPoints" }: Options = {},
 ) {
   const { data: initialData } = useGetLiveRankingQuery(
     { tournamentID },
@@ -77,7 +81,7 @@ export function useLiveOverallRanking(
     },
   );
   const [teams, setTeams] = useState<LiveRankEntry[]>(() =>
-    preview ? getMockLiveOverallRanking() : [],
+    preview ? withRankPositions(getMockLiveOverallRanking(), sortBy) : [],
   );
   const [showTopFour, setShowTopFour] = useState(false);
   const [topFourTeams, setTopFourTeams] = useState<LiveRankEntry[]>([]);
@@ -87,12 +91,15 @@ export function useLiveOverallRanking(
   );
   const topFourModeRef = useRef(false);
 
-  const applyTopFour = useCallback((data: TopFourPayload) => {
-    const ranked = withRankPositions(data).slice(0, 4);
-    topFourModeRef.current = true;
-    setTopFourTeams(ranked);
-    setShowTopFour(true);
-  }, []);
+  const applyTopFour = useCallback(
+    (data: TopFourPayload) => {
+      const ranked = withRankPositions(data, sortBy).slice(0, 4);
+      topFourModeRef.current = true;
+      setTopFourTeams(ranked);
+      setShowTopFour(true);
+    },
+    [sortBy],
+  );
 
   const resetTopFour = useCallback(() => {
     topFourModeRef.current = false;
@@ -107,7 +114,7 @@ export function useLiveOverallRanking(
   }, [resetTopFour]);
 
   const applyTeams = useCallback((data: LiveRankEntry[]) => {
-    const ranked = withRankPositions(data);
+    const ranked = withRankPositions(data, sortBy);
     const aliveTeams = getAliveTeams(ranked);
 
     setTeams(ranked);
@@ -131,7 +138,7 @@ export function useLiveOverallRanking(
         prev.length > 0 ? mergeTopFourTeams(prev, ranked) : prev,
       );
     }
-  }, [applyTopFour, resetTopFour]);
+  }, [applyTopFour, resetTopFour, sortBy]);
 
   useEffect(() => {
     if (preview) return;
@@ -194,6 +201,33 @@ export function useLiveOverallRanking(
     applyTopFour(getMockTopFour());
   }, [preview, showTopFour, applyTopFour]);
 
+  // Flip one alive team to fully eliminated — same data shape a live update
+  // produces, so the row's transition detector plays its flash naturally.
+  const triggerEliminationPreview = useCallback(() => {
+    if (!preview) return;
+    setTeams((current) => {
+      const target = current.find(
+        (entry) =>
+          !entry.isMissing &&
+          (entry.players?.length ?? 0) > 0 &&
+          !isTeamEliminated(entry.players),
+      );
+      if (!target) return current;
+      return current.map((entry) =>
+        entry === target
+          ? {
+              ...entry,
+              players: (entry.players ?? []).map((player) => ({
+                ...player,
+                liveState: 5,
+                healths: 0,
+              })),
+            }
+          : entry,
+      );
+    });
+  }, [preview]);
+
   return {
     teams,
     showTopFour,
@@ -203,5 +237,6 @@ export function useLiveOverallRanking(
     preview,
     triggerObservingPreview,
     triggerTopFourPreview,
+    triggerEliminationPreview,
   };
 }

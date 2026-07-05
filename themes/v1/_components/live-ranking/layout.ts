@@ -1,5 +1,7 @@
 export const LIVE_RANKING_RANK_WIDTH = 48;
 export const LIVE_RANKING_STATS_WIDTH = 152;
+/** Width reclaimed when the PTS column is hidden (live-ranking variant). */
+export const LIVE_RANKING_PTS_COL_WIDTH = 45;
 export const LIVE_RANKING_ROW_HEIGHT = 40.625;
 export const LIVE_RANKING_HEADER_HEIGHT = 40;
 export const LIVE_RANKING_LEGEND_HEIGHT = 19;
@@ -131,26 +133,34 @@ export function getLiveRankingBroadcastLayout(
   };
 }
 
-export function getLiveRankingLayout(showFullTeamName: boolean) {
+export function getLiveRankingLayout(
+  showFullTeamName: boolean,
+  showPoints = true,
+) {
   const teamColWidth = showFullTeamName ? 210 : 130;
-  const panelWidth =
-    LIVE_RANKING_RANK_WIDTH + teamColWidth + LIVE_RANKING_STATS_WIDTH;
+  const statsWidth = showPoints
+    ? LIVE_RANKING_STATS_WIDTH
+    : LIVE_RANKING_STATS_WIDTH - LIVE_RANKING_PTS_COL_WIDTH;
+  const panelWidth = LIVE_RANKING_RANK_WIDTH + teamColWidth + statsWidth;
   const statsColStart = LIVE_RANKING_RANK_WIDTH + teamColWidth;
 
+  // With PTS hidden, ELIMS slides left into the freed slot so ALIVE + ELIMS
+  // stay evenly spaced instead of leaving a gap on the right.
   return {
     teamColWidth,
     panelWidth,
     statsColStart,
+    showPoints,
     headerLabels: {
       team: LIVE_RANKING_RANK_WIDTH + 11,
       alive: statsColStart + 2,
       pts: statsColStart + 57,
-      elims: statsColStart + 102,
+      elims: statsColStart + (showPoints ? 102 : 57),
     },
     statsValues: {
       barsLeft: 10,
       ptsLeft: 66,
-      elimsLeft: 110,
+      elimsLeft: showPoints ? 110 : 66,
     },
   };
 }

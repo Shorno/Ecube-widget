@@ -32,6 +32,9 @@ type Props = {
   showFullTeamName?: boolean;
   showObserverHighlight?: boolean;
   preview?: boolean;
+  /** Live-ranking variant hides the PTS column and ranks by per-match points. */
+  showPoints?: boolean;
+  sortBy?: "overAllPoints" | "points";
 };
 
 function teamId(entry: LiveRankEntry) {
@@ -44,8 +47,10 @@ export default function LiveOverallRankingView({
   showFullTeamName = false,
   showObserverHighlight = true,
   preview = false,
+  showPoints = true,
+  sortBy = "overAllPoints",
 }: Props) {
-  const rankingLayout = getLiveRankingLayout(showFullTeamName);
+  const rankingLayout = getLiveRankingLayout(showFullTeamName, showPoints);
   const {
     teams,
     showTopFour,
@@ -54,7 +59,8 @@ export default function LiveOverallRankingView({
     ready,
     triggerObservingPreview,
     triggerTopFourPreview,
-  } = useLiveOverallRanking(tournamentID, { preview });
+    triggerEliminationPreview,
+  } = useLiveOverallRanking(tournamentID, { preview, sortBy });
 
   const containerRef = useRef<HTMLDivElement>(null);
   const slidePanelRef = useRef<HTMLDivElement>(null);
@@ -172,6 +178,7 @@ export default function LiveOverallRankingView({
             <LiveRankingPreviewControls
               onTriggerObserver={triggerObservingPreview}
               onTriggerTopFour={triggerTopFourPreview}
+              onTriggerElimination={triggerEliminationPreview}
               topFourActive={showTopFour}
             />
           </>
@@ -194,7 +201,10 @@ export default function LiveOverallRankingView({
               style={broadcastLayout.slide}
             >
               <div className="flex flex-col" style={broadcastLayout.inner}>
-                <LiveRankingHeader showFullTeamName={showFullTeamName} />
+                <LiveRankingHeader
+                  showFullTeamName={showFullTeamName}
+                  showPoints={showPoints}
+                />
 
                 <div ref={containerRef} className="flex w-full flex-col">
                   {displayTeams.map((entry, index) => (
@@ -205,11 +215,15 @@ export default function LiveOverallRankingView({
                       isObserved={activeObservingTeamId === teamId(entry)}
                       showTeamFlags={showTeamFlags}
                       showFullTeamName={showFullTeamName}
+                      showPoints={showPoints}
                     />
                   ))}
                 </div>
 
-                <LiveRankingLegend showFullTeamName={showFullTeamName} />
+                <LiveRankingLegend
+                  showFullTeamName={showFullTeamName}
+                  showPoints={showPoints}
+                />
               </div>
             </div>
           </div>

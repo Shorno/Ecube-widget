@@ -4,13 +4,15 @@ import { getLiveRankingLayout } from "./layout";
 type Props = {
   className?: string;
   showFullTeamName?: boolean;
+  showPoints?: boolean;
 };
 
 export default function LiveRankingLegend({
   className,
   showFullTeamName = false,
+  showPoints = true,
 }: Props) {
-  const { panelWidth } = getLiveRankingLayout(showFullTeamName);
+  const { panelWidth } = getLiveRankingLayout(showFullTeamName, showPoints);
 
   return (
     <div
