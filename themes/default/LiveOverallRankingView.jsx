@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { cn } from "@/lib/utils";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
@@ -34,6 +40,8 @@ export default function LiveOverallRankingView({
   showFullTeamName = false,
   showObserverHighlight = true,
   preview = false,
+  isOverall = true,
+  sortBy = "overAllPoints",
 }) {
   const {
     teams,
@@ -41,7 +49,7 @@ export default function LiveOverallRankingView({
     topFourTeams,
     observingTeamId,
     ready,
-  } = useLiveOverallRanking(tournamentID, { preview });
+  } = useLiveOverallRanking(tournamentID, { preview, sortBy });
 
   const containerRef = useRef(null);
   const listPanelRef = useRef(null);
@@ -51,9 +59,8 @@ export default function LiveOverallRankingView({
   const pendingDataRef = useRef(null);
   const sidebarHiddenRef = useRef(false);
   const [displayTeams, setDisplayTeams] = useState([]);
-  const applyTeamsRef = useRef(null);
 
-  applyTeamsRef.current = (newData) => {
+  const applyTeams = useCallback((newData) => {
     if (isAnimatingRef.current) {
       pendingDataRef.current = newData;
       return;
@@ -65,12 +72,12 @@ export default function LiveOverallRankingView({
     }
     isFirstRenderRef.current = false;
     setDisplayTeams(newData);
-  };
+  }, []);
 
   useEffect(() => {
     if (teams.length === 0) return;
-    applyTeamsRef.current(teams);
-  }, [teams]);
+    applyTeams(teams);
+  }, [teams, applyTeams]);
 
   useLayoutEffect(() => {
     if (!flipStateRef.current) return;
@@ -83,12 +90,12 @@ export default function LiveOverallRankingView({
         if (pendingDataRef.current) {
           const next = pendingDataRef.current;
           pendingDataRef.current = null;
-          applyTeamsRef.current(next);
+          applyTeams(next);
         }
       },
     });
     flipStateRef.current = null;
-  }, [displayTeams]);
+  }, [displayTeams, applyTeams]);
 
   useEffect(() => {
     if (!showTopFour || sidebarHiddenRef.current) return;
@@ -155,7 +162,7 @@ export default function LiveOverallRankingView({
                 key={teamId(entry)}
                 entry={entry}
                 isObserved={activeObservingTeamId === teamId(entry)}
-                isOverall
+                isOverall={isOverall}
                 rank={index + 1}
               />
             ))}

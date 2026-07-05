@@ -4,13 +4,15 @@ import { getLiveRankingLayout } from "./layout";
 type Props = {
   className?: string;
   showFullTeamName?: boolean;
+  showPoints?: boolean;
 };
 
 export default function LiveRankingHeader({
   className,
   showFullTeamName = false,
+  showPoints = true,
 }: Props) {
-  const layout = getLiveRankingLayout(showFullTeamName);
+  const layout = getLiveRankingLayout(showFullTeamName, showPoints);
 
   return (
     <div
@@ -76,16 +78,18 @@ export default function LiveRankingHeader({
         ALIVE
       </span>
 
-      <span
-        className="font-primary text-widget-text-3 absolute top-[14px] h-[18px] w-[40px] text-center font-bold uppercase"
-        style={{
-          left: layout.headerLabels.pts,
-          fontSize: "18px",
-          lineHeight: "18px",
-        }}
-      >
-        PTS
-      </span>
+      {showPoints && (
+        <span
+          className="font-primary text-widget-text-3 absolute top-[14px] h-[18px] w-[40px] text-center font-bold uppercase"
+          style={{
+            left: layout.headerLabels.pts,
+            fontSize: "18px",
+            lineHeight: "18px",
+          }}
+        >
+          PTS
+        </span>
+      )}
 
       <span
         className="font-primary text-widget-text-3 absolute top-[14px] h-[18px] w-[40px] text-center font-bold uppercase"

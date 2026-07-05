@@ -36,6 +36,7 @@ type Props = {
   isObserved?: boolean;
   showTeamFlags?: boolean;
   showFullTeamName?: boolean;
+  showPoints?: boolean;
   className?: string;
 };
 
@@ -45,6 +46,7 @@ export default function LiveRankingRow({
   isObserved = false,
   showTeamFlags = true,
   showFullTeamName = false,
+  showPoints = true,
   className,
 }: Props) {
   const eliminated = isEliminated(entry.players);
@@ -69,7 +71,7 @@ export default function LiveRankingRow({
     ) ??
       false);
   const logo = teamLogo(entry);
-  const layout = getLiveRankingLayout(showFullTeamName);
+  const layout = getLiveRankingLayout(showFullTeamName, showPoints);
   const teamLabel = getTeamDisplayLabel(entry.team, showFullTeamName);
   const flagDisplay = getTeamFlagDisplay(entry.team);
   const hasFlag = showTeamFlags && flagDisplay.kind !== "none";
@@ -212,16 +214,18 @@ export default function LiveRankingRow({
           </div>
         )}
 
-        <div
-          className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"
-          style={{
-            left: layout.statsValues.ptsLeft,
-            fontSize: `${statsFontSize}px`,
-            lineHeight: `${statsLineHeight}px`,
-          }}
-        >
-          {String(entry.overAllPoints ?? 0).padStart(2, "0")}
-        </div>
+        {showPoints && (
+          <div
+            className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"
+            style={{
+              left: layout.statsValues.ptsLeft,
+              fontSize: `${statsFontSize}px`,
+              lineHeight: `${statsLineHeight}px`,
+            }}
+          >
+            {String(entry.overAllPoints ?? 0).padStart(2, "0")}
+          </div>
+        )}
 
         <div
           className="font-secondary text-widget-text-3 absolute top-[6px] w-[32px] text-center font-bold"

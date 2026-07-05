@@ -33,6 +33,7 @@ export type WidgetSlot =
   | "WWCStats"
   | "MatchStart"
   | "LiveOverallRanking"
+  | "LiveRanking"
   | "TeamElimination"
   | "Achievements";
 
@@ -53,6 +54,7 @@ export { default as TopPlayersGroup } from "./TopPlayersGroupView";
 export { default as WWCStats } from "./WWCStatsView";
 export { default as MatchStart } from "./MatchStartView";
 export { default as LiveOverallRanking } from "./LiveOverallRankingView";
+export { default as LiveRanking } from "./LiveRankingView";
 export { default as TeamElimination } from "./TeamEliminationView";
 export { default as Achievements } from "./AchievementsView";
 
