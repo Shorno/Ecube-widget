@@ -196,7 +196,7 @@ export default function LiveRankingRow({
       >
         {missing ? (
           <div
-            className="font-secondary text-widget-text-3 absolute top-[6px] w-[42px] text-center font-bold uppercase"
+            className="font-secondary absolute top-[6px] w-[42px] text-center font-bold text-[#ff3b30] uppercase"
             style={{
               left: layout.statsValues.barsLeft,
               fontSize: `${statsFontSize}px`,

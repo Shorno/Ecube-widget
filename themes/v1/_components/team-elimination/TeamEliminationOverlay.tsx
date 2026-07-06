@@ -4,8 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import TeamFlag from "@/components/common/TeamFlag";
-import { getTeamFlagDisplay } from "@/lib/utils/teamFlag";
 import { getTeamDisplayLabel } from "@/lib/utils/teamDisplay";
 import type { TeamEliminationPayload } from "@/types/team-elimination";
 
@@ -22,6 +20,17 @@ const CENTER_PANEL_GRADIENT =
 
 const ELIMINATED_BAR_GRADIENT =
   "linear-gradient(180deg, color-mix(in srgb, var(--widget-primary-dark) 88%, white) 0%, var(--widget-primary-dark) 45%, color-mix(in srgb, var(--widget-primary-dark) 80%, black) 100%)";
+
+// Depth layering for the four busts — the middle pair sits in front (full size,
+// higher stacking, drop shadow), the outer pair tucks behind (smaller, dimmed).
+// Negative `overlap` pulls each bust over its neighbour so silhouettes overlap
+// instead of leaving a hard seam between them.
+const PLAYER_LAYERS = [
+  { scale: 0.82, z: 10, overlap: 0, back: true },
+  { scale: 1, z: 30, overlap: -28, back: false },
+  { scale: 1, z: 30, overlap: -28, back: false },
+  { scale: 0.82, z: 10, overlap: -28, back: true },
+];
 
 type Props = {
   data: TeamEliminationPayload;
@@ -40,7 +49,6 @@ function getPlacement(data: TeamEliminationPayload): number {
 
 export default function TeamEliminationOverlay({
   data,
-  showTeamFlags = true,
   showFullTeamName = false,
 }: Props) {
   const playerImages = getPlayerImages(data);
@@ -49,8 +57,6 @@ export default function TeamEliminationOverlay({
   const kills = data.victimTeam.kills ?? 0;
   const logoSrc = data.victimTeam.logo || DEFAULT_PLAYER_IMAGE;
   const [pubgLogoFailed, setPubgLogoFailed] = useState(false);
-  const flagVisible =
-    showTeamFlags && getTeamFlagDisplay(data.victimTeam).kind !== "none";
   const sidePanelWidth = 140;
   const bannerWidth = 620;
 
@@ -70,33 +76,25 @@ export default function TeamEliminationOverlay({
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.35, delay: 0.05, ease: "easeOut" }}
           style={{ background: SIDE_PANEL_GRADIENT, width: sidePanelWidth }}
-          className="relative flex shrink-0 flex-col items-center justify-center gap-1.5 px-2 py-2.5"
+          className="relative flex shrink-0 flex-col items-center justify-center gap-2.5 px-2 py-2.5"
         >
           <Image
             src={logoSrc}
             alt={data.victimTeam.name}
-            width={44}
-            height={44}
-            className="h-11 w-11 shrink-0 object-contain drop-shadow"
+            width={96}
+            height={96}
+            className="h-20 w-20 shrink-0 object-contain drop-shadow"
             unoptimized
           />
           <p
             className="font-primary min-w-0 w-full text-center font-bold leading-tight tracking-wide text-widget-text-3 uppercase line-clamp-2"
             style={{
-              fontSize: showFullTeamName ? "13px" : "15px",
-              lineHeight: showFullTeamName ? "14px" : "16px",
+              fontSize: showFullTeamName ? "14px" : "17px",
+              lineHeight: showFullTeamName ? "15px" : "18px",
             }}
           >
             {teamLabel}
           </p>
-          {flagVisible && (
-            <TeamFlag
-              team={data.victimTeam}
-              showTeamFlags={showTeamFlags}
-              className="shrink-0"
-              imageClassName="h-[15px] w-[22px] rounded-[1px] shadow-sm"
-            />
-          )}
         </motion.div>
 
         {/* Center panel */}
@@ -123,28 +121,45 @@ export default function TeamEliminationOverlay({
               />
             </div>
           )}
-          <div className="flex flex-1 items-end justify-center gap-0.5 pb-0.5 pt-1">
-            {playerImages.map((src, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.3,
-                  delay: 0.25 + i * 0.08,
-                  ease: "easeOut",
-                }}
-                className="relative h-[92px] flex-1 overflow-hidden"
-              >
-                <Image
-                  src={src}
-                  alt={`Player ${i + 1}`}
-                  fill
-                  className="object-cover object-top scale-[1.4] origin-top"
-                  unoptimized
-                />
-              </motion.div>
-            ))}
+          <div className="relative flex flex-1 items-end justify-center pt-1">
+            {playerImages.map((src, i) => {
+              const layer = PLAYER_LAYERS[i];
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.3,
+                    delay: 0.25 + i * 0.08,
+                    ease: "easeOut",
+                  }}
+                  className="relative h-[96px] w-[92px] shrink-0"
+                  style={{ zIndex: layer.z, marginLeft: layer.overlap }}
+                >
+                  <div
+                    className={cn(
+                      "relative h-full w-full",
+                      layer.back
+                        ? "brightness-[0.82]"
+                        : "drop-shadow-[0_3px_6px_rgba(0,0,0,0.45)]",
+                    )}
+                    style={{
+                      transform: `scale(${layer.scale})`,
+                      transformOrigin: "bottom center",
+                    }}
+                  >
+                    <Image
+                      src={src}
+                      alt={`Player ${i + 1}`}
+                      fill
+                      className="object-cover object-top"
+                      unoptimized
+                    />
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
           <motion.div
             initial={{ y: "100%" }}
@@ -169,7 +184,7 @@ export default function TeamEliminationOverlay({
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.35, delay: 0.05, ease: "easeOut" }}
           style={{ background: SIDE_PANEL_GRADIENT, width: sidePanelWidth }}
-          className="flex shrink-0 flex-col items-center justify-center gap-1 px-2"
+          className="flex shrink-0 flex-col items-center justify-center gap-1.5 px-2"
         >
           <motion.span
             initial={{ scale: 0.5, opacity: 0 }}
@@ -180,23 +195,31 @@ export default function TeamEliminationOverlay({
               type: "spring",
               stiffness: 260,
             }}
-            className="font-primary text-5xl font-black leading-none text-widget-text-3 italic"
+            className="font-primary text-4xl font-black leading-none text-widget-text-3 italic"
           >
             #{placement}
           </motion.span>
           <div className="h-px w-10 bg-white/30" />
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.5, ease: "easeOut" }}
-            className="text-base font-black tracking-tight text-widget-secondary uppercase italic"
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{
+              duration: 0.4,
+              delay: 0.5,
+              type: "spring",
+              stiffness: 260,
+            }}
+            className="flex flex-col items-center leading-none text-widget-secondary"
             style={{
               fontFamily:
                 "var(--widget-font-secondary), 'Agency FB', sans-serif",
             }}
           >
-            {kills} ELIMS
-          </motion.p>
+            <span className="text-4xl font-black leading-none">{kills}</span>
+            <span className="mt-0.5 text-[11px] font-black tracking-[0.18em] uppercase">
+              ELIMS
+            </span>
+          </motion.div>
         </motion.div>
       </div>
     </motion.div>
