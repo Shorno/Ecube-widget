@@ -3,8 +3,11 @@
 import { useCallback } from "react";
 import type { AchievementQueueItem } from "@/types/achievement-event";
 import { getMockDominationAchievement } from "./mockDominationAchievement";
+import { getMockDropLootedAchievement } from "./mockDropLootedAchievement";
 import { getMockFirstBloodAchievement } from "./mockFirstBloodAchievement";
+import { getMockGrenadierAchievement } from "./mockGrenadierAchievement";
 import { getMockRampageAchievement } from "./mockRampageAchievement";
+import { getMockVehicleElimAchievement } from "./mockVehicleElimAchievement";
 import { parseAchievementEvent } from "./parseAchievementEvent";
 import { useAchievementQueue } from "./useAchievementQueue";
 import {
@@ -69,11 +72,35 @@ export function useAchievements(
     });
   }, [triggerPreview]);
 
+  const triggerDropLootedPreview = useCallback(() => {
+    triggerPreview({
+      kind: "drop-looted",
+      data: getMockDropLootedAchievement(),
+    });
+  }, [triggerPreview]);
+
+  const triggerVehicleElimPreview = useCallback(() => {
+    triggerPreview({
+      kind: "vehicle-elim",
+      data: getMockVehicleElimAchievement(),
+    });
+  }, [triggerPreview]);
+
+  const triggerGrenadierPreview = useCallback(() => {
+    triggerPreview({
+      kind: "grenadier",
+      data: getMockGrenadierAchievement(),
+    });
+  }, [triggerPreview]);
+
   return {
     ...queue,
     preview,
     triggerRampagePreview,
     triggerDominationPreview,
     triggerFirstBloodPreview,
+    triggerDropLootedPreview,
+    triggerVehicleElimPreview,
+    triggerGrenadierPreview,
   };
 }

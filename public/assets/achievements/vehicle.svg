@@ -1,0 +1,16 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Vehicle Main Body -->
+  <path d="M40 108L76 108L96 76H140L156 108H208C216.836 108 224 115.164 224 124V144H32V124C32 115.164 31.164 108 40 108Z" stroke="var(--vehicle-stroke, currentColor)" stroke-width="var(--vehicle-stroke-width, 8)" stroke-linejoin="round" fill="var(--vehicle-body-fill, var(--vehicle-fill, #ffffff))"/>
+  
+  <!-- Left Wheel Outer -->
+  <circle cx="80" cy="160" r="32" stroke="var(--vehicle-stroke, currentColor)" stroke-width="var(--vehicle-stroke-width, 8)" fill="var(--vehicle-wheel-fill, var(--vehicle-fill, #ffffff))"/>
+  
+  <!-- Right Wheel Outer -->
+  <circle cx="176" cy="160" r="32" stroke="var(--vehicle-stroke, currentColor)" stroke-width="var(--vehicle-stroke-width, 8)" fill="var(--vehicle-wheel-fill, var(--vehicle-fill, #ffffff))"/>
+  
+  <!-- Left Wheel Inner (Hubcap) -->
+  <circle cx="80" cy="160" r="12" fill="var(--vehicle-hubcap-fill, #000000)" fill-opacity="var(--vehicle-hubcap-opacity, 0.25)"/>
+  
+  <!-- Right Wheel Inner (Hubcap) -->
+  <circle cx="176" cy="160" r="12" fill="var(--vehicle-hubcap-fill, #000000)" fill-opacity="var(--vehicle-hubcap-opacity, 0.25)"/>
+</svg>

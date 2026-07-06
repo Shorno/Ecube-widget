@@ -22,6 +22,9 @@ export default function AchievementsView({
     triggerRampagePreview,
     triggerDominationPreview,
     triggerFirstBloodPreview,
+    triggerDropLootedPreview,
+    triggerVehicleElimPreview,
+    triggerGrenadierPreview,
   } = useAchievements(tournamentID, { preview });
 
   return (
@@ -35,6 +38,9 @@ export default function AchievementsView({
             onTriggerRampage={triggerRampagePreview}
             onTriggerDomination={triggerDominationPreview}
             onTriggerFirstBlood={triggerFirstBloodPreview}
+            onTriggerDropLooted={triggerDropLootedPreview}
+            onTriggerVehicleElim={triggerVehicleElimPreview}
+            onTriggerGrenadier={triggerGrenadierPreview}
             isLocked={isLocked}
           />
         </>
