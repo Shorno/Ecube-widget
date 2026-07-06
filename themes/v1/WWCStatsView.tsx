@@ -64,8 +64,15 @@ export default function WWCStatsView({ tournamentID }: Props) {
 
   if (!ready) return null;
 
-  const leftPlayers = players.slice(0, 2);
-  const rightPlayers = players.slice(2, 4);
+  // Keep the original left / right grouping; only drop players without an
+  // image so no broken card renders. The row is centred (justify-center), so a
+  // partial squad sits together in the middle beside the logo instead of being
+  // pinned to an edge.
+  const shownPlayers = players
+    .filter((player) => player?.player_imageUrl)
+    .slice(0, 4);
+  const leftPlayers = shownPlayers.slice(0, 2);
+  const rightPlayers = shownPlayers.slice(2, 4);
 
   return (
     <WidgetStage dataReady={ready} onReady={() => setStageReady(true)}>
@@ -75,24 +82,26 @@ export default function WWCStatsView({ tournamentID }: Props) {
             <Title title="WWCD Team Stats" data={info} />
           </div>
 
-          <div className="mt-12 flex items-center justify-between px-4">
+          <div className="mt-12 flex items-center justify-center gap-16 px-4">
             {/* left — players 1 & 2 */}
-            <div className="flex gap-8">
-              {leftPlayers.map((p, idx) => (
-                <PlayerCard
-                  key={p.player_id ?? idx}
-                  player={toTopPlayer(p)}
-                  rank={idx + 1}
-                  hideTeamLogo
-                  stats={[
-                    { label: "Eliminations", value: p.kills },
-                    { label: "Damage", value: p.damages },
-                    { label: "Assists", value: p.assists },
-                    { label: "Knocks", value: p.knocks },
-                  ]}
-                />
-              ))}
-            </div>
+            {leftPlayers.length > 0 && (
+              <div className="flex gap-8">
+                {leftPlayers.map((p, idx) => (
+                  <PlayerCard
+                    key={p.player_id ?? idx}
+                    player={toTopPlayer(p)}
+                    rank={idx + 1}
+                    hideTeamLogo
+                    stats={[
+                      { label: "Eliminations", value: p.kills },
+                      { label: "Damage", value: p.damages },
+                      { label: "Assists", value: p.assists },
+                      { label: "Knocks", value: p.knocks },
+                    ]}
+                  />
+                ))}
+              </div>
+            )}
 
             {/* center — team logo + total elims */}
             <div className="anim-center flex h-full flex-col items-center justify-between gap-10 opacity-0">
@@ -116,22 +125,24 @@ export default function WWCStatsView({ tournamentID }: Props) {
             </div>
 
             {/* right — players 3 & 4 */}
-            <div className="flex gap-8">
-              {rightPlayers.map((p, idx) => (
-                <PlayerCard
-                  key={p.player_id ?? idx}
-                  player={toTopPlayer(p)}
-                  rank={idx + 3}
-                  hideTeamLogo
-                  stats={[
-                    { label: "Eliminations", value: p.kills },
-                    { label: "Damage", value: p.damages },
-                    { label: "Assists", value: p.assists },
-                    { label: "Knocks", value: p.knocks },
-                  ]}
-                />
-              ))}
-            </div>
+            {rightPlayers.length > 0 && (
+              <div className="flex gap-8">
+                {rightPlayers.map((p, idx) => (
+                  <PlayerCard
+                    key={p.player_id ?? idx}
+                    player={toTopPlayer(p)}
+                    rank={idx + 3}
+                    hideTeamLogo
+                    stats={[
+                      { label: "Eliminations", value: p.kills },
+                      { label: "Damage", value: p.damages },
+                      { label: "Assists", value: p.assists },
+                      { label: "Knocks", value: p.knocks },
+                    ]}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </Layout>
