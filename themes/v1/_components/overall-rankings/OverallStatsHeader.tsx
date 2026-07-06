@@ -7,7 +7,7 @@ type Props = {
 const STAT_COLS = ["WWCD", "POS", "ELIMS"] as const;
 
 export const OVERALL_RANK_COL_WIDTH = 67;
-export const OVERALL_TEAM_COL_WIDTH = 240;
+export const OVERALL_TEAM_COL_WIDTH = 320;
 export const OVERALL_STAT_COL_WIDTH = 88;
 export const OVERALL_TOTAL_COL_WIDTH = 108;
 

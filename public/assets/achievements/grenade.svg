@@ -1,9 +1,22 @@
-<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="40" y="44" width="40" height="52" rx="20" fill="white"/>
-<rect x="52" y="32" width="16" height="14" rx="2" fill="white"/>
-<path d="M68 34L90 29L90 36L70 42Z" fill="white"/>
-<circle cx="46" cy="30" r="8" fill="white"/>
-<circle cx="46" cy="30" r="3.5" fill="#000" fill-opacity="0.25"/>
-<path d="M42 62H78M42 78H78" stroke="#000" stroke-width="2.5" stroke-opacity="0.2"/>
-<path d="M53 48V94M67 48V94" stroke="#000" stroke-width="2.5" stroke-opacity="0.2"/>
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Neck -->
+  <rect x="84" y="75" width="52" height="35" stroke="var(--grenade-stroke, currentColor)" stroke-width="var(--grenade-stroke-width, 8)" stroke-linejoin="round" fill="var(--grenade-cap-fill, var(--grenade-fill, #ffffff))"/>
+  
+  <!-- Cap -->
+  <rect x="74" y="55" width="72" height="20" rx="4" ry="4" stroke="var(--grenade-stroke, currentColor)" stroke-width="var(--grenade-stroke-width, 8)" stroke-linejoin="round" fill="var(--grenade-cap-fill, var(--grenade-fill, #ffffff))"/>
+  
+  <!-- Grenade Main Body -->
+  <circle cx="110" cy="150" r="55" stroke="var(--grenade-stroke, currentColor)" stroke-width="var(--grenade-stroke-width, 8)" fill="var(--grenade-body-fill, var(--grenade-fill, #ffffff))"/>
+  
+  <!-- Middle Horizontal Band -->
+  <rect x="42" y="140" width="136" height="20" rx="10" ry="10" stroke="var(--grenade-stroke, currentColor)" stroke-width="var(--grenade-stroke-width, 8)" stroke-linejoin="round" fill="var(--grenade-band-fill, var(--grenade-fill, #ffffff))"/>
+  
+  <!-- Pull Ring -->
+  <circle cx="148" cy="82" r="22" stroke="var(--grenade-stroke, currentColor)" stroke-width="var(--grenade-stroke-width, 8)" fill="var(--grenade-ring-fill, var(--grenade-fill, #ffffff))"/>
+  
+  <!-- Safety Pin Loop -->
+  <rect x="131" y="52" width="12" height="22" rx="6" stroke="var(--grenade-stroke, currentColor)" stroke-width="var(--grenade-stroke-width, 8)" stroke-linejoin="round" fill="var(--grenade-pin-fill, var(--grenade-fill, #ffffff))" transform="rotate(15 137 63)"/>
+  
+  <!-- Safety Lever (Handle) -->
+  <path d="M 74 63 L 143 63 L 190 110 L 190 180 C 190 191, 210 191, 210 180 L 210 100 L 155 45 L 74 45 C 64 45, 64 63, 74 63 Z" stroke="var(--grenade-stroke, currentColor)" stroke-width="var(--grenade-stroke-width, 8)" stroke-linejoin="round" stroke-linecap="round" fill="var(--grenade-handle-fill, var(--grenade-fill, #ffffff))"/>
 </svg>

@@ -13,7 +13,7 @@ const PUBG_LOGO = "/assets/team-elimination/pubg-mobile-logo.png";
 
 /** Token-only vertical gradients — subtle light top, slightly deeper bottom */
 const SIDE_PANEL_GRADIENT =
-  "linear-gradient(180deg, color-mix(in srgb, var(--widget-status-knocked) 86%, white) 0%, var(--widget-status-knocked) 40%, color-mix(in srgb, var(--widget-status-knocked) 82%, black) 100%)";
+  "linear-gradient(180deg, color-mix(in srgb, var(--widget-secondary) 86%, white) 0%, var(--widget-secondary) 40%, color-mix(in srgb, var(--widget-secondary) 82%, black) 100%)";
 
 const CENTER_PANEL_GRADIENT =
   "linear-gradient(180deg, color-mix(in srgb, var(--widget-gradient-from) 80%, white) 0%, var(--widget-gradient-from) 20%, var(--widget-primary) 58%, var(--widget-primary-dark) 100%)";
@@ -76,21 +76,21 @@ export default function TeamEliminationOverlay({
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.35, delay: 0.05, ease: "easeOut" }}
           style={{ background: SIDE_PANEL_GRADIENT, width: sidePanelWidth }}
-          className="relative flex shrink-0 flex-col items-center justify-center gap-2.5 px-2 py-2.5"
+          className="relative flex shrink-0 flex-col items-center justify-center gap-2 px-2 py-2"
         >
           <Image
             src={logoSrc}
             alt={data.victimTeam.name}
             width={96}
             height={96}
-            className="h-20 w-20 shrink-0 object-contain drop-shadow"
+            className="h-14 w-14 shrink-0 object-contain drop-shadow"
             unoptimized
           />
           <p
-            className="font-primary min-w-0 w-full text-center font-bold leading-tight tracking-wide text-widget-text-3 uppercase line-clamp-2"
+            className="font-primary min-w-0 w-full text-center font-bold leading-tight tracking-wide text-widget-text-2 uppercase line-clamp-2"
             style={{
-              fontSize: showFullTeamName ? "14px" : "17px",
-              lineHeight: showFullTeamName ? "15px" : "18px",
+              fontSize: showFullTeamName ? "18px" : "23px",
+              lineHeight: showFullTeamName ? "19px" : "24px",
             }}
           >
             {teamLabel}
@@ -195,11 +195,11 @@ export default function TeamEliminationOverlay({
               type: "spring",
               stiffness: 260,
             }}
-            className="font-primary text-4xl font-black leading-none text-widget-text-3 italic"
+            className="font-primary text-4xl font-black leading-none text-widget-text-2 italic"
           >
             #{placement}
           </motion.span>
-          <div className="h-px w-10 bg-white/30" />
+          <div className="h-px w-10 bg-black/25" />
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -209,14 +209,14 @@ export default function TeamEliminationOverlay({
               type: "spring",
               stiffness: 260,
             }}
-            className="flex flex-col items-center leading-none text-widget-secondary"
+            className="flex flex-col items-center leading-none text-widget-text-2"
             style={{
               fontFamily:
                 "var(--widget-font-secondary), 'Agency FB', sans-serif",
             }}
           >
             <span className="text-4xl font-black leading-none">{kills}</span>
-            <span className="mt-0.5 text-[11px] font-black tracking-[0.18em] uppercase">
+            <span className="mt-0.5 text-[18px] font-black tracking-[0.14em] uppercase">
               ELIMS
             </span>
           </motion.div>
