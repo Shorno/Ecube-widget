@@ -20,7 +20,7 @@ export default function TopFourWwcdBar({ winProbability, className }: Props) {
       <svg
         width={TOP_FOUR_CARD_WIDTH}
         height={TOP_FOUR_WWCD_HEIGHT}
-        viewBox="0 0 301 40"
+        viewBox="0 0 301 28"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="absolute inset-0 h-full w-full"
@@ -32,7 +32,7 @@ export default function TopFourWwcdBar({ winProbability, className }: Props) {
             x1="9"
             y1="0"
             x2="150.5"
-            y2="38"
+            y2="26.6"
             gradientUnits="userSpaceOnUse"
           >
             <stop offset="0" stopColor="var(--widget-v1-wwcd-from, var(--widget-gradient-from))" />
@@ -43,7 +43,7 @@ export default function TopFourWwcdBar({ winProbability, className }: Props) {
             x1="158"
             y1="0"
             x2="286"
-            y2="38"
+            y2="26.6"
             gradientUnits="userSpaceOnUse"
           >
             <stop
@@ -61,7 +61,7 @@ export default function TopFourWwcdBar({ winProbability, className }: Props) {
             x1="221"
             y1="0"
             x2="221"
-            y2="28"
+            y2="19.6"
             gradientUnits="userSpaceOnUse"
           >
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.14" />
@@ -70,39 +70,39 @@ export default function TopFourWwcdBar({ winProbability, className }: Props) {
         </defs>
 
         <path
-          d="M9 0 H150.5 V37 H22 L9 19 Z"
+          d="M9 0 H150.5 V25.9 H22 L9 13.3 Z"
           fill={`url(#${leftGradId})`}
         />
         <path
-          d="M150.5 0 H292 V19 L279 37 H150.5 Z"
+          d="M150.5 0 H292 V13.3 L279 25.9 H150.5 Z"
           fill={`url(#${rightGradId})`}
         />
         <path
-          d="M150.5 0 H292 V19 L279 37 H150.5 Z"
+          d="M150.5 0 H292 V13.3 L279 25.9 H150.5 Z"
           fill={`url(#${rightSheenId})`}
         />
         <path
-          d="M7 0 H294 V20 L280 40 H21 L7 20 Z"
+          d="M7 0 H294 V14 L280 28 H21 L7 14 Z"
           stroke="var(--widget-secondary-dark)"
-          strokeWidth="2"
+          strokeWidth="1.25"
           fill="none"
         />
         <path
-          d="M8.5 0 H292.5 V19.5 L279 39 H22 L8.5 19.5 Z"
+          d="M8.5 0 H292.5 V13.65 L279 27.3 H22 L8.5 13.65 Z"
           stroke="var(--widget-primary-accent)"
-          strokeWidth="1"
+          strokeWidth="0.75"
           fill="none"
         />
       </svg>
 
       <div
-        className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-[28px] leading-none uppercase tracking-[0.08em]"
+        className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-[20px] leading-none uppercase tracking-[0.08em]"
         style={{ left: 9, width: 148 }}
       >
         WWCD
       </div>
       <div
-        className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-[26px] leading-none tracking-wide"
+        className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-[18px] leading-none tracking-wide"
         style={{ left: 150.5, width: 141.5 }}
       >
         {Math.round(winProbability)}%

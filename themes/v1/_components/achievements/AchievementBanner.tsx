@@ -118,7 +118,6 @@ export default function AchievementBanner({
                       stiffness: 280,
                     }}
                     className="font-primary shrink-0 text-[7.5rem] font-normal leading-[0.75] text-widget-text-2"
-                    style={{ fontFamily: "var(--font-bebas-neue)" }}
                   >
                     {kills}
                   </motion.span>
@@ -134,7 +133,6 @@ export default function AchievementBanner({
                     />
                     <span
                       className="font-primary text-[0.9rem] font-bold tracking-[0.25em] text-widget-text-2 uppercase leading-none -mr-[0.25em]"
-                      style={{ fontFamily: "var(--font-bebas-neue)" }}
                     >
                       Elims
                     </span>
@@ -146,7 +144,6 @@ export default function AchievementBanner({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: 0.35, ease: "easeOut" }}
                   className="font-primary mt-1 w-full text-center text-[2.65rem] font-normal tracking-[0.05em] text-widget-text-2 uppercase leading-none"
-                  style={{ fontFamily: "var(--font-american-captain)" }}
                 >
                   {title}
                 </motion.div>
@@ -179,7 +176,6 @@ export default function AchievementBanner({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.35, delay: 0.3, ease: "easeOut" }}
                   className="font-primary max-w-[7ch] text-center text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-2 uppercase leading-[0.9]"
-                  style={{ fontFamily: "var(--font-american-captain)" }}
                 >
                   {title}
                 </motion.div>

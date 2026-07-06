@@ -5,6 +5,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import WidgetStage from "@/components/common/WidgetStage";
 import { useWWC } from "@/hooks/widget-data";
+import { cn } from "@/lib/utils";
+import type { WWCPlayer } from "@/types/widgets";
 import Image from "next/image";
 
 type Props = { tournamentID: string };
@@ -52,10 +54,10 @@ export default function WWCDView({ tournamentID }: Props) {
               {team?.team_name}
             </div>
             <div className="relative z-50 flex items-center gap-2 p-2">
-              <div className="bg-widget-primary text-widget-text-3 grid h-20.75 w-64.5 place-content-center">
+              <div className="bg-widget-primary text-widget-text-3 grid h-20.75 w-64.5 place-content-center px-3 text-center text-[44px] leading-none whitespace-nowrap">
                 {info?.day}
               </div>
-              <div className="bg-widget-primary text-widget-text-3 grid h-20.75 w-64.5 place-content-center">
+              <div className="bg-widget-primary text-widget-text-3 grid h-20.75 w-64.5 place-content-center px-3 text-center text-[44px] leading-none whitespace-nowrap">
                 {info?.match_name}
               </div>
             </div>
@@ -74,38 +76,28 @@ export default function WWCDView({ tournamentID }: Props) {
             {/* players and wwcd title */}
             <div className="absolute right-0 bottom-full left-0 z-10">
               <div className="relative z-10 flex items-end justify-center">
-                <div className="anim-player opacity-0">
-                  <Image
-                    src={players[0]?.player_imageUrl || ""}
-                    alt={players[0]?.player_name ?? ""}
-                    width={443}
-                    height={663}
-                  />
-                </div>
-                <div className="anim-player -ml-52 opacity-0">
-                  <Image
-                    src={players[1]?.player_imageUrl || ""}
-                    alt={players[1]?.player_name ?? ""}
-                    width={443}
-                    height={663}
-                  />
-                </div>
-                <div className="anim-player -ml-52 opacity-0">
-                  <Image
-                    src={players[2]?.player_imageUrl || ""}
-                    alt={players[2]?.player_name ?? ""}
-                    width={443}
-                    height={663}
-                  />
-                </div>
-                <div className="anim-player -ml-52 opacity-0">
-                  <Image
-                    src={players[3]?.player_imageUrl || ""}
-                    alt={players[3]?.player_name ?? ""}
-                    width={443}
-                    height={663}
-                  />
-                </div>
+                {players
+                  .filter(
+                    (player): player is WWCPlayer & { player_imageUrl: string } =>
+                      Boolean(player?.player_imageUrl),
+                  )
+                  .slice(0, 4)
+                  .map((player, index) => (
+                    <div
+                      key={player.player_id ?? index}
+                      className={cn(
+                        "anim-player opacity-0",
+                        index > 0 && "-ml-52",
+                      )}
+                    >
+                      <Image
+                        src={player.player_imageUrl}
+                        alt={player.player_name ?? ""}
+                        width={443}
+                        height={663}
+                      />
+                    </div>
+                  ))}
                 {/* WWCD title */}
                 <div className="anim-title text-widget-text-3 absolute -top-12 -z-10 w-full text-center text-[240px] leading-[0.9] uppercase opacity-0">
                   <span>WINNER WINNER</span>
