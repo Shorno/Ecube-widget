@@ -47,6 +47,17 @@ export default function AchievementBanner({
   const teamName = team?.name || "TEAM";
   const showKills = typeof kills === "number";
 
+  // Icon-variant title auto-fits its column. A long single word like
+  // "GRENADIER" can't wrap across the 7ch cap, so it would overflow and clip.
+  // Widen the cap to the longest word and shrink the font proportionally, which
+  // keeps the pixel width constant. Titles whose longest word is <= 7 chars
+  // (FIRST BLOOD, VEHICLE ELIM, AIR DROP LOOTED) are left exactly as before.
+  const longestTitleWord = Math.max(
+    ...title.split(/\s+/).map((word) => word.length),
+  );
+  const titleCapCh = Math.max(7, longestTitleWord);
+  const titleFontRem = (2.75 * 7) / titleCapCh;
+
   const bannerWidth = 483;
   const leftWidth = 210;
   const rightWidth = bannerWidth - leftWidth;
@@ -175,7 +186,11 @@ export default function AchievementBanner({
                   initial={{ opacity: 0, x: 12 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.35, delay: 0.3, ease: "easeOut" }}
-                  className="font-primary max-w-[7ch] text-center text-[2.75rem] font-normal tracking-[0.06em] text-widget-text-2 uppercase leading-[0.9]"
+                  className="font-primary text-center font-normal tracking-[0.06em] text-widget-text-2 uppercase leading-[0.9]"
+                  style={{
+                    maxWidth: `${titleCapCh}ch`,
+                    fontSize: `${titleFontRem}rem`,
+                  }}
                 >
                   {title}
                 </motion.div>
