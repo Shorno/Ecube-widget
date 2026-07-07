@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { useAchievements } from "@/hooks/widget-data";
+import { ACHIEVEMENT_ICONS } from "./_components/achievements/achievementIcons";
 import AchievementPreviewControls from "./_components/achievements/AchievementPreviewControls";
 import AchievementsLayer from "./_components/achievements/AchievementsLayer";
 
@@ -26,6 +28,17 @@ export default function AchievementsView({
     triggerVehicleElimPreview,
     triggerGrenadierPreview,
   } = useAchievements(tournamentID, { preview });
+
+  // Warm the achievement header icons into the browser cache on mount. Overlays
+  // only reference an icon once its event fires, so without this the first event
+  // of each type fetches the icon from the network mid-animation and flashes a
+  // blank slot. Syncing with an external system (the browser image cache).
+  useEffect(() => {
+    ACHIEVEMENT_ICONS.forEach((src) => {
+      const img = new window.Image();
+      img.src = src;
+    });
+  }, []);
 
   return (
     <div className="relative h-screen w-screen bg-transparent">

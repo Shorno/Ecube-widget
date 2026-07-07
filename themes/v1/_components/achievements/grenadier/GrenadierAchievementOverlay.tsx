@@ -2,8 +2,7 @@
 
 import type { GrenadierPayload } from "@/types/grenadier";
 import AchievementBanner from "../AchievementBanner";
-
-const GRENADE_ICON = "/assets/achievements/grenade.svg";
+import { GRENADE_ICON } from "../achievementIcons";
 
 type Props = {
   data: GrenadierPayload;
