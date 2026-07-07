@@ -2,8 +2,7 @@
 
 import type { DropLootedPayload } from "@/types/drop-looted";
 import AchievementBanner from "../AchievementBanner";
-
-const AIRDROP_ICON = "/assets/match-summary/airdrop.svg";
+import { AIRDROP_ICON } from "../achievementIcons";
 
 type Props = {
   data: DropLootedPayload;

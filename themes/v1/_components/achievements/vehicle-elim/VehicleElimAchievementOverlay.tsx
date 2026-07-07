@@ -2,8 +2,7 @@
 
 import type { VehicleElimPayload } from "@/types/vehicle-elim";
 import AchievementBanner from "../AchievementBanner";
-
-const VEHICLE_ICON = "/assets/achievements/vehicle.svg";
+import { VEHICLE_ICON } from "../achievementIcons";
 
 type Props = {
   data: VehicleElimPayload;
