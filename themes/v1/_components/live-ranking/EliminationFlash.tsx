@@ -88,7 +88,7 @@ export default function EliminationFlash({ onDone }: Props) {
           data-stamp
           className="font-secondary text-widget-text-3 font-black uppercase"
           style={{
-            fontSize: "18px",
+            fontSize: "26px",
             letterSpacing: "0.25em",
             opacity: 0,
             textShadow: "0 1px 2px rgba(0,0,0,0.6)",
