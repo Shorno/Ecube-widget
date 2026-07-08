@@ -42,7 +42,7 @@ export default function TeamEliminationLayer({
         </div>
       )}
 
-      <div className="pointer-events-none fixed top-[12%] left-1/2 z-40 -translate-x-1/2">
+      <div className="pointer-events-none fixed top-[176px] left-1/2 z-40 -translate-x-1/2">
         <AnimatePresence onExitComplete={onExitComplete}>
           {isVisible && currentElimination && (
             <TeamEliminationOverlay
