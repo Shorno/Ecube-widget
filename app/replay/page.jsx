@@ -11,12 +11,18 @@ import Centered from "@/components/replay/Centered";
 // The broadcast output: nothing but the map, mirroring whatever the Replay
 // Control is playing. Open /replay/control alongside this to drive it.
 export default function ReplayDisplayPage() {
-  const { data, isLoading, isError } = useGetReplayEventsQuery();
-  const time = useReplayViewer();
+  const { data: defaultData, isError } = useGetReplayEventsQuery();
+  const { time, localData } = useReplayViewer();
 
-  if (isLoading) return <Centered>Loading replay…</Centered>;
-  if (isError || !data)
-    return <Centered>Failed to load replay recording</Centered>;
+  // A match loaded on the control widget takes precedence over the default.
+  const data = localData ?? defaultData;
+
+  if (!data)
+    return (
+      <Centered>
+        {isError ? "Failed to load replay recording" : "Loading replay…"}
+      </Centered>
+    );
 
   const timeline = buildTimeline(data.events);
   const { players, zone, plane, trails, killMarkers, observedUid } =
