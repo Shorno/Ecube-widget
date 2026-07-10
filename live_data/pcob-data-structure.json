@@ -1,0 +1,452 @@
+{
+  "totalmessage": {
+    "TotalPlayerList": [
+      {
+        "uId": 5139933423,
+        "playerName": "KS丨HANZO",
+        "playerOpenId": "8235543888790824",
+        "picUrl": "",
+        "showPicUrl": false,
+        "teamId": 1,
+        "teamName": "Team1",
+        "character": "None",
+        "isFiring": false,
+        "bHasDied": false,
+        "location": {
+          "x": 171601,
+          "y": 143161,
+          "z": 2857
+        },
+        "health": 100,
+        "healthMax": 100,
+        "liveState": 0,
+        "killNum": 2,
+        "killNumBeforeDie": 2,
+        "playerKey": 2138110657,
+        "gotAirDropNum": 0,
+        "maxKillDistance": 5,
+        "damage": 200,
+        "killNumInVehicle": 0,
+        "killNumByGrenade": 0,
+        "AIKillNum": 2,
+        "BossKillNum": 0,
+        "rank": 1,
+        "isOutsideBlueCircle": false,
+        "inDamage": 0,
+        "heal": 0,
+        "headShotNum": 0,
+        "survivalTime": 233,
+        "driveDistance": 0,
+        "marchDistance": 119,
+        "assists": 0,
+        "outsideBlueCircleTime": 0,
+        "knockouts": 2,
+        "rescueTimes": 0,
+        "useSmokeGrenadeNum": 0,
+        "useFragGrenadeNum": 0,
+        "useBurnGrenadeNum": 0,
+        "useFlashGrenadeNum": 0,
+        "PoisonTotalDamage": 0,
+        "UseSelfRescueTime": 0,
+        "UseEmergencyCallTime": 0
+      },
+      {
+        "uId": 527077765,
+        "playerName": "KS丨FAHlM",
+        "playerOpenId": "1240250928465192",
+        "picUrl": "",
+        "showPicUrl": false,
+        "teamId": 1,
+        "teamName": "Team1",
+        "character": "None",
+        "isFiring": true,
+        "bHasDied": false,
+        "location": {
+          "x": 171909,
+          "y": 143227,
+          "z": 2849
+        },
+        "health": 100,
+        "healthMax": 100,
+        "liveState": 0,
+        "killNum": 1,
+        "killNumBeforeDie": 1,
+        "playerKey": 4068873881,
+        "gotAirDropNum": 0,
+        "maxKillDistance": 5,
+        "damage": 199,
+        "killNumInVehicle": 0,
+        "killNumByGrenade": 0,
+        "AIKillNum": 1,
+        "BossKillNum": 0,
+        "rank": 1,
+        "isOutsideBlueCircle": false,
+        "inDamage": 0,
+        "heal": 0,
+        "headShotNum": 1,
+        "survivalTime": 233,
+        "driveDistance": 0,
+        "marchDistance": 150,
+        "assists": 1,
+        "outsideBlueCircleTime": 0,
+        "knockouts": 0,
+        "rescueTimes": 0,
+        "useSmokeGrenadeNum": 0,
+        "useFragGrenadeNum": 0,
+        "useBurnGrenadeNum": 0,
+        "useFlashGrenadeNum": 0,
+        "PoisonTotalDamage": 0,
+        "UseSelfRescueTime": 0,
+        "UseEmergencyCallTime": 0
+      },
+      {
+        "uId": 52488341911,
+        "playerName": "CupKochi",
+        "playerOpenId": "185700894783178024",
+        "picUrl": "",
+        "showPicUrl": false,
+        "teamId": 2,
+        "teamName": "Team2",
+        "character": "None",
+        "isFiring": false,
+        "bHasDied": false,
+        "location": {
+          "x": 171413,
+          "y": 142907,
+          "z": 2825
+        },
+        "health": 0,
+        "healthMax": 100,
+        "liveState": 5,
+        "killNum": 0,
+        "killNumBeforeDie": 0,
+        "playerKey": 1317508700,
+        "gotAirDropNum": 0,
+        "maxKillDistance": 0,
+        "damage": 0,
+        "killNumInVehicle": 0,
+        "killNumByGrenade": 0,
+        "AIKillNum": 0,
+        "BossKillNum": 0,
+        "rank": 2,
+        "isOutsideBlueCircle": false,
+        "inDamage": 100,
+        "heal": 0,
+        "headShotNum": 0,
+        "survivalTime": 233,
+        "driveDistance": 0,
+        "marchDistance": 45,
+        "assists": 0,
+        "outsideBlueCircleTime": 0,
+        "knockouts": 0,
+        "rescueTimes": 0,
+        "useSmokeGrenadeNum": 0,
+        "useFragGrenadeNum": 0,
+        "useBurnGrenadeNum": 0,
+        "useFlashGrenadeNum": 0,
+        "PoisonTotalDamage": 0,
+        "UseSelfRescueTime": 0,
+        "UseEmergencyCallTime": 0
+      },
+      {
+        "uId": 52486200243,
+        "playerName": "EndlessBOB",
+        "playerOpenId": "185569052104983848",
+        "picUrl": "",
+        "showPicUrl": false,
+        "teamId": 2,
+        "teamName": "Team2",
+        "character": "None",
+        "isFiring": false,
+        "bHasDied": false,
+        "location": {
+          "x": 171868,
+          "y": 142688,
+          "z": 2834
+        },
+        "health": 0,
+        "healthMax": 100,
+        "liveState": 5,
+        "killNum": 0,
+        "killNumBeforeDie": 0,
+        "playerKey": 3125928261,
+        "gotAirDropNum": 0,
+        "maxKillDistance": 0,
+        "damage": 0,
+        "killNumInVehicle": 0,
+        "killNumByGrenade": 0,
+        "AIKillNum": 0,
+        "BossKillNum": 0,
+        "rank": 2,
+        "isOutsideBlueCircle": false,
+        "inDamage": 100,
+        "heal": 0,
+        "headShotNum": 0,
+        "survivalTime": 233,
+        "driveDistance": 0,
+        "marchDistance": 31,
+        "assists": 0,
+        "outsideBlueCircleTime": 0,
+        "knockouts": 0,
+        "rescueTimes": 0,
+        "useSmokeGrenadeNum": 0,
+        "useFragGrenadeNum": 0,
+        "useBurnGrenadeNum": 0,
+        "useFlashGrenadeNum": 0,
+        "PoisonTotalDamage": 0,
+        "UseSelfRescueTime": 0,
+        "UseEmergencyCallTime": 0
+      },
+      {
+        "uId": 5209690069,
+        "playerName": "KSaxeNEEL",
+        "playerOpenId": "12490206540596520",
+        "picUrl": "",
+        "showPicUrl": false,
+        "teamId": 2,
+        "teamName": "Team2",
+        "character": "None",
+        "isFiring": false,
+        "bHasDied": false,
+        "location": {
+          "x": 171527,
+          "y": 142808,
+          "z": 2820
+        },
+        "health": 0,
+        "healthMax": 100,
+        "liveState": 5,
+        "killNum": 0,
+        "killNumBeforeDie": 0,
+        "playerKey": 1248469102,
+        "gotAirDropNum": 0,
+        "maxKillDistance": 0,
+        "damage": 0,
+        "killNumInVehicle": 0,
+        "killNumByGrenade": 0,
+        "AIKillNum": 0,
+        "BossKillNum": 0,
+        "rank": 2,
+        "isOutsideBlueCircle": false,
+        "inDamage": 198,
+        "heal": 0,
+        "headShotNum": 0,
+        "survivalTime": 230,
+        "driveDistance": 0,
+        "marchDistance": 4,
+        "assists": 0,
+        "outsideBlueCircleTime": 0,
+        "knockouts": 0,
+        "rescueTimes": 0,
+        "useSmokeGrenadeNum": 0,
+        "useFragGrenadeNum": 0,
+        "useBurnGrenadeNum": 0,
+        "useFlashGrenadeNum": 0,
+        "PoisonTotalDamage": 0,
+        "UseSelfRescueTime": 0,
+        "UseEmergencyCallTime": 0
+      }
+    ],
+    "TeamInfoList": [
+      {
+        "teamId": 1,
+        "teamName": "Team1",
+        "isShowLogo": false,
+        "logoPicUrl": "",
+        "killNum": 3,
+        "liveMemberNum": 2
+      },
+      {
+        "teamId": 2,
+        "teamName": "Team2",
+        "isShowLogo": false,
+        "logoPicUrl": "",
+        "killNum": 0,
+        "liveMemberNum": 0
+      }
+    ],
+    "GameStartTime": "1783193310",
+    "FightingStartTime": "1783193365",
+    "FinishedStartTime": "1783193598",
+    "GameID": "2379307503844542172",
+    "CurrentTime": "1783193617"
+  },
+  "setobservingplayer": {
+    "0": "52488341911",
+    "GunADS": "false"
+  },
+  "setgameglobalinfo": {
+    "CircleArray": [
+      {
+        "X": "327702.125000",
+        "Y": "448851.125000",
+        "Size": "254520.000000"
+      }
+    ],
+    "PlaneStartLocX": "77637.843750",
+    "PlaneStartLocY": "-59795.968750",
+    "PlaneStopLocX": "640025.875000",
+    "PlaneStopLocY": "917271.375000"
+  },
+  "setteambackpackinfo": {
+    "TeamBackPackList": [
+      {
+        "602420": "Quality:0,Num:1,Worth:0",
+        "604127": "Quality:0,Num:10,Worth:0",
+        "MainWeapon1ID": 0,
+        "MainWeapon1AmmoNuminClip": 0,
+        "MainWeapon2ID": 0,
+        "MainWeapon2AmmoNuminClip": 0,
+        "PlayerKey": 1317508700,
+        "TeamID": 2
+      },
+      {
+        "602420": "Quality:0,Num:1,Worth:0",
+        "604127": "Quality:0,Num:10,Worth:0",
+        "MainWeapon1ID": 0,
+        "MainWeapon1AmmoNuminClip": 0,
+        "MainWeapon2ID": 0,
+        "MainWeapon2AmmoNuminClip": 0,
+        "PlayerKey": 3125928261,
+        "TeamID": 2
+      }
+    ]
+  },
+  "setisingame": "Finished",
+  "setcircleinfo": {
+    "GameTime": "203",
+    "CircleStatus": "0",
+    "CircleIndex": "1",
+    "Counter": "113",
+    "MaxTime": "300"
+  },
+  "setkillinfo": {
+    "CauserName": "KS丨FAHlM",
+    "VictimName": "EndlessBOB",
+    "CauserUID": "527077765",
+    "VictimUID": "52486200243",
+    "ItemID": "101101",
+    "ResultHealthStatus": "2",
+    "CurGameTime": "290",
+    "Distance": 5
+  },
+  "setplayerassistinfo": {
+    "PlayerAssistInfo": [
+      {},
+      {
+        "killerUId": 5139933423,
+        "victimUId": 5209690069,
+        "assistUIdArray": [
+          527077765
+        ]
+      }
+    ]
+  },
+  "setplayerweapondetailinfo": {
+    "WeaponResult": [
+      {
+        "BodyShootCount": 0,
+        "UniqueHitCount": 4,
+        "FootShootCount": 0,
+        "HeadShootCount": 4,
+        "TotalDamage": 367.33152008057,
+        "AvatarID": -1,
+        "LimbsShootCount": 0,
+        "TotalUseTime": 170.62454986572,
+        "FireCount": 4,
+        "Associations": [],
+        "KnockNumber": 0,
+        "KillCount": 1,
+        "WeaponId": 101101,
+        "DIYPlanID": -1,
+        "HitDistanceArray": [
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        "TotalOwnTime": 163.38047027588,
+        "HandShootCount": 0
+      },
+      {
+        "BodyShootCount": 0,
+        "UniqueHitCount": 0,
+        "FootShootCount": 0,
+        "HeadShootCount": 0,
+        "TotalDamage": 0,
+        "AvatarID": 1103005013,
+        "LimbsShootCount": 0,
+        "TotalUseTime": 62.730728149414,
+        "FireCount": 0,
+        "Associations": [],
+        "KnockNumber": 0,
+        "KillCount": 0,
+        "WeaponId": 103005,
+        "DIYPlanID": -1,
+        "HitDistanceArray": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "TotalOwnTime": 163.82543945312,
+        "HandShootCount": 0
+      },
+      {
+        "BodyShootCount": 0,
+        "UniqueHitCount": 0,
+        "FootShootCount": 0,
+        "HeadShootCount": 0,
+        "TotalDamage": 0,
+        "AvatarID": 1106002016,
+        "LimbsShootCount": 0,
+        "TotalUseTime": 36.450119018555,
+        "FireCount": 0,
+        "Associations": [
+          203002
+        ],
+        "KnockNumber": 0,
+        "KillCount": 0,
+        "WeaponId": 106002,
+        "DIYPlanID": -1,
+        "HitDistanceArray": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "TotalOwnTime": 167.56332397461,
+        "HandShootCount": 0
+      }
+    ],
+    "RoomID": 2379307503844500000,
+    "PlayerID": 527077765,
+    "CustomRoomID": 3973202
+  },
+  "setplayersaminfo": {
+    "UseData": [],
+    "RoomID": 2379307503844500000,
+    "PlayerID": 527077765,
+    "PickUpData": []
+  },
+  "setplayerssightusageinfo": {
+    "PlayersSightUsageInfos": [
+      {
+        "0": 0,
+        "1": 2,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "PlayerKey": 4068873881
+      }
+    ]
+  },
+  "setplayerweaponinfo": {
+    "TotalPlayerWeaponReport": []
+  }
+}
