@@ -47,7 +47,7 @@ export default function PlayerCard({
       <div className="px-2">
         <div className="to-widget-primary from-widget-primary-accent bg-linear-to-r text-center">
           <p className="text-widget-text-3 font-secondary truncate text-[40px] uppercase">
-            {player.player_name}
+            {player.player_ign ?? player.player_name}
           </p>
         </div>
       </div>
