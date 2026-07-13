@@ -21,16 +21,13 @@ const CENTER_PANEL_GRADIENT =
 const ELIMINATED_BAR_GRADIENT =
   "linear-gradient(180deg, color-mix(in srgb, var(--widget-primary-dark) 88%, white) 0%, var(--widget-primary-dark) 45%, color-mix(in srgb, var(--widget-primary-dark) 80%, black) 100%)";
 
-// Depth layering for the four busts — the middle pair sits in front (full size,
-// higher stacking, drop shadow), the outer pair tucks behind (smaller, dimmed).
-// Negative `overlap` pulls each bust over its neighbour so silhouettes overlap
-// instead of leaving a hard seam between them.
-const PLAYER_LAYERS = [
-  { scale: 0.82, z: 10, overlap: 0, back: true },
-  { scale: 1, z: 30, overlap: -28, back: false },
-  { scale: 1, z: 30, overlap: -28, back: false },
-  { scale: 0.82, z: 10, overlap: -28, back: true },
-];
+// Busts render at one equal size and softly overlap at the shoulders — no depth
+// scaling or dimming, matching the after-match ranking winner card. Negative
+// `PLAYER_OVERLAP` pulls each bust over its neighbour so silhouettes overlap
+// instead of leaving a hard seam, without one image hard-blocking another.
+const PLAYER_WIDTH = 92;
+const PLAYER_HEIGHT = 96;
+const PLAYER_OVERLAP = -20;
 
 type Props = {
   data: TeamEliminationPayload;
@@ -38,9 +35,16 @@ type Props = {
   showFullTeamName?: boolean;
 };
 
+// One bust per player the team actually fielded — mirrors the live overall
+// ranking, which renders a status bar per entry in `players` and never pads a
+// short squad up to four. The default image is only a per-player photo fallback,
+// never a filler slot, so a three-player squad shows exactly three busts.
 function getPlayerImages(data: TeamEliminationPayload): string[] {
-  const fromTeam = data.victimTeam.players?.map((p) => p.image) ?? [];
-  return Array.from({ length: 4 }, (_, i) => fromTeam[i] ?? DEFAULT_PLAYER_IMAGE);
+  return (
+    data.victimTeam.players
+      ?.slice(0, 4)
+      .map((p) => p.image || DEFAULT_PLAYER_IMAGE) ?? []
+  );
 }
 
 function getPlacement(data: TeamEliminationPayload): number {
@@ -122,44 +126,33 @@ export default function TeamEliminationOverlay({
             </div>
           )}
           <div className="relative flex flex-1 items-end justify-center pt-1">
-            {playerImages.map((src, i) => {
-              const layer = PLAYER_LAYERS[i];
-              return (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.3,
-                    delay: 0.25 + i * 0.08,
-                    ease: "easeOut",
-                  }}
-                  className="relative h-[96px] w-[92px] shrink-0"
-                  style={{ zIndex: layer.z, marginLeft: layer.overlap }}
-                >
-                  <div
-                    className={cn(
-                      "relative h-full w-full",
-                      layer.back
-                        ? "brightness-[0.82]"
-                        : "drop-shadow-[0_3px_6px_rgba(0,0,0,0.45)]",
-                    )}
-                    style={{
-                      transform: `scale(${layer.scale})`,
-                      transformOrigin: "bottom center",
-                    }}
-                  >
-                    <Image
-                      src={src}
-                      alt={`Player ${i + 1}`}
-                      fill
-                      className="object-cover object-top"
-                      unoptimized
-                    />
-                  </div>
-                </motion.div>
-              );
-            })}
+            {playerImages.map((src, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.3,
+                  delay: 0.25 + i * 0.08,
+                  ease: "easeOut",
+                }}
+                className="relative shrink-0 drop-shadow-[0_3px_6px_rgba(0,0,0,0.45)]"
+                style={{
+                  width: PLAYER_WIDTH,
+                  height: PLAYER_HEIGHT,
+                  marginLeft: i === 0 ? 0 : PLAYER_OVERLAP,
+                  zIndex: 10 + i,
+                }}
+              >
+                <Image
+                  src={src}
+                  alt={`Player ${i + 1}`}
+                  fill
+                  className="object-cover object-top"
+                  unoptimized
+                />
+              </motion.div>
+            ))}
           </div>
           <motion.div
             initial={{ y: "100%" }}
