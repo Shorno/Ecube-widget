@@ -6,9 +6,9 @@ export const LIVE_RANKING_ROW_HEIGHT = 40.625;
 export const LIVE_RANKING_HEADER_HEIGHT = 40;
 export const LIVE_RANKING_LEGEND_HEIGHT = 19;
 
-/** Broadcast layout — reserve top-right for in-game minimap */
-export const LIVE_RANKING_MAP_SAFE_TOP = 220;
-export const LIVE_RANKING_MAP_SAFE_WIDTH = 280;
+/** Broadcast layout — reserve top-right for the 204x250 in-game minimap */
+export const LIVE_RANKING_MAP_SAFE_TOP = 250;
+export const LIVE_RANKING_MAP_SAFE_WIDTH = 204;
 export const LIVE_RANKING_PANEL_BOTTOM = 16;
 export const LIVE_RANKING_PANEL_SCALE = 0.92;
 

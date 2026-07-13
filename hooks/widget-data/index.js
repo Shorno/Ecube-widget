@@ -16,6 +16,7 @@ export { useTopPlayers } from "./useTopPlayers";
 export { useTopPlayersGroup } from "./useTopPlayersGroup";
 export { useWWC } from "./useWWC";
 export { useLiveOverallRanking } from "./useLiveOverallRanking";
+export { useLiveCircleTimer } from "./useLiveCircleTimer";
 export { useTeamElimination } from "./useTeamElimination";
 export { useEliminationQueue } from "./useEliminationQueue";
 export { useAchievementQueue } from "./useAchievementQueue";

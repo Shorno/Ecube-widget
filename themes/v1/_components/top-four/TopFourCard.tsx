@@ -67,6 +67,8 @@ export default function TopFourCard({
         style={{ width: TOP_FOUR_CARD_WIDTH, height: TOP_FOUR_CARD_HEIGHT }}
       >
         <TopFourCardShape
+          width={TOP_FOUR_CARD_WIDTH}
+          height={TOP_FOUR_CARD_HEIGHT}
           primaryColor="var(--widget-primary)"
           primaryDarkColor="var(--widget-primary-dark)"
           primaryAccentColor="var(--widget-secondary-dark)"
