@@ -17,7 +17,7 @@ const MOCK_LIVE_MATCH = {
  * Live Match Info — current match metadata for match-start overlays.
  */
 export function useLiveMatchInfo(tournamentID, { preview = false } = {}) {
-  const { data, isLoading } = useGetLiveMatchInfoQuery(
+  const { data, isLoading, isFetching, refetch } = useGetLiveMatchInfoQuery(
     { tournamentID },
     { skip: preview },
   );
@@ -27,12 +27,14 @@ export function useLiveMatchInfo(tournamentID, { preview = false } = {}) {
       match: MOCK_LIVE_MATCH,
       info: { ...MOCK_MATCH_INFO, match_map: "ERANGEL" },
       ready: true,
+      refresh: null,
     };
   }
 
   return {
     match: data?.data ?? null,
     info: data?.info ?? null,
-    ready: !isLoading && !!data?.data,
+    ready: !isLoading && !isFetching && !!data?.data,
+    refresh: refetch,
   };
 }

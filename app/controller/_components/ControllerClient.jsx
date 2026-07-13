@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import EcubeBrand from "@/components/common/EcubeBrand";
 import TeamFlagsSwitch from "@/components/common/TeamFlagsSwitch";
 import ObserverHighlightSwitch from "@/components/common/ObserverHighlightSwitch";
+import WidgetStatusBanner from "@/components/common/WidgetStatusBanner";
 import {
   Select,
   SelectContent,
@@ -27,7 +28,7 @@ export default function ControllerClient({ userId, allowedTournamentIds }) {
   const [sendStatus, setSendStatus] = useState("idle");
   const [origin, setOrigin] = useState("");
   const [copied, setCopied] = useState(false);
-  const [loadError, setLoadError] = useState(null);
+  const [widgetError, setWidgetError] = useState(null);
 
   useEffect(() => {
     setOrigin(window.location.origin);
@@ -52,8 +53,11 @@ export default function ControllerClient({ userId, allowedTournamentIds }) {
 
     const es = new EventSource(`/api/sse?tournamentId=${initial || ""}`);
     es.addEventListener("widget-status", (e) => {
-      const { widgetUrl, failedImages } = JSON.parse(e.data);
-      setLoadError({ widgetUrl, failedImages });
+      const status = JSON.parse(e.data);
+      setWidgetError((current) => {
+        if (status.state === "error") return status;
+        return current?.widgetUrl === status.widgetUrl ? null : current;
+      });
     });
 
     return () => es.close();
@@ -66,7 +70,7 @@ export default function ControllerClient({ userId, allowedTournamentIds }) {
     localStorage.setItem(`effinity-tid-${userId}`, tid);
     setActiveUrl(undefined);
     setActiveLabel(null);
-    setLoadError(null);
+    setWidgetError(null);
   }
 
   async function sendCommand(url, label, target = "display") {
@@ -216,35 +220,10 @@ export default function ControllerClient({ userId, allowedTournamentIds }) {
         </div>
       </header>
 
-      {/* Load error banner */}
-      {loadError && (
-        <div className="border-b border-red-700 bg-red-950 px-5 py-2">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <p className="mb-1 text-xs font-bold tracking-widest text-red-400 uppercase">
-                ⚠ Widget hidden — image failed to load
-              </p>
-              <p className="mb-1 text-xs text-red-500">
-                Widget:{" "}
-                <span className="font-mono text-red-300">
-                  {loadError.widgetUrl}
-                </span>
-              </p>
-              {loadError.failedImages.map((url, i) => (
-                <p key={i} className="truncate font-mono text-xs text-red-400">
-                  ✗ {url}
-                </p>
-              ))}
-            </div>
-            <button
-              onClick={() => setLoadError(null)}
-              className="my-auto shrink-0 bg-red-900 p-4 text-xs font-bold text-red-100 hover:text-red-300"
-            >
-              Dismiss
-            </button>
-          </div>
-        </div>
-      )}
+      <WidgetStatusBanner
+        status={widgetError}
+        onDismiss={() => setWidgetError(null)}
+      />
 
       {/* Display URL bar */}
       <div className="flex items-center justify-between gap-4 border-b border-gray-800 bg-gray-950 px-5 py-2">

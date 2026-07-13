@@ -1,4 +1,5 @@
 import { useState, useEffect, useLayoutEffect } from "react";
+import { reportWidgetError } from "@/lib/widget-status-client";
 
 export function useWidgetReady(containerRef, dataReady) {
   const [ready, setReady] = useState(false);
@@ -9,7 +10,6 @@ export function useWidgetReady(containerRef, dataReady) {
   useLayoutEffect(() => {
     if (!dataReady || !containerRef.current) return;
     const images = containerRef.current.querySelectorAll("img");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (images.length === 0) setReady(true);
   }, [dataReady, containerRef]);
 
@@ -29,14 +29,11 @@ export function useWidgetReady(containerRef, dataReady) {
 
     function onError(src) {
       failedImages.push(src);
-      fetch("/api/widget-status", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          widgetUrl: window.location.pathname,
-          failedImages,
-        }),
-      }).catch(() => {});
+      reportWidgetError({
+        kind: "image-load",
+        message: "One or more required widget images failed to load.",
+        details: failedImages,
+      });
 
       if (process.env.NEXT_PUBLIC_HIDE_ON_IMAGE_ERROR === "false") {
         onLoad();

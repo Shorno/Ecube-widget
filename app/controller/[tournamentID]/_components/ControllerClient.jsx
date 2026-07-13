@@ -8,6 +8,7 @@ import EcubeBrand from "@/components/common/EcubeBrand";
 import TeamNameSwitch from "@/components/common/TeamNameSwitch";
 import TeamFlagsSwitch from "@/components/common/TeamFlagsSwitch";
 import ObserverHighlightSwitch from "@/components/common/ObserverHighlightSwitch";
+import WidgetStatusBanner from "@/components/common/WidgetStatusBanner";
 import {
   Select,
   SelectContent,
@@ -34,7 +35,7 @@ export default function ControllerClient({
   const [sendStatus, setSendStatus] = useState("idle");
   const [origin, setOrigin] = useState("");
   const [copied, setCopied] = useState(false);
-  const [loadError, setLoadError] = useState(null);
+  const [widgetError, setWidgetError] = useState(null);
 
   useEffect(() => {
     setOrigin(window.location.origin);
@@ -50,8 +51,11 @@ export default function ControllerClient({
 
     const es = new EventSource(`/api/sse?tournamentId=${tournamentId}`);
     es.addEventListener("widget-status", (e) => {
-      const { widgetUrl, failedImages } = JSON.parse(e.data);
-      setLoadError({ widgetUrl, failedImages });
+      const status = JSON.parse(e.data);
+      setWidgetError((current) => {
+        if (status.state === "error") return status;
+        return current?.widgetUrl === status.widgetUrl ? null : current;
+      });
     });
 
     return () => es.close();
@@ -70,7 +74,7 @@ export default function ControllerClient({
         if (target === "display") {
           setActiveUrl(url);
           setActiveLabel(label);
-          setLoadError(null);
+          setWidgetError(null);
         }
         setSendStatus("sent");
         setTimeout(() => setSendStatus("idle"), 1200);
@@ -156,35 +160,10 @@ export default function ControllerClient({
         </div>
       </header>
 
-      {/* Load error banner */}
-      {loadError && (
-        <div className="border-b border-red-700 bg-red-950 px-5 py-2">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <p className="mb-1 text-xs font-bold tracking-widest text-red-400 uppercase">
-                ⚠ Widget hidden — image failed to load
-              </p>
-              <p className="mb-1 text-xs text-red-500">
-                Widget:{" "}
-                <span className="font-mono text-red-300">
-                  {loadError.widgetUrl}
-                </span>
-              </p>
-              {loadError.failedImages.map((url, i) => (
-                <p key={i} className="truncate font-mono text-xs text-red-400">
-                  ✗ {url}
-                </p>
-              ))}
-            </div>
-            <button
-              onClick={() => setLoadError(null)}
-              className="my-auto shrink-0 bg-red-900 p-4 text-xs font-bold text-red-100 hover:text-red-300"
-            >
-              Dismiss
-            </button>
-          </div>
-        </div>
-      )}
+      <WidgetStatusBanner
+        status={widgetError}
+        onDismiss={() => setWidgetError(null)}
+      />
 
       {/* Sources bar: LEFT sources | CENTER live | RIGHT controls */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-gray-800 bg-gray-950 px-5 py-2">
@@ -248,7 +227,7 @@ export default function ControllerClient({
           <button
             onClick={copyDisplayUrl}
             className={[
-              "shrink-0 whitespace-nowrap border px-3 py-1 text-xs font-bold tracking-wider uppercase transition-colors",
+              "shrink-0 border px-3 py-1 text-xs font-bold tracking-wider whitespace-nowrap uppercase transition-colors",
               copied
                 ? "border-green-500 bg-green-950 text-green-400"
                 : "border-gray-600 text-gray-400 hover:border-blue-500 hover:text-blue-400",
@@ -259,20 +238,20 @@ export default function ControllerClient({
           <Link
             href={`/${userId}/${tournamentId}/display`}
             target="_blank"
-            className="shrink-0 whitespace-nowrap border border-gray-600 px-3 py-1 text-xs font-bold tracking-wider text-gray-400 uppercase hover:border-blue-500 hover:text-blue-400"
+            className="shrink-0 border border-gray-600 px-3 py-1 text-xs font-bold tracking-wider whitespace-nowrap text-gray-400 uppercase hover:border-blue-500 hover:text-blue-400"
           >
             Open ↗
           </Link>
           <Link
             href={`/${userId}/${tournamentId}/widgets`}
             target="_blank"
-            className="shrink-0 whitespace-nowrap border border-gray-600 px-3 py-1 text-xs font-bold tracking-wider text-gray-400 uppercase hover:border-blue-500 hover:text-blue-400"
+            className="shrink-0 border border-gray-600 px-3 py-1 text-xs font-bold tracking-wider whitespace-nowrap text-gray-400 uppercase hover:border-blue-500 hover:text-blue-400"
           >
             Individual Links
           </Link>
           <Link
             href="/settings"
-            className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap border border-blue-600 bg-blue-700/30 px-3 py-1 text-xs font-bold tracking-wider text-blue-300 uppercase transition-colors hover:bg-blue-700/60 hover:text-white"
+            className="inline-flex shrink-0 items-center gap-1 border border-blue-600 bg-blue-700/30 px-3 py-1 text-xs font-bold tracking-wider whitespace-nowrap text-blue-300 uppercase transition-colors hover:bg-blue-700/60 hover:text-white"
           >
             ⚙ Settings
           </Link>
