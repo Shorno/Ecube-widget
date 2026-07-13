@@ -15,6 +15,7 @@ import {
   ACHIEVEMENT_WIDGETS,
   IN_GAME_WIDGETS,
   PRE_GAME_WIDGETS,
+  REPLAY_WIDGETS,
   getWidgetPath,
   getWidgetPlaceholder,
 } from "@/lib/widget-catalog";
@@ -247,7 +248,7 @@ export default function WidgetsPage() {
             <span className="h-px flex-1 bg-gray-700" />
           </div>
           <div className="mt-3 space-y-2">
-            {IN_GAME_WIDGETS.map((w) => {
+            {IN_GAME_WIDGETS.filter((w) => !w.hideFromLinks).map((w) => {
               const path = getWidgetPath(w, userId, tid);
               const url = toDisplayUrl(path, origin);
               return (
@@ -255,6 +256,33 @@ export default function WidgetsPage() {
                   key={w.id}
                   label={w.label}
                   url={url}
+                  placeholder={toDisplayUrl(getWidgetPlaceholder(w), origin)}
+                  copiedUrl={copiedUrl}
+                  onCopy={copy}
+                  origin={origin}
+                  disabled={!path}
+                />
+              );
+            })}
+          </div>
+        </section>
+
+        <section>
+          <div className="mb-3 flex items-center gap-3">
+            <span className="block h-4 w-1 shrink-0 rounded-sm bg-rose-500" />
+            <span className="text-xs font-bold tracking-widest text-rose-400 uppercase">
+              Replay
+            </span>
+            <span className="h-px flex-1 bg-gray-700" />
+          </div>
+          <div className="mt-3 space-y-2">
+            {REPLAY_WIDGETS.map((w) => {
+              const path = getWidgetPath(w, userId, tid);
+              return (
+                <UrlRow
+                  key={w.id}
+                  label={w.label}
+                  url={toDisplayUrl(path, origin)}
                   placeholder={toDisplayUrl(getWidgetPlaceholder(w), origin)}
                   copiedUrl={copiedUrl}
                   onCopy={copy}
