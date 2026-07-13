@@ -1,8 +1,11 @@
-export const TOP_FOUR_CARD_WIDTH = 301;
+// Cards carry generous internal slack, so they're kept narrow with a tight
+// inter-card gap — this keeps the centered row clear of the top-right circle
+// timer / minimap instead of running under them.
+export const TOP_FOUR_CARD_WIDTH = 274;
 export const TOP_FOUR_CARD_HEIGHT = 79;
 export const TOP_FOUR_WWCD_HEIGHT = 28;
 export const TOP_FOUR_WWCD_GAP = 8;
-export const TOP_FOUR_GAP = 16;
+export const TOP_FOUR_GAP = 8;
 export const TOP_FOUR_TOP_OFFSET = 16;
 
 export function getTopFourLayerWidth() {

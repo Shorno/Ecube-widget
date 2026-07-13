@@ -10,7 +10,8 @@ import {
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import WidgetStage from "@/components/common/WidgetStage";
-import { useLiveOverallRanking } from "@/hooks/widget-data";
+import CircleCountdown from "@/components/common/CircleCountdown";
+import { useLiveCircleTimer, useLiveOverallRanking } from "@/hooks/widget-data";
 import type { LiveRankEntry } from "@/types/live-rank";
 import LiveRankingHeader from "./_components/live-ranking/LiveRankingHeader";
 import LiveRankingRow from "./_components/live-ranking/LiveRankingRow";
@@ -61,6 +62,10 @@ export default function LiveOverallRankingView({
     triggerTopFourPreview,
     triggerEliminationPreview,
   } = useLiveOverallRanking(tournamentID, { preview, sortBy });
+  const { timer: circleTimer, triggerCircle } = useLiveCircleTimer(
+    tournamentID,
+    { preview },
+  );
 
   const containerRef = useRef<HTMLDivElement>(null);
   const slidePanelRef = useRef<HTMLDivElement>(null);
@@ -158,6 +163,8 @@ export default function LiveOverallRankingView({
   return (
     <WidgetStage dataReady={ready} onReady={() => {}}>
       <div className="relative h-screen w-screen overflow-hidden">
+        <CircleCountdown timer={circleTimer} />
+
         {preview && (
           <>
             <div className="fixed top-2 left-2 z-50 rounded bg-black/70 px-2 py-1 font-mono text-[10px] text-yellow-300 uppercase">
@@ -179,6 +186,7 @@ export default function LiveOverallRankingView({
               onTriggerObserver={triggerObservingPreview}
               onTriggerTopFour={triggerTopFourPreview}
               onTriggerElimination={triggerEliminationPreview}
+              onTriggerCircle={triggerCircle}
               topFourActive={showTopFour}
             />
           </>

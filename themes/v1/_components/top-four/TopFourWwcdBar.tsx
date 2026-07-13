@@ -23,6 +23,9 @@ export default function TopFourWwcdBar({ winProbability, className }: Props) {
         viewBox="0 0 301 28"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        // Stretch the 301-unit artwork to whatever card width is set, rather
+        // than letterboxing it, so the bar always spans the full card.
+        preserveAspectRatio="none"
         className="absolute inset-0 h-full w-full"
         aria-hidden
       >
@@ -95,15 +98,17 @@ export default function TopFourWwcdBar({ winProbability, className }: Props) {
         />
       </svg>
 
+      {/* Positions track the SVG's 301-unit split proportionally, so the
+          labels stay aligned when the card width changes. */}
       <div
         className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-[20px] leading-none uppercase tracking-[0.08em]"
-        style={{ left: 9, width: 148 }}
+        style={{ left: `${(9 / 301) * 100}%`, width: `${(148 / 301) * 100}%` }}
       >
         WWCD
       </div>
       <div
         className="absolute bottom-0 top-0 flex items-center justify-center font-primary text-[18px] leading-none tracking-wide"
-        style={{ left: 150.5, width: 141.5 }}
+        style={{ left: "50%", width: `${(141.5 / 301) * 100}%` }}
       >
         {Math.round(winProbability)}%
       </div>

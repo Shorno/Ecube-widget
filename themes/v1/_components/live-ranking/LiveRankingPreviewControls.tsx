@@ -4,6 +4,7 @@ type Props = {
   onTriggerObserver: () => void;
   onTriggerTopFour: () => void;
   onTriggerElimination: () => void;
+  onTriggerCircle: () => void;
   topFourActive?: boolean;
 };
 
@@ -11,6 +12,7 @@ export default function LiveRankingPreviewControls({
   onTriggerObserver,
   onTriggerTopFour,
   onTriggerElimination,
+  onTriggerCircle,
   topFourActive = false,
 }: Props) {
   return (
@@ -36,6 +38,13 @@ export default function LiveRankingPreviewControls({
         className="rounded bg-white px-4 py-2 text-sm font-bold text-black shadow hover:bg-gray-100"
       >
         Trigger Elimination
+      </button>
+      <button
+        type="button"
+        onClick={onTriggerCircle}
+        className="rounded bg-white px-4 py-2 text-sm font-bold text-black shadow hover:bg-gray-100"
+      >
+        Trigger Circle
       </button>
     </div>
   );

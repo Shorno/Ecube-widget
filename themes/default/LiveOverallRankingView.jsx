@@ -10,7 +10,8 @@ import {
 import { cn } from "@/lib/utils";
 import gsap from "gsap";
 import { Flip } from "gsap/Flip";
-import { useLiveOverallRanking } from "@/hooks/widget-data";
+import { useLiveCircleTimer, useLiveOverallRanking } from "@/hooks/widget-data";
+import CircleCountdown from "@/components/common/CircleCountdown";
 import { TeamRow } from "@/app/[userId]/[tournamentID]/in-game/_components/TeamRow";
 import TopFourLayer from "@/themes/v1/_components/top-four/TopFourLayer";
 
@@ -50,6 +51,10 @@ export default function LiveOverallRankingView({
     observingTeamId,
     ready,
   } = useLiveOverallRanking(tournamentID, { preview, sortBy });
+  const { timer: circleTimer, triggerCircle } = useLiveCircleTimer(
+    tournamentID,
+    { preview },
+  );
 
   const containerRef = useRef(null);
   const listPanelRef = useRef(null);
@@ -125,6 +130,18 @@ export default function LiveOverallRankingView({
 
   return (
     <div className="relative h-screen w-screen font-sans">
+      <CircleCountdown timer={circleTimer} />
+
+      {preview && (
+        <button
+          type="button"
+          onClick={triggerCircle}
+          className="fixed top-5 right-5 z-50 rounded bg-white px-4 py-2 text-sm font-bold text-black shadow hover:bg-gray-100"
+        >
+          Trigger Circle
+        </button>
+      )}
+
       {showTopFour && topFourTeams.length > 0 && (
         <TopFourLayer
           teams={topFourTeams}
