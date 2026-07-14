@@ -4,6 +4,7 @@ import Link from "next/link";
 import { requireSession } from "@/lib/auth/session";
 import { getUser } from "@/lib/db/queries";
 import EcubeBrand from "@/components/common/EcubeBrand";
+import AddTournamentForm from "./_components/AddTournamentForm";
 
 export default async function ControllerPage() {
   const session = await requireSession();
@@ -42,10 +43,12 @@ export default async function ControllerPage() {
           <h1 className="text-2xl font-bold text-white">Select Tournament</h1>
           {tids.length === 0 && (
             <p className="mt-2 text-sm text-gray-500">
-              No tournaments assigned. Contact your admin.
+              No tournaments yet. Add one with its ID below to get started.
             </p>
           )}
         </div>
+
+        <AddTournamentForm />
 
         {tids.length > 0 && (
           <div className="w-full max-w-sm space-y-2">
