@@ -8,6 +8,10 @@ import WidgetStage from "@/components/common/WidgetStage";
 import Layout from "@/components/common/Layout";
 import { useLiveMatchInfo, useMatchStartOverlay } from "@/hooks/widget-data";
 import { cn } from "@/lib/utils";
+import {
+  clearWidgetError,
+  reportWidgetError,
+} from "@/lib/widget-status-client";
 import type { LiveMatchInfo, MatchInfo } from "@/types/widgets";
 
 type Props = { tournamentID: string; preview?: boolean };
@@ -41,8 +45,13 @@ function displayMapImage(mapName: string) {
   return MAP_IMAGES[mapName.trim().toUpperCase()] ?? "";
 }
 
-export default function MatchStartView({ tournamentID, preview = false }: Props) {
-  const { match, info, ready } = useLiveMatchInfo(tournamentID, { preview });
+export default function MatchStartView({
+  tournamentID,
+  preview = false,
+}: Props) {
+  const { match, info, ready, refresh } = useLiveMatchInfo(tournamentID, {
+    preview,
+  });
   const {
     isVisible,
     isLocked,
@@ -54,19 +63,63 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
   const liveMatch = match as LiveMatchInfo | null;
   const matchInfo = info as MatchInfo | null;
   const [stageReady, setStageReady] = useState(false);
+  const [triggerVersion, setTriggerVersion] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const wasVisibleRef = useRef(false);
+  const triggerActiveRef = useRef(false);
 
   useEffect(() => {
-    if (preview || !tournamentID || !ready || !liveMatch) return;
+    if (preview || !tournamentID || !refresh) return;
+
+    let disposed = false;
 
     const es = new EventSource(`/api/sse?tournamentId=${tournamentID}`);
-    es.addEventListener("match-start-trigger", show);
+    const handleMatchStart = async () => {
+      if (triggerActiveRef.current) return;
 
-    return () => es.close();
-  }, [preview, tournamentID, ready, liveMatch, show]);
+      triggerActiveRef.current = true;
+      setStageReady(false);
+
+      try {
+        const result = await refresh().unwrap();
+        if (disposed) return;
+
+        if (!result?.data) {
+          reportWidgetError({
+            kind: "data-refresh",
+            message:
+              "Match Start was not shown because the API returned no active match data.",
+          });
+          triggerActiveRef.current = false;
+          return;
+        }
+
+        clearWidgetError();
+        setTriggerVersion((version) => version + 1);
+        show();
+      } catch {
+        if (disposed) return;
+
+        reportWidgetError({
+          kind: "data-refresh",
+          message:
+            "Match Start was not shown because fresh match data could not be loaded.",
+        });
+        triggerActiveRef.current = false;
+      }
+    };
+
+    es.addEventListener("match-start-trigger", handleMatchStart);
+
+    return () => {
+      disposed = true;
+      triggerActiveRef.current = false;
+      es.close();
+    };
+  }, [preview, tournamentID, refresh, show]);
 
   const handleExitComplete = useCallback(() => {
+    triggerActiveRef.current = false;
     onExitComplete();
   }, [onExitComplete]);
 
@@ -143,6 +196,7 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
 
   return (
     <WidgetStage
+      key={triggerVersion}
       dataReady={ready && isVisible}
       onReady={() => setStageReady(true)}
     >
@@ -199,13 +253,13 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
                   }}
                 />
                 <div
-                  className="anim-start-shape border-widget-secondary-accent absolute top-[160px] left-[64px] h-[432px] w-[360px] bg-widget-secondary opacity-0"
+                  className="anim-start-shape border-widget-secondary-accent bg-widget-secondary absolute top-[160px] left-[64px] h-[432px] w-[360px] opacity-0"
                   style={{
                     clipPath: "polygon(0 32%, 100% 4%, 78% 100%, 18% 100%)",
                   }}
                 />
                 <div
-                  className="anim-start-shape border-widget-secondary-dark absolute top-[122px] right-[58px] h-[320px] w-[490px] bg-widget-secondary opacity-0"
+                  className="anim-start-shape border-widget-secondary-dark bg-widget-secondary absolute top-[122px] right-[58px] h-[320px] w-[490px] opacity-0"
                   style={{
                     clipPath: "polygon(8% 18%, 100% 0, 98% 88%, 0 100%)",
                   }}
@@ -220,7 +274,7 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
 
                 <section
                   className={cn(
-                    "anim-start-panel border-widget-text-1 absolute top-[176px] left-[214px] z-30 h-[362px] w-[872px] overflow-hidden rounded-[34px] border-2 bg-widget-bg opacity-0 shadow-[0_24px_42px_rgba(0,0,0,0.4)]",
+                    "anim-start-panel border-widget-text-1 bg-widget-bg absolute top-[176px] left-[214px] z-30 h-[362px] w-[872px] overflow-hidden rounded-[34px] border-2 opacity-0 shadow-[0_24px_42px_rgba(0,0,0,0.4)]",
                   )}
                 >
                   {panelImageSrc && (
@@ -233,7 +287,10 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
                       unoptimized={!mapImageSrc}
                     />
                   )}
-                  <div className="absolute inset-0 bg-widget-bg/38" aria-hidden />
+                  <div
+                    className="bg-widget-bg/38 absolute inset-0"
+                    aria-hidden
+                  />
                   <div
                     className="absolute inset-0"
                     style={{
@@ -261,7 +318,7 @@ export default function MatchStartView({ tournamentID, preview = false }: Props)
                 </section>
 
                 <div
-                  className="anim-start-banner absolute bottom-[54px] left-[108px] z-40 flex h-[206px] w-[1080px] items-center justify-center bg-gradient-to-r from-widget-gradient-from to-widget-primary-dark opacity-0 shadow-[0_20px_34px_rgba(0,0,0,0.35)]"
+                  className="anim-start-banner from-widget-gradient-from to-widget-primary-dark absolute bottom-[54px] left-[108px] z-40 flex h-[206px] w-[1080px] items-center justify-center bg-gradient-to-r opacity-0 shadow-[0_20px_34px_rgba(0,0,0,0.35)]"
                   style={{
                     clipPath: "polygon(4% 0, 100% 0, 96% 100%, 0 100%)",
                   }}
