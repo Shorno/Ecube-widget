@@ -9,21 +9,30 @@ const CHANNEL = "replay-sync";
 // file — the parsed recording itself to open displays. A display announces
 // itself with "hello" on mount; we answer with the current time and, if a local
 // match is loaded, its data, so it syncs immediately even while paused.
-export function useReplayHost(time, localData) {
+export function useReplayHost(time, localData, visibleTeamIds) {
   const channelRef = useRef(null);
   const timeRef = useRef(time);
   const dataRef = useRef(localData);
+  const visibleTeamIdsRef = useRef(visibleTeamIds);
   const firstData = useRef(true);
+  const visibleTeamIdsKey = visibleTeamIds?.join("|") ?? null;
+
+  useEffect(() => {
+    visibleTeamIdsRef.current =
+      visibleTeamIdsKey === null ? null : visibleTeamIdsKey.split("|");
+  }, [visibleTeamIdsKey]);
 
   useEffect(() => {
     const channel = new BroadcastChannel(CHANNEL);
     channelRef.current = channel;
     channel.onmessage = (event) => {
       if (event.data?.type === "hello") {
-        channel.postMessage({ type: "time", time: timeRef.current });
-        if (dataRef.current) {
-          channel.postMessage({ type: "dataset", data: dataRef.current });
-        }
+        channel.postMessage({
+          type: "state",
+          time: timeRef.current,
+          data: dataRef.current,
+          visibleTeamIds: visibleTeamIdsRef.current,
+        });
       }
     };
     return () => {
@@ -45,8 +54,20 @@ export function useReplayHost(time, localData) {
       firstData.current = false;
       return;
     }
-    channelRef.current?.postMessage({ type: "dataset", data: localData });
+    channelRef.current?.postMessage({
+      type: "dataset",
+      data: localData,
+      visibleTeamIds: visibleTeamIdsRef.current,
+    });
   }, [localData]);
+
+  useEffect(() => {
+    if (visibleTeamIdsKey === null) return;
+    channelRef.current?.postMessage({
+      type: "visible-teams",
+      teamIds: visibleTeamIdsRef.current,
+    });
+  }, [visibleTeamIdsKey]);
 }
 
 // Display side: mirror the control's clock, and adopt an uploaded match when
@@ -55,6 +76,7 @@ export function useReplayHost(time, localData) {
 export function useReplayViewer() {
   const [time, setTime] = useState(0);
   const [localData, setLocalData] = useState(null);
+  const [visibleTeamIds, setVisibleTeamIds] = useState(null);
 
   useEffect(() => {
     const channel = new BroadcastChannel(CHANNEL);
@@ -62,14 +84,21 @@ export function useReplayViewer() {
       const message = event.data;
       if (message?.type === "time") {
         setTime(message.time);
+      } else if (message?.type === "state") {
+        setTime(message.time);
+        setLocalData(message.data);
+        setVisibleTeamIds(message.visibleTeamIds);
       } else if (message?.type === "dataset") {
         setLocalData(message.data);
+        setVisibleTeamIds(message.visibleTeamIds);
         setTime(0);
+      } else if (message?.type === "visible-teams") {
+        setVisibleTeamIds(message.teamIds);
       }
     };
     channel.postMessage({ type: "hello" });
     return () => channel.close();
   }, []);
 
-  return { time, localData };
+  return { time, localData, visibleTeamIds };
 }
