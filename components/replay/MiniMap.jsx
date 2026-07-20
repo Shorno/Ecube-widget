@@ -2,25 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Maximize } from "lucide-react";
+import TeamLogoGlyph, { teamColor } from "./TeamLogoGlyph";
 
 const VIEW = 1000;
 const MAX_ZOOM = 8;
 const WHEEL_ZOOM_STEP = 1.2;
-
-const TEAM_COLORS = [
-  "#f59e0b",
-  "#38bdf8",
-  "#a78bfa",
-  "#34d399",
-  "#fb7185",
-  "#facc15",
-  "#22d3ee",
-  "#c084fc",
-];
-
-export function teamColor(teamId) {
-  return TEAM_COLORS[teamId % TEAM_COLORS.length];
-}
 
 const DEAD_STATE = 5;
 
@@ -33,6 +19,7 @@ export default function MiniMap({
   killMarkers,
   observedUid,
   planePosition,
+  teamLogoById,
 }) {
   // Pan/zoom lives entirely in this component so map gestures never re-render
   // the page (and its per-frame replay state derivations) above us.
@@ -262,6 +249,7 @@ export default function MiniMap({
               const y = toY(player.location.y);
               const dead = player.liveState === DEAD_STATE;
               const observed = String(player.uId) === observedUid;
+              const teamLogoUrl = teamLogoById[String(player.teamId)];
               return (
                 <g
                   key={player.uId}
@@ -273,15 +261,16 @@ export default function MiniMap({
                       <line x1="-6" y1="6" x2="6" y2="-6" />
                     </g>
                   ) : (
-                    <circle
-                      r="7"
-                      fill={teamColor(player.teamId)}
-                      stroke={observed ? "#ffffff" : "#0c1220"}
-                      strokeWidth={observed ? 3 : 1.5}
+                    <TeamLogoGlyph
+                      key={teamLogoUrl || "fallback"}
+                      teamId={player.teamId}
+                      logoUrl={teamLogoUrl}
+                      observed={observed}
+                      radius={9}
                     />
                   )}
                   <text
-                    y="-13"
+                    y={dead ? "-13" : "-16"}
                     textAnchor="middle"
                     fontSize="17"
                     fill="#ffffff"

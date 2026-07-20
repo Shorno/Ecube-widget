@@ -6,7 +6,11 @@ import { useGetReplayEventsQuery } from "@/lib/services/replay-api";
 import { useReplayPlayer } from "@/hooks/useReplayPlayer";
 import { useReplayHost } from "@/hooks/useReplaySync";
 import { parseReplay } from "@/lib/replay/parse";
-import { buildTimeline, finalTeamStandings } from "@/lib/replay/timeline";
+import {
+  buildTeamLogoLookup,
+  buildTimeline,
+  finalTeamStandings,
+} from "@/lib/replay/timeline";
 import {
   deriveReplayState,
   filterReplayMapState,
@@ -32,6 +36,7 @@ export default function ReplayControlPage() {
 
   const timeline = data ? buildTimeline(data.events) : null;
   const teamStandings = timeline ? finalTeamStandings(timeline) : [];
+  const teamLogoById = buildTeamLogoLookup(teamStandings);
   const defaultTeamIds = teamStandings
     .slice(0, 4)
     .map((team) => String(team.teamId));
@@ -197,6 +202,7 @@ export default function ReplayControlPage() {
               planePosition={replayState.planePosition}
               killMarkers={mapState.killMarkers}
               observedUid={observedUid}
+              teamLogoById={teamLogoById}
             />
           </div>
         </main>

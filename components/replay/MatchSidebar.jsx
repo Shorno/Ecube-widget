@@ -1,5 +1,5 @@
-import { teamColor } from "./MiniMap";
 import { formatClock } from "./PlaybackControls";
+import TeamLogoGlyph from "./TeamLogoGlyph";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
@@ -115,10 +115,18 @@ export default function MatchSidebar({
                   <span className="w-6 shrink-0 font-mono text-xs font-bold text-neutral-500 tabular-nums">
                     {team.rank ? `#${team.rank}` : "—"}
                   </span>
-                  <span
-                    className="h-2.5 w-2.5 shrink-0 rounded-full ring-2 ring-black/30"
-                    style={{ backgroundColor: teamColor(team.teamId) }}
-                  />
+                  <svg
+                    viewBox="-10 -10 20 20"
+                    className="h-6 w-6 shrink-0 overflow-visible"
+                    aria-hidden="true"
+                  >
+                    <TeamLogoGlyph
+                      key={team.logoPicUrl || "fallback"}
+                      teamId={team.teamId}
+                      logoUrl={team.logoPicUrl}
+                      radius={9}
+                    />
+                  </svg>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium text-neutral-200">
                       {team.teamName}
