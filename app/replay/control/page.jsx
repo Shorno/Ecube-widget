@@ -6,8 +6,11 @@ import { useGetReplayEventsQuery } from "@/lib/services/replay-api";
 import { useReplayPlayer } from "@/hooks/useReplayPlayer";
 import { useReplayHost } from "@/hooks/useReplaySync";
 import { parseReplay } from "@/lib/replay/parse";
-import { buildTimeline } from "@/lib/replay/timeline";
-import { deriveReplayState } from "@/lib/replay/deriveState";
+import { buildTimeline, finalTeamStandings } from "@/lib/replay/timeline";
+import {
+  deriveReplayState,
+  filterReplayMapState,
+} from "@/lib/replay/deriveState";
 import { ERANGEL } from "@/lib/replay/maps";
 import MiniMap from "@/components/replay/MiniMap";
 import PlaybackControls from "@/components/replay/PlaybackControls";
@@ -20,14 +23,22 @@ export default function ReplayControlPage() {
   const [loadedName, setLoadedName] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const [isParsing, setIsParsing] = useState(false);
+  const [teamSelection, setTeamSelection] = useState(null);
 
   // A locally loaded match takes precedence over the bundled default.
   const data = localData ?? defaultData;
   const { time, isPlaying, speed, setSpeed, seek, seekBy, togglePlay } =
     useReplayPlayer(data?.duration ?? 0);
 
-  // Mirror the clock and the loaded match to any Replay display in this browser.
-  useReplayHost(time, localData);
+  const timeline = data ? buildTimeline(data.events) : null;
+  const teamStandings = timeline ? finalTeamStandings(timeline) : [];
+  const defaultTeamIds = teamStandings
+    .slice(0, 4)
+    .map((team) => String(team.teamId));
+  const visibleTeamIds = data ? (teamSelection ?? defaultTeamIds) : null;
+
+  // Mirror playback and operator visibility choices to Replay displays.
+  useReplayHost(time, localData, visibleTeamIds);
 
   // Load another match recording — parsed here in the browser, no server round
   // trip. Setting localData feeds the display/circle widgets via the host hook.
@@ -43,6 +54,7 @@ export default function ReplayControlPage() {
       if (parsed.count === 0) throw new Error("No usable events in file");
       setLocalData(parsed);
       setLoadedName(file.name);
+      setTeamSelection(null);
       seek(0);
     } catch {
       setUploadError("Couldn't read that file");
@@ -56,6 +68,7 @@ export default function ReplayControlPage() {
     setLocalData(null);
     setLoadedName(null);
     setUploadError(null);
+    setTeamSelection(null);
     seek(0);
   }
 
@@ -83,19 +96,20 @@ export default function ReplayControlPage() {
       </Centered>
     );
 
-  const timeline = buildTimeline(data.events);
-  const {
-    players,
-    zone,
-    kills,
-    phase,
-    circleInfo,
-    teams,
-    observedUid,
-    plane,
-    trails,
-    killMarkers,
-  } = deriveReplayState(timeline, time, ERANGEL);
+  const replayState = deriveReplayState(timeline, time, ERANGEL);
+  const { zone, kills, phase, circleInfo, teams, observedUid, plane } =
+    replayState;
+  const mapState = filterReplayMapState(replayState, visibleTeamIds);
+
+  function setTeamVisibility(teamId, isVisible) {
+    setTeamSelection((current) => {
+      const next = new Set(current ?? defaultTeamIds);
+      const key = String(teamId);
+      if (isVisible) next.add(key);
+      else next.delete(key);
+      return [...next];
+    });
+  }
 
   const scrubberMarkers = [
     ...(timeline.get("setgameglobalinfo") ?? []).map((event) => ({
@@ -116,7 +130,7 @@ export default function ReplayControlPage() {
     <div className="flex h-screen w-screen flex-col bg-neutral-950 text-neutral-100">
       <header className="flex items-center justify-between border-b border-white/10 px-4 py-2.5">
         <div className="flex items-center gap-3">
-          <h1 className="text-sm font-semibold uppercase tracking-widest">
+          <h1 className="text-sm font-semibold tracking-widest uppercase">
             Replay Control
           </h1>
           <label
@@ -154,7 +168,7 @@ export default function ReplayControlPage() {
           )}
         </div>
         <div className="flex items-center gap-3 text-sm">
-          <span className="font-mono tabular-nums text-neutral-400">
+          <span className="font-mono text-neutral-400 tabular-nums">
             Game time {circleInfo?.GameTime ?? "0"}s
           </span>
           <span
@@ -176,11 +190,12 @@ export default function ReplayControlPage() {
           <div className="aspect-square h-full max-w-full">
             <MiniMap
               world={ERANGEL}
-              players={players}
-              trails={trails}
+              players={mapState.players}
+              trails={mapState.trails}
               zone={zone}
               plane={plane}
-              killMarkers={killMarkers}
+              planePosition={replayState.planePosition}
+              killMarkers={mapState.killMarkers}
               observedUid={observedUid}
             />
           </div>
@@ -188,8 +203,15 @@ export default function ReplayControlPage() {
         <MatchSidebar
           circleInfo={circleInfo}
           teams={teams}
-          players={players}
+          teamStandings={teamStandings}
+          visibleTeamIds={visibleTeamIds}
           kills={kills}
+          onTeamVisibilityChange={setTeamVisibility}
+          onShowTopFour={() => setTeamSelection(null)}
+          onShowAll={() =>
+            setTeamSelection(teamStandings.map((team) => String(team.teamId)))
+          }
+          onHideAll={() => setTeamSelection([])}
         />
       </div>
 

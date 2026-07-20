@@ -23,7 +23,6 @@ export function teamColor(teamId) {
 }
 
 const DEAD_STATE = 5;
-const IN_PLANE_STATE = 1;
 
 export default function MiniMap({
   world,
@@ -33,6 +32,7 @@ export default function MiniMap({
   plane,
   killMarkers,
   observedUid,
+  planePosition,
 }) {
   // Pan/zoom lives entirely in this component so map gestures never re-render
   // the page (and its per-frame replay state derivations) above us.
@@ -137,15 +137,6 @@ export default function MiniMap({
   // point markers get the inverse scale applied locally.
   const markerScale = 1 / view.scale;
 
-  const inPlane = players.filter((p) => p.liveState === IN_PLANE_STATE);
-  const planePos =
-    inPlane.length > 0
-      ? {
-          x: inPlane.reduce((sum, p) => sum + p.location.x, 0) / inPlane.length,
-          y: inPlane.reduce((sum, p) => sum + p.location.y, 0) / inPlane.length,
-        }
-      : null;
-
   return (
     <div className="relative h-full w-full">
       <svg
@@ -178,9 +169,7 @@ export default function MiniMap({
         </defs>
 
         <g clipPath="url(#map-viewport)">
-          <g
-            transform={`translate(${view.x} ${view.y}) scale(${view.scale})`}
-          >
+          <g transform={`translate(${view.x} ${view.y}) scale(${view.scale})`}>
             <image
               href={world.imageSrc}
               width={VIEW}
@@ -260,9 +249,9 @@ export default function MiniMap({
               </g>
             ))}
 
-            {planePos && (
+            {planePosition && (
               <g
-                transform={`translate(${toX(planePos.x)}, ${toY(planePos.y)}) scale(${markerScale})`}
+                transform={`translate(${toX(planePosition.x)}, ${toY(planePosition.y)}) scale(${markerScale})`}
               >
                 <polygon points="0,-14 10,10 0,4 -10,10" fill="#facc15" />
               </g>
@@ -311,8 +300,8 @@ export default function MiniMap({
       </svg>
 
       {isMoved && (
-        <div className="absolute right-2 top-2 flex items-center gap-2">
-          <span className="rounded bg-black/60 px-2 py-1 font-mono text-xs tabular-nums text-neutral-200">
+        <div className="absolute top-2 right-2 flex items-center gap-2">
+          <span className="rounded bg-black/60 px-2 py-1 font-mono text-xs text-neutral-200 tabular-nums">
             {view.scale.toFixed(1)}x
           </span>
           <button
