@@ -16,7 +16,7 @@ import {
 } from "./layout";
 
 function teamId(entry: LiveRankEntry) {
-  return entry.team.id ?? entry.team._id ?? String(entry.rank);
+  return entry.team.id ?? entry.team._id ?? String(entry.position);
 }
 
 function teamLogo(entry: LiveRankEntry) {

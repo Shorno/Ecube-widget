@@ -10,7 +10,7 @@ import { TOP_FOUR_GAP, TOP_FOUR_TOP_OFFSET } from "./layout";
 gsap.registerPlugin(Flip);
 
 function teamId(entry: LiveRankEntry) {
-  return entry.team.id ?? entry.team._id ?? String(entry.rank);
+  return entry.team.id ?? entry.team._id ?? String(entry.position);
 }
 
 function isTeamEliminated(players?: LiveRankEntry["players"]) {

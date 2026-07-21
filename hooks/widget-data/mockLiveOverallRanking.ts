@@ -10,7 +10,13 @@ function players(
   }));
 }
 
-const MOCK_TEAMS: Omit<LiveRankEntry, "rank">[] = [
+/** Rows carry raw stats only; standing and rank fields are derived in the builder. */
+type MockTeam = Omit<
+  LiveRankEntry,
+  "position" | "matchRank" | "positionPoints" | "killPoints" | "wwcd"
+>;
+
+const MOCK_TEAMS: MockTeam[] = [
   {
     team: {
       id: "team-1",
@@ -454,10 +460,7 @@ const LOCAL_PREVIEW_COUNTRIES = [
   { country_code: "BT", country_alpha3: "BTN", country_name: "Bhutan" },
 ];
 
-function withLocalPreviewCountry(
-  entry: Omit<LiveRankEntry, "rank">,
-  index: number,
-): Omit<LiveRankEntry, "rank"> {
+function withLocalPreviewCountry(entry: MockTeam, index: number): MockTeam {
   const team = { ...entry.team };
   delete team.country_flag_emoji;
 
@@ -470,11 +473,47 @@ function withLocalPreviewCountry(
   };
 }
 
+/**
+ * Group positions held by teams sitting out the current match. Preview drops
+ * them so the overlay renders 1-10 then jumps to 15 — the scenario this widget
+ * exists to handle, and the one that proves rows show true tournament rank
+ * rather than renumbering whatever the payload happens to contain.
+ */
+const PREVIEW_SIT_OUT_POSITIONS = [11, 12, 13, 14];
+
 export function getMockLiveOverallRanking(): LiveRankEntry[] {
-  return [...MOCK_TEAMS]
-    .map(withLocalPreviewCountry)
-    .sort((a, b) => (b.overAllPoints ?? 0) - (a.overAllPoints ?? 0))
-    .map((entry, index) => ({ ...entry, rank: index + 1 }));
+  const groupStandings = MOCK_TEAMS.map(withLocalPreviewCountry)
+    .map((entry, index) => {
+      // Vary the split so teams tied on total still differ on position points,
+      // which exercises the real tiebreak chain in preview.
+      const positionPoints = Math.round(
+        entry.overAllPoints * (0.25 + (index % 5) * 0.1),
+      );
+      return {
+        ...entry,
+        positionPoints,
+        killPoints: entry.overAllPoints - positionPoints,
+        wwcd: index === 0 ? 2 : entry.overAllPoints >= 60 ? 1 : 0,
+      };
+    })
+    .sort(
+      (a, b) =>
+        b.overAllPoints - a.overAllPoints ||
+        b.wwcd - a.wwcd ||
+        b.positionPoints - a.positionPoints ||
+        b.killPoints - a.killPoints,
+    )
+    .map((entry, index) => ({ ...entry, position: index + 1 }));
+
+  const playing = groupStandings.filter(
+    (entry) => !PREVIEW_SIT_OUT_POSITIONS.includes(entry.position),
+  );
+
+  return playing
+    .slice()
+    .sort((a, b) => b.points - a.points)
+    .map((entry, index) => ({ ...entry, matchRank: index + 1 }))
+    .sort((a, b) => a.position - b.position);
 }
 
 /** Sample WWCD % for preview top-four cards (rank order) */
@@ -488,7 +527,6 @@ export function getMockTopFour(): LiveRankEntry[] {
   );
   return alive.slice(0, 4).map((entry, index) => ({
     ...entry,
-    rank: index + 1,
     winProbability: MOCK_TOP_FOUR_WIN_PROBABILITIES[index] ?? null,
   }));
 }

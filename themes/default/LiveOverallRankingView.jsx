@@ -32,7 +32,7 @@ const stateList = [
 ];
 
 function teamId(entry) {
-  return entry.team?.id ?? entry.team?._id ?? String(entry.rank);
+  return entry.team?.id ?? entry.team?._id ?? String(entry.position);
 }
 
 export default function LiveOverallRankingView({
@@ -174,13 +174,13 @@ export default function LiveOverallRankingView({
             ref={containerRef}
             className="relative flex flex-col bg-slate-900"
           >
-            {displayTeams.map((entry, index) => (
+            {displayTeams.map((entry) => (
               <TeamRow
                 key={teamId(entry)}
                 entry={entry}
                 isObserved={activeObservingTeamId === teamId(entry)}
                 isOverall={isOverall}
-                rank={index + 1}
+                rank={sortBy === "points" ? entry.matchRank : entry.position}
               />
             ))}
           </div>

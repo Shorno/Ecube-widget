@@ -1,0 +1,1747 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A practical architecture guide to the Tournalink backend, operations frontend, desktop PCOB gateway, and Ecube broadcast widget."
+    />
+    <title>Tournalink Platform Architecture</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #f3efe4;
+        --paper-deep: #e9e2d2;
+        --ink: #17211d;
+        --muted: #66716b;
+        --line: #c8c0ae;
+        --panel: rgba(255, 253, 246, 0.82);
+        --navy: #173b4d;
+        --teal: #087f78;
+        --orange: #e1642f;
+        --amber: #e9a527;
+        --red: #b73b34;
+        --green: #366f54;
+        --shadow: 0 18px 50px rgba(29, 36, 31, 0.1);
+        --radius: 20px;
+      }
+
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --paper: #111815;
+        --paper-deep: #19221e;
+        --ink: #edf1e9;
+        --muted: #a1aca5;
+        --line: #36413b;
+        --panel: rgba(26, 35, 31, 0.88);
+        --navy: #85bad0;
+        --teal: #53c5b7;
+        --orange: #ff8153;
+        --amber: #f3bb4c;
+        --red: #f17a70;
+        --green: #74be92;
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.32);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 30px;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(rgba(23, 33, 29, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(23, 33, 29, 0.035) 1px, transparent 1px),
+          radial-gradient(circle at 12% 8%, rgba(233, 165, 39, 0.12), transparent 27rem),
+          radial-gradient(circle at 88% 22%, rgba(8, 127, 120, 0.1), transparent 30rem),
+          var(--paper);
+        background-size: 24px 24px, 24px 24px, auto, auto, auto;
+        font-family: "Aptos", "Segoe UI", sans-serif;
+        line-height: 1.65;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.24;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.09'/%3E%3C/svg%3E");
+        z-index: -1;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .page-shell {
+        width: min(1480px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 22px 0 64px;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 14px;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 10px 12px 10px 18px;
+        border: 1px solid color-mix(in srgb, var(--line), transparent 15%);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--paper), transparent 9%);
+        box-shadow: 0 12px 35px rgba(29, 36, 31, 0.08);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 28px;
+        height: 28px;
+        flex: 0 0 auto;
+        place-items: center;
+        border-radius: 50%;
+        color: #fffaf1;
+        background: var(--orange);
+        box-shadow: 5px 5px 0 color-mix(in srgb, var(--teal), transparent 20%);
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 7px;
+      }
+
+      .tool-button {
+        display: inline-flex;
+        min-height: 36px;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 7px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--ink);
+        background: var(--panel);
+        cursor: pointer;
+        transition: 160ms ease;
+      }
+
+      .tool-button:hover {
+        border-color: var(--orange);
+        transform: translateY(-1px);
+      }
+
+      .tool-button svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .hero {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(290px, 0.55fr);
+        gap: 52px;
+        min-height: 580px;
+        align-items: center;
+        padding: 76px 5vw 58px;
+        overflow: hidden;
+      }
+
+      .hero::after {
+        content: "04";
+        position: absolute;
+        right: 1vw;
+        bottom: -0.38em;
+        color: color-mix(in srgb, var(--orange), transparent 88%);
+        font-family: Impact, "Arial Narrow", sans-serif;
+        font-size: clamp(15rem, 34vw, 34rem);
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 22px;
+        color: var(--orange);
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 42px;
+        height: 3px;
+        background: currentColor;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 0;
+        text-wrap: balance;
+      }
+
+      h1 {
+        max-width: 940px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(3.2rem, 7.3vw, 7.7rem);
+        font-weight: 500;
+        letter-spacing: -0.065em;
+        line-height: 0.91;
+      }
+
+      h1 em {
+        color: var(--teal);
+        font-weight: 500;
+      }
+
+      .hero-lede {
+        max-width: 740px;
+        margin: 30px 0 0;
+        color: var(--muted);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(1.08rem, 1.7vw, 1.42rem);
+        line-height: 1.65;
+      }
+
+      .hero-aside {
+        position: relative;
+        z-index: 1;
+        align-self: end;
+        margin-bottom: 22px;
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-left: 5px solid var(--orange);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        transform: rotate(1.5deg);
+      }
+
+      .hero-aside strong {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--orange);
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .hero-aside p {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.12rem;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: clamp(28px, 5vw, 84px);
+        align-items: start;
+      }
+
+      .toc {
+        position: sticky;
+        top: 88px;
+        max-height: calc(100vh - 108px);
+        overflow: auto;
+        padding: 22px 18px;
+        border-top: 3px solid var(--ink);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .toc-label {
+        margin: 0 0 13px;
+        color: var(--muted);
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.17em;
+        text-transform: uppercase;
+      }
+
+      .toc a {
+        display: block;
+        padding: 7px 0 7px 14px;
+        border-left: 2px solid var(--line);
+        color: var(--muted);
+        font-size: 0.86rem;
+        text-decoration: none;
+        transition: 150ms ease;
+      }
+
+      .toc a:hover,
+      .toc a.active {
+        border-left-color: var(--orange);
+        color: var(--ink);
+        transform: translateX(3px);
+      }
+
+      main {
+        min-width: 0;
+      }
+
+      section {
+        margin-bottom: 100px;
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: 75px minmax(0, 1fr);
+        gap: 20px;
+        align-items: start;
+        margin-bottom: 34px;
+      }
+
+      .section-number {
+        color: var(--orange);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 2.2rem;
+        font-style: italic;
+        line-height: 1;
+      }
+
+      h2 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.1rem, 4.5vw, 4rem);
+        font-weight: 500;
+        letter-spacing: -0.045em;
+        line-height: 1;
+      }
+
+      .section-intro {
+        max-width: 800px;
+        margin: 15px 0 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+
+      h3 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.65rem;
+        font-weight: 600;
+        letter-spacing: -0.025em;
+      }
+
+      h4 {
+        font-size: 0.77rem;
+        font-weight: 900;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      p {
+        margin: 0.7em 0;
+      }
+
+      .system-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .system-card {
+        position: relative;
+        min-height: 240px;
+        padding: 26px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+        box-shadow: 0 9px 28px rgba(29, 36, 31, 0.055);
+      }
+
+      .system-card::before {
+        content: attr(data-index);
+        position: absolute;
+        right: 12px;
+        top: -35px;
+        color: color-mix(in srgb, var(--card-color), transparent 85%);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 8rem;
+        font-style: italic;
+        line-height: 1;
+      }
+
+      .system-card h3 {
+        position: relative;
+        max-width: 75%;
+        color: var(--card-color);
+      }
+
+      .system-card .role {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 3px 9px;
+        border: 1px solid color-mix(in srgb, var(--card-color), transparent 45%);
+        border-radius: 999px;
+        color: var(--card-color);
+        font-family: ui-monospace, "Cascadia Code", monospace;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .system-card p {
+        position: relative;
+        margin-top: 20px;
+        color: var(--muted);
+      }
+
+      .backend { --card-color: var(--orange); }
+      .desktop { --card-color: var(--teal); }
+      .frontend { --card-color: var(--amber); }
+      .widget { --card-color: var(--navy); }
+
+      .backbone {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 22px;
+        margin-top: 20px;
+        padding: 28px;
+        border: 1px solid var(--ink);
+        border-radius: var(--radius);
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .backbone h3 {
+        color: var(--amber);
+      }
+
+      .backbone p {
+        color: color-mix(in srgb, var(--paper), transparent 20%);
+      }
+
+      .backbone code {
+        color: var(--amber);
+      }
+
+      .stamp {
+        display: grid;
+        place-items: center;
+        min-height: 170px;
+        border: 2px dashed color-mix(in srgb, var(--paper), transparent 65%);
+        color: var(--paper);
+        font-family: ui-monospace, "Cascadia Code", monospace;
+        font-size: clamp(1.3rem, 3vw, 2.6rem);
+        font-weight: 900;
+        letter-spacing: -0.06em;
+        text-align: center;
+        transform: rotate(-2deg);
+      }
+
+      .flow-board {
+        position: relative;
+        padding: 28px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: color-mix(in srgb, var(--panel), var(--paper-deep) 25%);
+      }
+
+      .flow-board::before {
+        content: "LIVE DATA PATH";
+        position: absolute;
+        right: -28px;
+        top: 35px;
+        padding: 5px 42px;
+        color: #fff;
+        background: var(--orange);
+        font-size: 0.62rem;
+        font-weight: 900;
+        letter-spacing: 0.15em;
+        transform: rotate(45deg);
+      }
+
+      .flow-row {
+        display: grid;
+        grid-template-columns: 1fr 50px 1fr 50px 1fr;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .flow-row + .flow-row {
+        margin-top: 18px;
+      }
+
+      .node {
+        min-height: 110px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        background: var(--panel);
+      }
+
+      .node strong {
+        display: block;
+        color: var(--teal);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.25rem;
+      }
+
+      .node small {
+        display: block;
+        margin-top: 7px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .arrow {
+        position: relative;
+        height: 2px;
+        background: var(--orange);
+      }
+
+      .arrow::after {
+        content: "";
+        position: absolute;
+        right: -1px;
+        top: -5px;
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-left: 9px solid var(--orange);
+      }
+
+      .branch-note {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .note {
+        padding: 18px;
+        border-left: 4px solid var(--teal);
+        background: color-mix(in srgb, var(--teal), transparent 92%);
+      }
+
+      .note.warning {
+        border-left-color: var(--orange);
+        background: color-mix(in srgb, var(--orange), transparent 92%);
+      }
+
+      .note strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .repo {
+        display: grid;
+        grid-template-columns: 0.7fr 1.3fr;
+        gap: 34px;
+        padding: 30px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .repo:last-child {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .repo-title {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+      }
+
+      .repo-title .repo-number {
+        color: var(--orange);
+        font-family: ui-monospace, "Cascadia Code", monospace;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.13em;
+      }
+
+      .repo-title h3 {
+        margin-top: 5px;
+        overflow-wrap: anywhere;
+      }
+
+      .stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 15px;
+      }
+
+      .stack span {
+        padding: 3px 9px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        font-family: ui-monospace, "Cascadia Code", monospace;
+        font-size: 0.66rem;
+      }
+
+      .repo-body > p:first-child {
+        margin-top: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.2rem;
+      }
+
+      ul,
+      ol {
+        padding-left: 1.2rem;
+      }
+
+      li {
+        margin: 0.42rem 0;
+      }
+
+      li::marker {
+        color: var(--orange);
+      }
+
+      code {
+        padding: 0.12em 0.35em;
+        border: 1px solid color-mix(in srgb, var(--line), transparent 20%);
+        border-radius: 5px;
+        color: var(--teal);
+        background: color-mix(in srgb, var(--paper-deep), transparent 30%);
+        font-family: ui-monospace, "Cascadia Code", "SFMono-Regular", monospace;
+        font-size: 0.86em;
+      }
+
+      pre {
+        margin: 18px 0;
+        padding: 20px;
+        overflow-x: auto;
+        border-radius: 13px;
+        color: #dce7df;
+        background: #17211d;
+        font-family: ui-monospace, "Cascadia Code", monospace;
+        font-size: 0.8rem;
+        line-height: 1.65;
+      }
+
+      pre code {
+        padding: 0;
+        border: 0;
+        color: inherit;
+        background: transparent;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+
+      th,
+      td {
+        padding: 15px 17px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--muted);
+        background: color-mix(in srgb, var(--paper-deep), transparent 25%);
+        font-size: 0.67rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      tbody tr:hover {
+        background: color-mix(in srgb, var(--teal), transparent 95%);
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        font-weight: 700;
+      }
+
+      .status::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .persistent { color: var(--green); }
+      .memory { color: var(--amber); }
+      .missing { color: var(--red); }
+
+      .big-number {
+        display: grid;
+        grid-template-columns: 0.45fr 1.55fr;
+        gap: 28px;
+        align-items: center;
+        margin: 26px 0;
+        padding: 30px;
+        border-radius: var(--radius);
+        color: #fff8eb;
+        background: var(--orange);
+        box-shadow: 14px 14px 0 color-mix(in srgb, var(--teal), transparent 10%);
+      }
+
+      .big-number strong {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(4rem, 9vw, 8rem);
+        font-weight: 500;
+        letter-spacing: -0.08em;
+        line-height: 0.8;
+      }
+
+      .big-number p {
+        font-size: 1.08rem;
+      }
+
+      .data-cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 13px;
+        margin-top: 24px;
+      }
+
+      .data-card {
+        min-height: 170px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel);
+      }
+
+      .data-card code {
+        display: inline-block;
+        margin-bottom: 12px;
+        color: var(--orange);
+        font-weight: 800;
+      }
+
+      .data-card p {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .conflict-list {
+        counter-reset: issue;
+        display: grid;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .conflict-list li {
+        counter-increment: issue;
+        display: grid;
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 15px;
+        margin: 0;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel);
+      }
+
+      .conflict-list li::before {
+        content: counter(issue, decimal-leading-zero);
+        color: var(--red);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.5rem;
+        font-style: italic;
+      }
+
+      .conflict-list strong {
+        display: block;
+        color: var(--red);
+      }
+
+      .conflict-list p {
+        margin: 4px 0 0;
+        color: var(--muted);
+      }
+
+      .target-flow {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin: 28px 0;
+      }
+
+      .target-step {
+        position: relative;
+        min-height: 180px;
+        padding: 21px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+      }
+
+      .target-step:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        z-index: 2;
+        right: -20px;
+        top: 50%;
+        display: grid;
+        width: 30px;
+        height: 30px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        color: var(--orange);
+        background: var(--paper);
+        transform: translateY(-50%);
+      }
+
+      .target-step span {
+        color: var(--orange);
+        font-family: ui-monospace, "Cascadia Code", monospace;
+        font-size: 0.7rem;
+        font-weight: 900;
+      }
+
+      .target-step h3 {
+        margin-top: 8px;
+        font-size: 1.35rem;
+      }
+
+      .target-step p {
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .priority-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .priority {
+        padding: 22px;
+        border-top: 5px solid var(--priority-color);
+        background: var(--panel);
+        box-shadow: 0 8px 24px rgba(29, 36, 31, 0.06);
+      }
+
+      .priority:nth-child(1) { --priority-color: var(--red); }
+      .priority:nth-child(2) { --priority-color: var(--orange); }
+      .priority:nth-child(3) { --priority-color: var(--teal); }
+
+      .priority h3 {
+        color: var(--priority-color);
+      }
+
+      .priority p,
+      .priority li {
+        color: var(--muted);
+        font-size: 0.89rem;
+      }
+
+      .ownership {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 25px;
+      }
+
+      .ownership div {
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: var(--panel);
+      }
+
+      .ownership strong {
+        display: block;
+        color: var(--teal);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.2rem;
+      }
+
+      .ownership span {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .footer {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 24px;
+        align-items: end;
+        padding: 38px 0 12px;
+        border-top: 3px solid var(--ink);
+      }
+
+      .footer strong {
+        display: block;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(1.6rem, 3vw, 2.5rem);
+      }
+
+      .footer p {
+        color: var(--muted);
+      }
+
+      .footer-mark {
+        color: var(--orange);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 4rem;
+        font-style: italic;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        animation: reveal 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+
+      .reveal:nth-child(2) { animation-delay: 70ms; }
+      .reveal:nth-child(3) { animation-delay: 140ms; }
+      .reveal:nth-child(4) { animation-delay: 210ms; }
+
+      @keyframes reveal {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      @media (max-width: 980px) {
+        .hero {
+          grid-template-columns: 1fr;
+          min-height: auto;
+          padding-top: 65px;
+        }
+
+        .hero-aside {
+          max-width: 520px;
+          margin: 0;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .toc {
+          position: relative;
+          top: auto;
+          display: flex;
+          gap: 2px;
+          margin-bottom: 38px;
+          overflow-x: auto;
+          border-top-width: 1px;
+          white-space: nowrap;
+        }
+
+        .toc-label { display: none; }
+        .toc a {
+          padding: 7px 10px;
+          border-left: 0;
+          border-bottom: 2px solid var(--line);
+        }
+
+        .toc a:hover,
+        .toc a.active {
+          border-bottom-color: var(--orange);
+          transform: none;
+        }
+
+        .repo {
+          grid-template-columns: 1fr;
+        }
+
+        .repo-title {
+          position: relative;
+          top: auto;
+        }
+
+        .target-flow,
+        .priority-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .target-step:nth-child(2)::after { display: none; }
+      }
+
+      @media (max-width: 680px) {
+        .page-shell {
+          width: min(100% - 20px, 1480px);
+        }
+
+        .topbar {
+          top: 8px;
+          border-radius: 16px;
+        }
+
+        .brand span:last-child {
+          max-width: 150px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .button-label { display: none; }
+
+        .hero {
+          padding: 54px 10px 50px;
+        }
+
+        h1 {
+          font-size: clamp(3rem, 16vw, 5rem);
+        }
+
+        .system-grid,
+        .backbone,
+        .branch-note,
+        .data-cards,
+        .target-flow,
+        .priority-grid,
+        .ownership,
+        .big-number {
+          grid-template-columns: 1fr;
+        }
+
+        .section-heading {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .section-number {
+          font-size: 1.2rem;
+        }
+
+        .flow-row {
+          grid-template-columns: 1fr;
+        }
+
+        .arrow {
+          width: 2px;
+          height: 32px;
+          margin: 0 auto;
+        }
+
+        .arrow::after {
+          right: -5px;
+          top: auto;
+          bottom: -2px;
+          border-top: 9px solid var(--orange);
+          border-right: 6px solid transparent;
+          border-bottom: 0;
+          border-left: 6px solid transparent;
+        }
+
+        .target-step:not(:last-child)::after {
+          display: none;
+        }
+
+        .big-number {
+          box-shadow: 8px 8px 0 color-mix(in srgb, var(--teal), transparent 10%);
+        }
+
+        section {
+          margin-bottom: 75px;
+        }
+      }
+
+      @media print {
+        :root {
+          --paper: #fff;
+          --paper-deep: #f3f3f3;
+          --ink: #111;
+          --muted: #444;
+          --line: #bbb;
+          --panel: #fff;
+        }
+
+        body {
+          background: #fff;
+          font-size: 10pt;
+        }
+
+        body::before,
+        .topbar,
+        .toc,
+        .hero::after {
+          display: none;
+        }
+
+        .page-shell {
+          width: 100%;
+          padding: 0;
+        }
+
+        .hero {
+          min-height: auto;
+          padding: 25mm 10mm 18mm;
+        }
+
+        .layout,
+        .repo,
+        .backbone {
+          display: block;
+        }
+
+        .repo-title {
+          position: static;
+          margin-bottom: 10px;
+        }
+
+        .system-card,
+        .flow-board,
+        .table-wrap,
+        .data-card,
+        .priority,
+        .conflict-list li {
+          break-inside: avoid;
+          box-shadow: none;
+        }
+
+        section {
+          margin-bottom: 16mm;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">T</span>
+          <span>Platform Field Guide</span>
+        </div>
+        <div class="toolbar">
+          <button class="tool-button" id="theme-toggle" type="button" aria-label="Toggle dark mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.4A7 7 0 0 1 12 3Z" />
+            </svg>
+            <span class="button-label">Theme</span>
+          </button>
+          <button class="tool-button" type="button" onclick="window.print()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <path d="M6 14h12v8H6z" />
+            </svg>
+            <span class="button-label">Print / PDF</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="hero">
+        <div class="reveal">
+          <div class="eyebrow">System architecture · audited from source</div>
+          <h1>Tournalink<br /><em>platform anatomy.</em></h1>
+          <p class="hero-lede">
+            A practical map of how tournament configuration, PCOB telemetry, scoring,
+            vMix data, OBS widgets, and replay recordings move through the four applications.
+          </p>
+        </div>
+        <aside class="hero-aside reveal">
+          <strong>The short answer</strong>
+          <p>
+            Backend owns truth. Desktop captures the match. Frontend runs operations.
+            Widget turns the data into broadcast graphics.
+          </p>
+        </aside>
+      </div>
+
+      <div class="layout">
+        <nav class="toc" aria-label="Table of contents">
+          <p class="toc-label">On this page</p>
+          <a href="#overview">System overview</a>
+          <a href="#flow">Data movement</a>
+          <a href="#projects">Project responsibilities</a>
+          <a href="#storage">Storage map</a>
+          <a href="#replay">Replay anatomy</a>
+          <a href="#conflicts">Contract conflicts</a>
+          <a href="#recommendation">Recommended direction</a>
+        </nav>
+
+        <main>
+          <section id="overview">
+            <div class="section-heading">
+              <span class="section-number">01</span>
+              <div>
+                <h2>Four applications, four clear jobs.</h2>
+                <p class="section-intro">
+                  The platform is easiest to understand when each repository is treated as
+                  one operational boundary rather than as a collection of pages and endpoints.
+                </p>
+              </div>
+            </div>
+
+            <div class="system-grid">
+              <article class="system-card backend reveal" data-index="1">
+                <h3>Ks-Tournalink-Backend</h3>
+                <span class="role">System of record</span>
+                <p>
+                  Owns tournament structure, match lifecycle, team and player state,
+                  scoring, analytics, vMix JSON, and live broadcast events.
+                </p>
+              </article>
+              <article class="system-card desktop reveal" data-index="2">
+                <h3>Ks-Tournalink-Desktop-App</h3>
+                <span class="role">Telemetry ingress</span>
+                <p>
+                  Receives local PCOB traffic, feeds meaningful match changes to the
+                  Backend, and serves local map and player overlays to OBS.
+                </p>
+              </article>
+              <article class="system-card frontend reveal" data-index="3">
+                <h3>Ks-Tournalink-Frontend</h3>
+                <span class="role">Operations console</span>
+                <p>
+                  Lets operators configure tournaments, activate matches, edit scores,
+                  inspect vMix data, and control broadcast presentation.
+                </p>
+              </article>
+              <article class="system-card widget reveal" data-index="4">
+                <h3>Ecube-widget</h3>
+                <span class="role">Presentation runtime</span>
+                <p>
+                  Fetches broadcast data, listens for live events, renders animated OBS
+                  graphics, and provides replay control and output pages.
+                </p>
+              </article>
+            </div>
+
+            <div class="backbone">
+              <div>
+                <h3>What is the backbone?</h3>
+                <p>
+                  The central business backbone is the Backend’s <code>TournamentDataStore</code>
+                  and <code>TournamentDataEngine</code>, backed by MongoDB. This is where the
+                  tournament aggregate becomes usable for scoring, analytics, vMix responses,
+                  and live broadcasts.
+                </p>
+                <p>
+                  For real-time gameplay, the Desktop App is the ingress backbone because it is
+                  the only production component that directly receives high-frequency PCOB data.
+                </p>
+              </div>
+              <div class="stamp">BACKEND<br />+<br />DESKTOP</div>
+            </div>
+          </section>
+
+          <section id="flow">
+            <div class="section-heading">
+              <span class="section-number">02</span>
+              <div>
+                <h2>How data moves.</h2>
+                <p class="section-intro">
+                  There are three major runtime paths: configuration, live telemetry, and
+                  broadcast presentation. Replay currently sits outside the production path.
+                </p>
+              </div>
+            </div>
+
+            <div class="flow-board">
+              <div class="flow-row">
+                <div class="node">
+                  <strong>Operator</strong>
+                  <small>Creates tournaments, assigns slots, and activates a match.</small>
+                </div>
+                <span class="arrow" aria-hidden="true"></span>
+                <div class="node">
+                  <strong>Admin Frontend</strong>
+                  <small>Authenticated REST requests through Axios and Pinia.</small>
+                </div>
+                <span class="arrow" aria-hidden="true"></span>
+                <div class="node">
+                  <strong>Backend + MongoDB</strong>
+                  <small>Persists structure and establishes the active match context.</small>
+                </div>
+              </div>
+              <div class="flow-row">
+                <div class="node">
+                  <strong>PUBG / PCOB</strong>
+                  <small>Posts player, kill, observer, circle, and global map payloads.</small>
+                </div>
+                <span class="arrow" aria-hidden="true"></span>
+                <div class="node">
+                  <strong>Desktop App :10086</strong>
+                  <small>Updates local overlays and filters the Backend statistics feed.</small>
+                </div>
+                <span class="arrow" aria-hidden="true"></span>
+                <div class="node">
+                  <strong>Engine processors</strong>
+                  <small>Normalize state, compute deltas, persist scores, and broadcast events.</small>
+                </div>
+              </div>
+              <div class="flow-row">
+                <div class="node">
+                  <strong>vMix REST + WebSocket</strong>
+                  <small>Scoreboards, MVP, summaries, rankings, and live eliminations.</small>
+                </div>
+                <span class="arrow" aria-hidden="true"></span>
+                <div class="node">
+                  <strong>Ecube-widget</strong>
+                  <small>Transforms data into themed, animated broadcast views.</small>
+                </div>
+                <span class="arrow" aria-hidden="true"></span>
+                <div class="node">
+                  <strong>OBS / Broadcast</strong>
+                  <small>Captures the widget display iframe and local map overlays.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="branch-note">
+              <div class="note">
+                <strong>Local visual path</strong>
+                Movement, circles, and global map information stay in Desktop memory and reach
+                the local OBS map through SSE.
+              </div>
+              <div class="note warning">
+                <strong>Backend statistics path</strong>
+                Only meaningful statistical changes, kills, and observer changes are forwarded
+                when the operator enables Feed Data.
+              </div>
+            </div>
+          </section>
+
+          <section id="projects">
+            <div class="section-heading">
+              <span class="section-number">03</span>
+              <div>
+                <h2>Responsibility of each project.</h2>
+                <p class="section-intro">
+                  These boundaries show where new features should live and which application
+                  should not be asked to own them.
+                </p>
+              </div>
+            </div>
+
+            <article class="repo">
+              <div class="repo-title">
+                <span class="repo-number">REPOSITORY 01</span>
+                <h3>Backend</h3>
+                <div class="stack"><span>NestJS</span><span>MongoDB</span><span>Mongoose</span><span>WebSocket</span></div>
+              </div>
+              <div class="repo-body">
+                <p>The authoritative tournament platform and business engine.</p>
+                <h4>Owns</h4>
+                <ul>
+                  <li>Users, authentication, tournaments, stages, groups, matches, teams, players, images, and sponsors.</li>
+                  <li>Match activity, start/running/finished/completed lifecycle, and captured game ID.</li>
+                  <li>Current normalized player and team state, manual scoring, and derived analytics.</li>
+                  <li>Public <code>/vmix/:tournamentId/...</code> responses and <code>/tournament</code> live events.</li>
+                </ul>
+                <h4>Important processing sequence</h4>
+                <ol>
+                  <li>Load the tournament aggregate into <code>TournamentDataStore</code>.</li>
+                  <li>Validate incoming match and game identifiers.</li>
+                  <li>Compare previous and current PCOB state.</li>
+                  <li>Upsert current player/team documents and update the in-memory aggregate.</li>
+                  <li>Emit eliminations, achievements, ranking changes, and match-end events.</li>
+                </ol>
+                <div class="note warning">
+                  <strong>Does not own replay history today</strong>
+                  It overwrites the latest raw match snapshot and normalized scores. Historical
+                  positions, circle movement, and plane data are not persisted.
+                </div>
+              </div>
+            </article>
+
+            <article class="repo">
+              <div class="repo-title">
+                <span class="repo-number">REPOSITORY 02</span>
+                <h3>Desktop App</h3>
+                <div class="stack"><span>Electron</span><span>Vue</span><span>Express</span><span>Local SSE</span></div>
+              </div>
+              <div class="repo-body">
+                <p>The production boundary between PUBG’s observer feed and Tournalink.</p>
+                <h4>Receives from PCOB</h4>
+                <pre><code>POST /totalmessage
+POST /setkillinfo
+POST /setobservingplayer
+POST /setcircleinfo
+POST /setgameglobalinfo</code></pre>
+                <h4>Produces</h4>
+                <ul>
+                  <li>Filtered Backend events through <code>/desktop-app/feed-pcob-api-data</code>.</li>
+                  <li>Local map state and SSE for the OBS map, timer, and player overlays.</li>
+                  <li>Local team-logo and player-image files, plus PUBG’s team configuration INI.</li>
+                </ul>
+                <div class="note">
+                  <strong>Why movement does not reach the Backend</strong>
+                  The change detector ignores <code>CurrentTime</code>, <code>location</code>, and
+                  <code>survivalTime</code>. Movement-only frames update the local map but are
+                  intentionally skipped by the scoring feed.
+                </div>
+              </div>
+            </article>
+
+            <article class="repo">
+              <div class="repo-title">
+                <span class="repo-number">REPOSITORY 03</span>
+                <h3>Admin Frontend</h3>
+                <div class="stack"><span>Nuxt</span><span>Vue</span><span>Pinia</span><span>Axios</span></div>
+              </div>
+              <div class="repo-body">
+                <p>The authenticated workspace for tournament and match operators.</p>
+                <h4>Operator workflows</h4>
+                <ul>
+                  <li>Create the tournament → stage → group → match hierarchy.</li>
+                  <li>Assign teams and players to PCOB slot indexes.</li>
+                  <li>Go live, finish a match, and manually repair scoring when required.</li>
+                  <li>Preview and copy Backend vMix JSON.</li>
+                  <li>Build OBS/widget URLs, select a widget, and edit tournament themes.</li>
+                </ul>
+                <p>
+                  The simulator page can generate fake PCOB events for development, but it is
+                  not part of the production telemetry flow.
+                </p>
+              </div>
+            </article>
+
+            <article class="repo">
+              <div class="repo-title">
+                <span class="repo-number">REPOSITORY 04</span>
+                <h3>Ecube-widget</h3>
+                <div class="stack"><span>Next.js</span><span>React</span><span>RTK Query</span><span>GSAP</span></div>
+              </div>
+              <div class="repo-body">
+                <p>The presentation runtime captured by OBS and used by replay operators.</p>
+                <h4>Consumes</h4>
+                <ul>
+                  <li>Backend vMix JSON for pre-game and post-match graphics.</li>
+                  <li>Backend <code>/tournament</code> WebSocket events for live ranking and event widgets.</li>
+                  <li>Widget-local theme and customer configuration.</li>
+                  <li>Uploaded JSONL data for the current replay tool.</li>
+                </ul>
+                <h4>Actual route contract</h4>
+                <pre><code>/{userId}/{tournamentId}/pre-game/{widget}
+/{userId}/{tournamentId}/in-game/{widget}
+/{userId}/{tournamentId}/after-match/{widget}
+/{userId}/{tournamentId}/display
+
+/replay
+/replay/control</code></pre>
+                <p>
+                  Its OBS display currently listens to the Widget application’s own SSE system,
+                  not the Backend widget-controller WebSocket.
+                </p>
+              </div>
+            </article>
+          </section>
+
+          <section id="storage">
+            <div class="section-heading">
+              <span class="section-number">04</span>
+              <div>
+                <h2>What persists—and what disappears.</h2>
+                <p class="section-intro">
+                  A large part of the live system is intentionally transient. Understanding that
+                  line is essential before adding replay or recovery behavior.
+                </p>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Data</th><th>Owner</th><th>Storage</th><th>Behavior</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Tournament hierarchy and assignments</td><td>Backend</td>
+                    <td><span class="status persistent">Persistent</span></td><td>MongoDB documents</td>
+                  </tr>
+                  <tr>
+                    <td>Current player and team score state</td><td>Backend</td>
+                    <td><span class="status persistent">Persistent</span></td><td>Upserted per match</td>
+                  </tr>
+                  <tr>
+                    <td>Full raw <code>TOTAL_MESSAGE</code></td><td>Backend</td>
+                    <td><span class="status persistent">Latest only</span></td><td>One match document is overwritten</td>
+                  </tr>
+                  <tr>
+                    <td>Event deduplication / knock ledger</td><td>Backend</td>
+                    <td><span class="status persistent">Persistent</span></td><td>Prevents duplicate announcements</td>
+                  </tr>
+                  <tr>
+                    <td>Live map, circle, and observer state</td><td>Desktop</td>
+                    <td><span class="status memory">In memory</span></td><td>Lost when the local server restarts</td>
+                  </tr>
+                  <tr>
+                    <td>Team and player media</td><td>Desktop</td>
+                    <td><span class="status persistent">Local files</span></td><td>Stored under <code>C:\Images</code></td>
+                  </tr>
+                  <tr>
+                    <td>Selected widget state</td><td>Backend and Widget</td>
+                    <td><span class="status memory">Two memory stores</span></td><td>Both reset on process restart</td>
+                  </tr>
+                  <tr>
+                    <td>Replay movement/circle history</td><td>None</td>
+                    <td><span class="status missing">Missing</span></td><td>Only available in diagnostic JSONL captures</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="replay">
+            <div class="section-heading">
+              <span class="section-number">05</span>
+              <div>
+                <h2>Why one replay becomes 100 MB.</h2>
+                <p class="section-intro">
+                  The recording is a diagnostic event dump, not a purpose-built replay format.
+                  It records far more information than the replay UI consumes.
+                </p>
+              </div>
+            </div>
+
+            <div class="big-number">
+              <strong>100<br />MB</strong>
+              <p>
+                The standalone <code>tools/pcob-capture.js</code> server appends every POST body,
+                including unchanged events, to one JSONL stream. Each line repeats complete PCOB
+                snapshots. New capture sessions can also be appended to the same file.
+              </p>
+            </div>
+
+            <h3>Current browser cost</h3>
+            <ol>
+              <li><code>file.text()</code> loads the complete file as a JavaScript string.</li>
+              <li>The parser splits the entire string into lines.</li>
+              <li>Every line is parsed before unchanged records are discarded.</li>
+              <li>Remaining events still contain complete PCOB bodies.</li>
+              <li>The normalized dataset is copied again through <code>BroadcastChannel</code>.</li>
+            </ol>
+
+            <h3 style="margin-top: 32px">What replay actually needs</h3>
+            <div class="data-cards">
+              <article class="data-card">
+                <code>totalmessage</code>
+                <p>
+                  Player UID, team, name, rank, live state, position; team ID, name,
+                  alive count, kills, and logo URL.
+                </p>
+              </article>
+              <article class="data-card">
+                <code>setcircleinfo</code>
+                <p>Circle status/index, counter, maximum time, and displayed game time.</p>
+              </article>
+              <article class="data-card">
+                <code>setgameglobalinfo</code>
+                <p>Circle geometry plus plane start and stop coordinates.</p>
+              </article>
+              <article class="data-card">
+                <code>setkillinfo</code>
+                <p>Victim UID, causer name, and victim name for map markers and the kill feed.</p>
+              </article>
+              <article class="data-card">
+                <code>setisingame</code>
+                <p>The current lobby or in-game phase used by the replay status display.</p>
+              </article>
+              <article class="data-card">
+                <code>setobservingplayer</code>
+                <p>The observed player UID, stored in the payload’s <code>"0"</code> field.</p>
+              </article>
+            </div>
+
+            <div class="note warning" style="margin-top: 24px">
+              <strong>The key conclusion</strong>
+              Most raw combat, damage, healing, equipment, network, survival, and scoring fields
+              in each full snapshot are unnecessary for map replay. They should be removed at the
+              Desktop capture boundary rather than parsed and discarded in the browser.
+            </div>
+          </section>
+
+          <section id="conflicts">
+            <div class="section-heading">
+              <span class="section-number">06</span>
+              <div>
+                <h2>Where the four projects have drifted.</h2>
+                <p class="section-intro">
+                  These are current integration problems, not theoretical risks. They should be
+                  resolved before adding more cross-project features.
+                </p>
+              </div>
+            </div>
+
+            <ol class="conflict-list">
+              <li>
+                <div><strong>Two widget control planes</strong><p>The Admin Frontend sends Backend WebSocket commands, while the actual Widget display listens to Widget SSE. The paths do not meet.</p></div>
+              </li>
+              <li>
+                <div><strong>Widget URL mismatch</strong><p>The Admin Frontend generates URLs without <code>userId</code>; current Widget routes require it and use different slugs.</p></div>
+              </li>
+              <li>
+                <div><strong>Duplicate catalogs</strong><p>Widget definitions exist in several Frontend and Widget files, and the copies have already diverged.</p></div>
+              </li>
+              <li>
+                <div><strong>Map port mismatch</strong><p>Desktop serves the map on <code>10086</code>, while the Widget catalog points to <code>10087</code>.</p></div>
+              </li>
+              <li>
+                <div><strong>Unowned PCOB port</strong><p>The Widget is configured for <code>localhost:8080</code>, but none of the four inspected repositories owns that service.</p></div>
+              </li>
+              <li>
+                <div><strong>No shared schemas</strong><p>Routes, event names, widget slugs, and DTO shapes are independently declared, making further contract drift likely.</p></div>
+              </li>
+            </ol>
+          </section>
+
+          <section id="recommendation">
+            <div class="section-heading">
+              <span class="section-number">07</span>
+              <div>
+                <h2>A cleaner target architecture.</h2>
+                <p class="section-intro">
+                  Preserve each application’s natural ownership and move replay optimization to
+                  the source of the high-frequency data.
+                </p>
+              </div>
+            </div>
+
+            <div class="target-flow">
+              <article class="target-step">
+                <span>STEP 01</span><h3>Capture</h3>
+                <p>Desktop receives the complete PCOB stream before its statistics filter.</p>
+              </article>
+              <article class="target-step">
+                <span>STEP 02</span><h3>Project</h3>
+                <p>Desktop keeps only versioned replay fields, changed frames, and periodic keyframes.</p>
+              </article>
+              <article class="target-step">
+                <span>STEP 03</span><h3>Persist</h3>
+                <p>Backend links compressed replay chunks to tournament, match, and game IDs.</p>
+              </article>
+              <article class="target-step">
+                <span>STEP 04</span><h3>Render</h3>
+                <p>Widget streams only the required chunks instead of loading a full JSONL file.</p>
+              </article>
+            </div>
+
+            <div class="priority-grid">
+              <article class="priority">
+                <h3>P0 · Fix contracts</h3>
+                <ul>
+                  <li>Choose one widget-control transport.</li>
+                  <li>Establish one canonical widget catalog.</li>
+                  <li>Correct user ID, slug, and port contracts.</li>
+                </ul>
+              </article>
+              <article class="priority">
+                <h3>P1 · Define replay</h3>
+                <ul>
+                  <li>Create a versioned compact replay DTO.</li>
+                  <li>Separate metadata, positions, circles, and events.</li>
+                  <li>Keep the existing scoring feed unchanged.</li>
+                </ul>
+              </article>
+              <article class="priority">
+                <h3>P2 · Stream storage</h3>
+                <ul>
+                  <li>Compress and split recordings into time chunks.</li>
+                  <li>Keep metadata in MongoDB and large chunks in file/object storage.</li>
+                  <li>Load replay by match ID from the Widget.</li>
+                </ul>
+              </article>
+            </div>
+
+            <div class="ownership">
+              <div><strong>Desktop App</strong><span>Capture and replay projection</span></div>
+              <div><strong>Backend</strong><span>Identity, validation, persistence, and delivery</span></div>
+              <div><strong>Admin Frontend</strong><span>Operator management and match selection</span></div>
+              <div><strong>Ecube-widget</strong><span>Replay rendering and broadcast playback</span></div>
+            </div>
+          </section>
+
+          <footer class="footer">
+            <div>
+              <strong>The rule of ownership</strong>
+              <p>
+                Backend owns truth. Desktop owns ingress. Frontend owns operations.
+                Widget owns presentation.
+              </p>
+            </div>
+            <span class="footer-mark" aria-hidden="true">T.</span>
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      const root = document.documentElement;
+      const themeButton = document.getElementById("theme-toggle");
+      const savedTheme = localStorage.getItem("architecture-theme");
+      if (savedTheme === "dark") root.dataset.theme = "dark";
+
+      themeButton.addEventListener("click", () => {
+        const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
+        root.dataset.theme = nextTheme;
+        localStorage.setItem("architecture-theme", nextTheme);
+      });
+
+      const links = [...document.querySelectorAll(".toc a")];
+      const sections = links
+        .map((link) => document.querySelector(link.getAttribute("href")))
+        .filter(Boolean);
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (!visible) return;
+          links.forEach((link) => {
+            link.classList.toggle("active", link.getAttribute("href") === `#${visible.target.id}`);
+          });
+        },
+        { rootMargin: "-18% 0px -65%", threshold: [0, 0.1, 0.4] },
+      );
+
+      sections.forEach((section) => observer.observe(section));
+    </script>
+  </body>
+</html>
