@@ -39,7 +39,7 @@ type Props = {
 };
 
 function teamId(entry: LiveRankEntry) {
-  return entry.team.id ?? entry.team._id ?? String(entry.rank);
+  return entry.team.id ?? entry.team._id ?? String(entry.position);
 }
 
 export default function LiveOverallRankingView({
@@ -52,6 +52,8 @@ export default function LiveOverallRankingView({
   sortBy = "overAllPoints",
 }: Props) {
   const rankingLayout = getLiveRankingLayout(showFullTeamName, showPoints);
+  // Both numbers are server-assigned; the variant only picks which one to show.
+  const rankKey = sortBy === "points" ? "matchRank" : "position";
   const {
     teams,
     showTopFour,
@@ -215,11 +217,11 @@ export default function LiveOverallRankingView({
                 />
 
                 <div ref={containerRef} className="flex w-full flex-col">
-                  {displayTeams.map((entry, index) => (
+                  {displayTeams.map((entry) => (
                     <LiveRankingRow
                       key={teamId(entry)}
                       entry={entry}
-                      rank={index + 1}
+                      rank={entry[rankKey]}
                       isObserved={activeObservingTeamId === teamId(entry)}
                       showTeamFlags={showTeamFlags}
                       showFullTeamName={showFullTeamName}

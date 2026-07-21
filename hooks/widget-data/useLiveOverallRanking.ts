@@ -18,22 +18,18 @@ import {
 
 type SortKey = "overAllPoints" | "points";
 
-function sortByKey(data: LiveRankEntry[], key: SortKey) {
-  return [...data].sort((a, b) => (b[key] ?? 0) - (a[key] ?? 0));
-}
-
-function withRankPositions(
-  data: LiveRankEntry[],
-  sortKey: SortKey = "overAllPoints",
-): LiveRankEntry[] {
-  return sortByKey(data, sortKey).map((entry, index) => ({
-    ...entry,
-    rank: index + 1,
-  }));
+/**
+ * Row order only — the rank NUMBERS come from the server on every entry.
+ * "overAllPoints" reads group standings (already position-ordered by the API),
+ * "points" reads this match's standings.
+ */
+function inRankOrder(data: LiveRankEntry[], sortKey: SortKey): LiveRankEntry[] {
+  const key = sortKey === "points" ? "matchRank" : "position";
+  return [...data].sort((a, b) => (a[key] ?? 0) - (b[key] ?? 0));
 }
 
 function teamId(entry: LiveRankEntry) {
-  return entry.team.id ?? entry.team._id ?? String(entry.rank);
+  return entry.team.id ?? entry.team._id ?? String(entry.position);
 }
 
 function isTeamEliminated(players?: LiveRankEntry["players"]) {
@@ -81,7 +77,7 @@ export function useLiveOverallRanking(
     },
   );
   const [teams, setTeams] = useState<LiveRankEntry[]>(() =>
-    preview ? withRankPositions(getMockLiveOverallRanking(), sortBy) : [],
+    preview ? inRankOrder(getMockLiveOverallRanking(), sortBy) : [],
   );
   const [showTopFour, setShowTopFour] = useState(false);
   const [topFourTeams, setTopFourTeams] = useState<LiveRankEntry[]>([]);
@@ -93,7 +89,7 @@ export function useLiveOverallRanking(
 
   const applyTopFour = useCallback(
     (data: TopFourPayload) => {
-      const ranked = withRankPositions(data, sortBy).slice(0, 4);
+      const ranked = inRankOrder(data, sortBy).slice(0, 4);
       topFourModeRef.current = true;
       setTopFourTeams(ranked);
       setShowTopFour(true);
@@ -114,7 +110,7 @@ export function useLiveOverallRanking(
   }, [resetTopFour]);
 
   const applyTeams = useCallback((data: LiveRankEntry[]) => {
-    const ranked = withRankPositions(data, sortBy);
+    const ranked = inRankOrder(data, sortBy);
     const aliveTeams = getAliveTeams(ranked);
 
     setTeams(ranked);

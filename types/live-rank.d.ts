@@ -21,13 +21,22 @@ export interface LiveRankPlayer {
 }
 
 export interface LiveRankEntry {
-  rank: number;
+  /**
+   * Rank across every team in the group, server-assigned. Gaps appear when
+   * teams sit out the current match — a team ranked 15th overall renders as 15
+   * even if four teams above it are not playing, so the live overlay and the
+   * after-match scoreboard always show the same number for the same team.
+   */
+  position: number;
+  /** Rank by this match's points alone, for the per-match ranking variant. */
+  matchRank: number;
   team: LiveRankTeam;
   points: number;
   overAllPoints: number;
+  positionPoints: number;
+  killPoints: number;
+  wwcd: number;
   kills: number;
-  wwcd?: number;
-  positionPoints?: number;
   players?: LiveRankPlayer[];
   isMissing?: boolean;
   isEliminated?: boolean;
