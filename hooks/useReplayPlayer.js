@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 
 // Virtual playback clock over a recorded session, in ms since recording start.
 // Play/pause, speed multiplier, and seeking — the YouTube control surface.
-export function useReplayPlayer(duration) {
+export function useReplayPlayer(duration, initialSpeed = 4) {
   const [time, setTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [speed, setSpeed] = useState(4);
+  const [speed, setSpeed] = useState(initialSpeed);
   const timeRef = useRef(0);
 
   // Advancing the clock is a sync with a browser timer — the external-system

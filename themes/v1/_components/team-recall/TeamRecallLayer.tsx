@@ -13,6 +13,7 @@ type Props = {
   isLocked?: boolean;
   onTriggerPreview?: (scenarioKey: string) => void;
   onResetPreview?: () => void;
+  onEnqueuePreview?: (payload: TeamRecallPayload) => void;
   showFullTeamName?: boolean;
 };
 
@@ -24,15 +25,17 @@ export default function TeamRecallLayer({
   isLocked = false,
   onTriggerPreview,
   onResetPreview,
+  onEnqueuePreview,
   showFullTeamName = false,
 }: Props) {
   return (
     <>
-      {preview && onTriggerPreview && onResetPreview && (
+      {preview && onTriggerPreview && onResetPreview && onEnqueuePreview && (
         <TeamRecallPreviewPanel
           isLocked={isLocked}
           onTrigger={onTriggerPreview}
           onReset={onResetPreview}
+          onEnqueue={onEnqueuePreview}
         />
       )}
 

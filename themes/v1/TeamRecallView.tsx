@@ -19,6 +19,7 @@ export default function TeamRecallView({
     isVisible,
     isLocked,
     triggerPreview,
+    enqueue,
     reset,
     onExitComplete,
     preview: isPreview,
@@ -40,6 +41,7 @@ export default function TeamRecallView({
         isLocked={isLocked}
         onTriggerPreview={triggerPreview}
         onResetPreview={reset}
+        onEnqueuePreview={enqueue}
         showFullTeamName={showFullTeamName}
       />
     </div>
