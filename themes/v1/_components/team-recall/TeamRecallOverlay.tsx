@@ -6,10 +6,8 @@ import { cn } from "@/lib/utils";
 import { getTeamDisplayLabel } from "@/lib/utils/teamDisplay";
 import type { TeamRecallPayload } from "@/types/team-recall";
 
-const DEFAULT_PLAYER_IMAGE =
-  "https://api.ecube.gg/images/defaults/default-player.png";
-const DEFAULT_TEAM_IMAGE =
-  "https://api.ecube.gg/images/defaults/default-team.png";
+const DEFAULT_PLAYER_IMAGE = "/default-player.png";
+const DEFAULT_TEAM_IMAGE = "/default-team.png";
 
 /** Same token gradients as the team elimination banner. */
 const SIDE_PANEL_GRADIENT =
@@ -72,7 +70,9 @@ export default function TeamRecallOverlay({
           style={{ originX: 0, background: CENTER_PANEL_GRADIENT }}
           className="relative flex flex-col"
         >
-          <div className="flex flex-1 items-end px-3 pt-2">
+          {/* The gap keeps each player's name strip separate instead of
+              reading as one bar. */}
+          <div className="flex flex-1 items-end gap-2 px-3 pt-2">
             <AnimatePresence initial={false} mode="popLayout">
               {players.map((player, i) => (
                 <motion.div

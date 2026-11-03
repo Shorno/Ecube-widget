@@ -7,8 +7,7 @@ import { cn } from "@/lib/utils";
 import { getTeamDisplayLabel } from "@/lib/utils/teamDisplay";
 import type { TeamEliminationPayload } from "@/types/team-elimination";
 
-const DEFAULT_PLAYER_IMAGE =
-  "https://api.ecube.gg/images/defaults/default-player.png";
+const DEFAULT_PLAYER_IMAGE = "/default-player.png";
 const PUBG_LOGO = "/assets/team-elimination/pubg-mobile-logo.png";
 
 /** Token-only vertical gradients — subtle light top, slightly deeper bottom */

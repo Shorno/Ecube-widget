@@ -4,8 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useTeamElimination } from "@/hooks/widget-data";
 
-const DEFAULT_PLAYER_IMAGE =
-  "https://api.ecube.gg/images/defaults/default-player.png";
+const DEFAULT_PLAYER_IMAGE = "/default-player.png";
 
 function DefaultEliminationOverlay({ data }) {
   const teamLabel = data.victimTeam.clanTag || data.victimTeam.name;

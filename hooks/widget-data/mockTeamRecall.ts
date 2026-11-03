@@ -1,9 +1,7 @@
 import type { TeamRecallPayload } from "@/types/team-recall";
 
-const DEFAULT_PLAYER_IMAGE =
-  "https://api.ecube.gg/images/defaults/default-player.png";
-const DEFAULT_TEAM_IMAGE =
-  "https://api.ecube.gg/images/defaults/default-team.png";
+const DEFAULT_PLAYER_IMAGE = "/default-player.png";
+const DEFAULT_TEAM_IMAGE = "/default-team.png";
 
 const mockPlayer = (id: string, ign: string) => ({
   id,

@@ -13,7 +13,7 @@ export function getMockRampageAchievement(): PlayerAchievementPayload {
       id: "6a3655b384b592178a243070",
       name: "MA5IA ESPORTS",
       clanTag: "MA5IA ESPORTS",
-      logo: "https://api.ecube.gg/images/defaults/default-team.png",
+      logo: "/default-team.png",
       index: 21,
       country_code: "BD",
       country_name: "Bangladesh",

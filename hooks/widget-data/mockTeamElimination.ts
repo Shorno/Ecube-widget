@@ -1,7 +1,6 @@
 import type { TeamEliminationPayload } from "@/types/team-elimination";
 
-const DEFAULT_PLAYER_IMAGE =
-  "https://api.ecube.gg/images/defaults/default-player.png";
+const DEFAULT_PLAYER_IMAGE = "/default-player.png";
 
 export function getMockTeamElimination(): TeamEliminationPayload {
   return {
@@ -9,7 +8,7 @@ export function getMockTeamElimination(): TeamEliminationPayload {
       id: "6a3655ba84b592178a243071",
       name: "TLB ESPORTS",
       clanTag: "TLB ESPORTS",
-      logo: "https://api.ecube.gg/images/defaults/default-team.png",
+      logo: "/default-team.png",
       index: 22,
       country_code: "BD",
       country_name: "Bangladesh",
@@ -52,7 +51,7 @@ export function getMockTeamElimination(): TeamEliminationPayload {
       id: "6a35051784b592178a242d4b",
       name: "SECTOR 12 ES",
       clanTag: "020",
-      logo: "https://api.ecube.gg/images/defaults/default-team.png",
+      logo: "/default-team.png",
       index: 7,
       country_code: "BD",
       country_name: "Bangladesh",

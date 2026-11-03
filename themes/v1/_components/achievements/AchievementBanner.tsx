@@ -10,8 +10,7 @@ import {
 import { ELIMS_ICON } from "./achievementIcons";
 
 const DEFAULT_PLAYER_IMAGE = "/default-player.png";
-const DEFAULT_TEAM_IMAGE =
-  "https://api.ecube.gg/images/defaults/default-team.png";
+const DEFAULT_TEAM_IMAGE = "/default-team.png";
 
 type BannerPlayer = { image?: string; ign?: string; name?: string };
 type BannerTeam = { logo?: string; name?: string };
