@@ -1,6 +1,7 @@
 import type { DropLootedPayload } from "@/types/drop-looted";
 import type { FirstBloodPayload } from "@/types/first-blood";
 import type { GrenadierPayload } from "@/types/grenadier";
+import type { MolotovPayload } from "@/types/molotov";
 import type { PlayerAchievementPayload } from "@/types/player-achievement";
 import type { VehicleElimPayload } from "@/types/vehicle-elim";
 
@@ -29,9 +30,15 @@ export type GrenadierQueueItem = {
   data: GrenadierPayload;
 };
 
+export type MolotovQueueItem = {
+  kind: "molotov";
+  data: MolotovPayload;
+};
+
 export type AchievementQueueItem =
   | PlayerAchievementQueueItem
   | FirstBloodQueueItem
   | DropLootedQueueItem
   | VehicleElimQueueItem
-  | GrenadierQueueItem;
+  | GrenadierQueueItem
+  | MolotovQueueItem;

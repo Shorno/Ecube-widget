@@ -27,6 +27,7 @@ export default function AchievementsView({
     triggerDropLootedPreview,
     triggerVehicleElimPreview,
     triggerGrenadierPreview,
+    triggerMolotovPreview,
   } = useAchievements(tournamentID, { preview });
 
   // Warm the achievement header icons into the browser cache on mount. Overlays
@@ -54,6 +55,7 @@ export default function AchievementsView({
             onTriggerDropLooted={triggerDropLootedPreview}
             onTriggerVehicleElim={triggerVehicleElimPreview}
             onTriggerGrenadier={triggerGrenadierPreview}
+            onTriggerMolotov={triggerMolotovPreview}
             isLocked={isLocked}
           />
         </>

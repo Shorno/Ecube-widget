@@ -2,6 +2,7 @@ import type { AchievementQueueItem } from "@/types/achievement-event";
 import type { DropLootedPayload } from "@/types/drop-looted";
 import type { FirstBloodPayload } from "@/types/first-blood";
 import type { GrenadierPayload } from "@/types/grenadier";
+import type { MolotovPayload } from "@/types/molotov";
 import type { PlayerAchievementPayload } from "@/types/player-achievement";
 import type { VehicleElimPayload } from "@/types/vehicle-elim";
 
@@ -29,26 +30,18 @@ function isDropLootedPayload(data: unknown): data is DropLootedPayload {
   return Boolean(payload.player && payload.team);
 }
 
-// PLAYER_ELIMINATION fires on every kill; only vehicle kills become an
-// achievement, so require the weapon type to be "vehicle".
-function isVehicleElimPayload(data: unknown): data is VehicleElimPayload {
-  if (!data || typeof data !== "object") return false;
-  const payload = data as VehicleElimPayload;
-  return Boolean(
-    payload.causer?.player &&
-      payload.victim?.player &&
-      payload.weapon?.type === "vehicle",
-  );
-}
-
-// Same PLAYER_ELIMINATION event, gated to grenade kills.
-function isGrenadierPayload(data: unknown): data is GrenadierPayload {
+// PLAYER_ELIMINATION fires on every kill; only kills by certain weapon types
+// (vehicle, grenade, molotov) become an achievement.
+function isWeaponElimPayload(
+  data: unknown,
+  weaponType: string,
+): data is VehicleElimPayload | GrenadierPayload | MolotovPayload {
   if (!data || typeof data !== "object") return false;
   const payload = data as GrenadierPayload;
   return Boolean(
     payload.causer?.player &&
       payload.victim?.player &&
-      payload.weapon?.type === "grenade",
+      payload.weapon?.type === weaponType,
   );
 }
 
@@ -68,12 +61,16 @@ export function parseAchievementEvent(
     return { kind: "drop-looted", data };
   }
 
-  if (eventName === "PLAYER_ELIMINATION" && isVehicleElimPayload(data)) {
-    return { kind: "vehicle-elim", data };
-  }
-
-  if (eventName === "PLAYER_ELIMINATION" && isGrenadierPayload(data)) {
-    return { kind: "grenadier", data };
+  if (eventName === "PLAYER_ELIMINATION") {
+    if (isWeaponElimPayload(data, "vehicle")) {
+      return { kind: "vehicle-elim", data };
+    }
+    if (isWeaponElimPayload(data, "grenade")) {
+      return { kind: "grenadier", data };
+    }
+    if (isWeaponElimPayload(data, "molotov")) {
+      return { kind: "molotov", data };
+    }
   }
 
   return null;

@@ -6,6 +6,7 @@ import { getMockDominationAchievement } from "./mockDominationAchievement";
 import { getMockDropLootedAchievement } from "./mockDropLootedAchievement";
 import { getMockFirstBloodAchievement } from "./mockFirstBloodAchievement";
 import { getMockGrenadierAchievement } from "./mockGrenadierAchievement";
+import { getMockMolotovAchievement } from "./mockMolotovAchievement";
 import { getMockRampageAchievement } from "./mockRampageAchievement";
 import { getMockVehicleElimAchievement } from "./mockVehicleElimAchievement";
 import { parseAchievementEvent } from "./parseAchievementEvent";
@@ -93,6 +94,13 @@ export function useAchievements(
     });
   }, [triggerPreview]);
 
+  const triggerMolotovPreview = useCallback(() => {
+    triggerPreview({
+      kind: "molotov",
+      data: getMockMolotovAchievement(),
+    });
+  }, [triggerPreview]);
+
   return {
     ...queue,
     preview,
@@ -102,5 +110,6 @@ export function useAchievements(
     triggerDropLootedPreview,
     triggerVehicleElimPreview,
     triggerGrenadierPreview,
+    triggerMolotovPreview,
   };
 }
