@@ -1,0 +1,16 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Flame -->
+  <path d="M 128 14 C 146 34, 158 48, 152 66 C 148 78, 138 84, 128 84 C 116 84, 106 76, 104 64 C 102 52, 110 44, 116 36 C 116 48, 122 54, 128 54 C 132 44, 132 30, 128 14 Z" stroke="var(--molotov-stroke, currentColor)" stroke-width="var(--molotov-stroke-width, 8)" stroke-linejoin="round" fill="var(--molotov-flame-fill, var(--molotov-fill, #ffffff))"/>
+
+  <!-- Rag -->
+  <path d="M 116 84 L 140 84 L 136 104 L 120 104 Z" stroke="var(--molotov-stroke, currentColor)" stroke-width="var(--molotov-stroke-width, 8)" stroke-linejoin="round" fill="var(--molotov-rag-fill, var(--molotov-fill, #ffffff))"/>
+
+  <!-- Bottle Neck -->
+  <rect x="114" y="104" width="28" height="34" stroke="var(--molotov-stroke, currentColor)" stroke-width="var(--molotov-stroke-width, 8)" stroke-linejoin="round" fill="var(--molotov-neck-fill, var(--molotov-fill, #ffffff))"/>
+
+  <!-- Bottle Body -->
+  <path d="M 114 138 C 90 148, 80 164, 80 186 L 80 226 C 80 236, 86 242, 96 242 L 160 242 C 170 242, 176 236, 176 226 L 176 186 C 176 164, 166 148, 142 138 Z" stroke="var(--molotov-stroke, currentColor)" stroke-width="var(--molotov-stroke-width, 8)" stroke-linejoin="round" fill="var(--molotov-body-fill, var(--molotov-fill, #ffffff))"/>
+
+  <!-- Fuel Line -->
+  <path d="M 80 196 L 176 196" stroke="var(--molotov-stroke, currentColor)" stroke-width="var(--molotov-stroke-width, 8)" stroke-linecap="round"/>
+</svg>
