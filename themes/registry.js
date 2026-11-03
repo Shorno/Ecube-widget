@@ -76,6 +76,7 @@ const ALL_SLOTS = [
   "LiveOverallRanking",
   "LiveRanking",
   "TeamElimination",
+  "TeamRecall",
   "Achievements",
 ];
 

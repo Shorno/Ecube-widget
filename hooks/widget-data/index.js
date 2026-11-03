@@ -19,6 +19,8 @@ export { useLiveOverallRanking } from "./useLiveOverallRanking";
 export { useLiveCircleTimer } from "./useLiveCircleTimer";
 export { useTeamElimination } from "./useTeamElimination";
 export { useEliminationQueue } from "./useEliminationQueue";
+export { useTeamRecall } from "./useTeamRecall";
+export { useRecallQueue } from "./useRecallQueue";
 export { useAchievementQueue } from "./useAchievementQueue";
 export { useAchievements } from "./useAchievements";
 // Note: WWCTwo and WWCStats both use useWWC — same data, different visuals
