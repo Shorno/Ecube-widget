@@ -14,3 +14,4 @@ export { default as MatchStart } from "../v1/MatchStartView";
 export { default as LiveOverallRanking } from "./LiveOverallRankingView";
 export { default as LiveRanking } from "./LiveRankingView";
 export { default as TeamElimination } from "./TeamEliminationView";
+export { default as TeamRecall } from "../v1/TeamRecallView";
