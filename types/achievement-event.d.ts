@@ -10,6 +10,13 @@ export type PlayerAchievementQueueItem = {
   data: PlayerAchievementPayload;
 };
 
+// PLAYER_ACHIEVEMENT with achievement "KILL_STEALER" — not a kill-count
+// milestone, so it gets its own icon banner instead of the count banner.
+export type KillStealerQueueItem = {
+  kind: "kill-stealer";
+  data: PlayerAchievementPayload;
+};
+
 export type FirstBloodQueueItem = {
   kind: "first-blood";
   data: FirstBloodPayload;
@@ -37,6 +44,7 @@ export type MolotovQueueItem = {
 
 export type AchievementQueueItem =
   | PlayerAchievementQueueItem
+  | KillStealerQueueItem
   | FirstBloodQueueItem
   | DropLootedQueueItem
   | VehicleElimQueueItem

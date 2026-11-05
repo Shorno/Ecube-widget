@@ -6,6 +6,7 @@ import { ACHIEVEMENT_OVERLAY_POSITION_CLASS } from "./achievementPlacement";
 import DropLootedAchievementOverlay from "./drop-looted/DropLootedAchievementOverlay";
 import FirstBloodAchievementOverlay from "./first-blood/FirstBloodAchievementOverlay";
 import GrenadierAchievementOverlay from "./grenadier/GrenadierAchievementOverlay";
+import KillStealerAchievementOverlay from "./kill-stealer/KillStealerAchievementOverlay";
 import MolotovAchievementOverlay from "./molotov/MolotovAchievementOverlay";
 import RampageAchievementOverlay from "./rampage/RampageAchievementOverlay";
 import VehicleElimAchievementOverlay from "./vehicle-elim/VehicleElimAchievementOverlay";
@@ -31,6 +32,9 @@ function queueItemKey(item: AchievementQueueItem): string {
   }
   if (item.kind === "molotov") {
     return `molotov-${item.data.causer.player.id}-${item.data.placement}`;
+  }
+  if (item.kind === "kill-stealer") {
+    return `kill-stealer-${item.data.player.id}-${item.data.kills}`;
   }
   return `player-achievement-${item.data.player.id}-${item.data.kills}-${item.data.achievement}`;
 }
@@ -78,6 +82,12 @@ export default function AchievementsLayer({
               )}
               {currentEvent.kind === "molotov" && (
                 <MolotovAchievementOverlay
+                  key={queueItemKey(currentEvent)}
+                  data={currentEvent.data}
+                />
+              )}
+              {currentEvent.kind === "kill-stealer" && (
+                <KillStealerAchievementOverlay
                   key={queueItemKey(currentEvent)}
                   data={currentEvent.data}
                 />

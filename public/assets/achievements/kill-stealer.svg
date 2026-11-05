@@ -1,0 +1,10 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Scaled in from the edges to match the other achievement icons' padding -->
+  <g transform="translate(128 128) scale(0.8) translate(-120 -130)">
+    <!-- Mask Ties -->
+    <path d="M 42 116 L 10 92 L 20 124 L 8 156 L 42 136 Z" stroke="var(--kill-stealer-stroke, currentColor)" stroke-width="var(--kill-stealer-stroke-width, 8)" stroke-linejoin="round" fill="var(--kill-stealer-tie-fill, var(--kill-stealer-fill, #ffffff))"/>
+
+    <!-- Bandit Mask (eye holes cut out, so they stay see-through as a silhouette) -->
+    <path fill-rule="evenodd" d="M 40 110 C 64 82, 106 84, 128 106 C 150 84, 192 82, 216 110 C 232 140, 214 172, 182 174 C 158 176, 140 162, 128 150 C 116 162, 98 176, 74 174 C 42 172, 24 140, 40 110 Z M 56 128 C 68 106, 104 104, 116 124 C 106 148, 68 150, 56 128 Z M 200 128 C 188 106, 152 104, 140 124 C 150 148, 188 150, 200 128 Z" stroke="var(--kill-stealer-stroke, currentColor)" stroke-width="var(--kill-stealer-stroke-width, 8)" stroke-linejoin="round" fill="var(--kill-stealer-mask-fill, var(--kill-stealer-fill, #ffffff))"/>
+  </g>
+</svg>

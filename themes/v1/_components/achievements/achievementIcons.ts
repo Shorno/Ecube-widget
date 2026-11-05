@@ -9,6 +9,7 @@ export const GRENADE_ICON = "/assets/achievements/grenade.svg";
 export const MOLOTOV_ICON = "/assets/achievements/molotov.svg";
 export const VEHICLE_ICON = "/assets/achievements/vehicle.svg";
 export const AIRDROP_ICON = "/assets/match-summary/airdrop.svg";
+export const KILL_STEALER_ICON = "/assets/achievements/kill-stealer.svg";
 
 export const ACHIEVEMENT_ICONS = [
   ELIMS_ICON,
@@ -16,4 +17,5 @@ export const ACHIEVEMENT_ICONS = [
   MOLOTOV_ICON,
   VEHICLE_ICON,
   AIRDROP_ICON,
+  KILL_STEALER_ICON,
 ];
