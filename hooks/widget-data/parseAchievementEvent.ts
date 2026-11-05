@@ -50,6 +50,9 @@ export function parseAchievementEvent(
   data: unknown,
 ): AchievementQueueItem | null {
   if (eventName === "PLAYER_ACHIEVEMENT" && isPlayerAchievementPayload(data)) {
+    if (data.achievement === "KILL_STEALER") {
+      return { kind: "kill-stealer", data };
+    }
     return { kind: "player-achievement", data };
   }
 

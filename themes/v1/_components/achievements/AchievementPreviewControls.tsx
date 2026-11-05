@@ -8,6 +8,7 @@ type Props = {
   onTriggerVehicleElim: () => void;
   onTriggerGrenadier: () => void;
   onTriggerMolotov: () => void;
+  onTriggerKillStealer: () => void;
   isLocked?: boolean;
 };
 
@@ -19,6 +20,7 @@ export default function AchievementPreviewControls({
   onTriggerVehicleElim,
   onTriggerGrenadier,
   onTriggerMolotov,
+  onTriggerKillStealer,
   isLocked = false,
 }: Props) {
   return (
@@ -78,6 +80,14 @@ export default function AchievementPreviewControls({
         className="rounded bg-white px-4 py-2 text-sm font-bold text-black shadow hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Trigger Molotov
+      </button>
+      <button
+        type="button"
+        onClick={onTriggerKillStealer}
+        disabled={isLocked}
+        className="rounded bg-white px-4 py-2 text-sm font-bold text-black shadow hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        Trigger Kill Stealer
       </button>
     </div>
   );
